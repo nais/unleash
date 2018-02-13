@@ -2,8 +2,10 @@
 ARG BASE_IMAGE_PREFIX=""
 FROM ${BASE_IMAGE_PREFIX}node
 
-RUN npm install --unsafe-perm -g unleash-server
+ADD . /
 
-ADD run.sh /run.sh
-RUN chmod +x /run.sh
-CMD bash /run.sh
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+
+RUN npm install --unsafe-perm
+
+CMD npm start
