@@ -10,8 +10,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "ad": "0.3.2",
     "basic-auth": "2.0.0",
-    "gravatar": "1.6.0",
     "unleash-server": "3.0.0"
   }
 }
