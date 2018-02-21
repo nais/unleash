@@ -9,9 +9,9 @@ services:
 
 before_install:
   - export TAGGED_VERSION="$(git rev-list --count HEAD).$(date +'%Y%m%d.%H%M')"
-  - docker build -t navikt/unleash:latest -t navikt/unleash:$TAGGED_VERSION .
+  - docker build
 
 after_success:
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - docker push navikt/unleash:latest
-  - docker push navikt/unleash:$TAGGED_VERSION
+  - git tag $TAGGED_VERSION
+  - git remote add auth-origin https://${GITHUB_ACCESS_TOKEN}@github.com/${TRAVIS_REPO_SLUG}
+  - git push auth-origin --tags
