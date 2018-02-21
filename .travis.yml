@@ -1,6 +1,6 @@
 # vi: se sts=2 ts=2 sw=2 et:
 
-language: node_js
+language: generic
 
 sudo: required
 
