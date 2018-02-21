@@ -8,8 +8,10 @@ services:
   - docker
 
 before_install:
-  - docker build -t navikt/unleash .
+  - export TAGGED_VERSION="$(git rev-list --count HEAD).$(date +'%Y%m%d.%H%M')"
+  - docker build -t navikt/unleash:latest -t navikt/unleash:$TAGGED_VERSION .
 
 after_success:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - docker push navikt/unleash
+  - docker push navikt/unleash:latest
+  - docker push navikt/unleash:$TAGGED_VERSION
