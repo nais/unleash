@@ -7,10 +7,8 @@ sudo: required
 services:
   - docker
 
-before_install:
+script:
   - docker build .
-
-after_success:
   - git tag "$(git rev-list --count HEAD).$(date +'%Y%m%d.%H%M')"
   - git remote add auth-origin https://${GITHUB_ACCESS_TOKEN}@github.com/${TRAVIS_REPO_SLUG}
   - git push auth-origin --tags
