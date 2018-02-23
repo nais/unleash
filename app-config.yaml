@@ -16,3 +16,7 @@ fasitResources:
     resourceType: datasource
   - alias: ldap
     resourceType: ldap
+  exposed:
+  - alias: unleash-client-api
+    resourceType: restservice
+    path: /api/client
