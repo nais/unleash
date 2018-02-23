@@ -9,11 +9,8 @@ if: branch = master
 services:
   - docker
 
-before_script:
-  - echo 'Europe/Oslo' | sudo tee /etc/timezone
-  - sudo dpkg-reconfigure --frontend noninteractive tzdata
-
 script:
+  - export TZ="Europe/Oslo"
   - export RELEASE_VERSION="$(git rev-list --count HEAD).$(date +'%Y%m%d.%H%M')"
   - export DOCKER_IMAGE_FULL_NAME="$TRAVIS_REPO_SLUG:$RELEASE_VERSION"
   - docker build -t "$DOCKER_IMAGE_FULL_NAME" .
