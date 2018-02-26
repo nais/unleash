@@ -1,11 +1,4 @@
-# gjør det mulig å bytte base-image slik at vi får bygd både innenfor og utenfor NAV
-ARG BASE_IMAGE_PREFIX=""
-FROM ${BASE_IMAGE_PREFIX}node
-
+FROM node:8-alpine
 ADD . /
-
-ENV NODE_TLS_REJECT_UNAUTHORIZED=0
-
-RUN npm install --unsafe-perm
-
+RUN npm install && npm cache clean -f
 CMD npm start
