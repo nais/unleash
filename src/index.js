@@ -4,7 +4,7 @@ const auth = require('./auth-hook');
 const UNLEASH_PG_URL = process.env.UNLEASH_PG_URL;
 const UNLEASH_PG_USERNAME = process.env.UNLEASH_PG_USERNAME;
 const UNLEASH_PG_PASSWORD = process.env.UNLEASH_PG_PASSWORD;
-const dbUri = `${UNLEASH_PG_URL.slice(0, 11)}${UNLEASH_PG_USERNAME}:${UNLEASH_PG_PASSWORD}@${UNLEASH_PG_URL.slice(11, UNLEASH_PG_URL.length)}`;
+const dbUri = `postgres://${UNLEASH_PG_USERNAME}:${UNLEASH_PG_PASSWORD}@${UNLEASH_PG_URL.slice(11, UNLEASH_PG_URL.length)}`;
 
 console.log("connecting to database", dbUri);
 
