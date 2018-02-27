@@ -15,9 +15,7 @@ logMaskedPassword("connecting to database " + dbUri, UNLEASH_PG_PASSWORD);
 unleash.start({
     databaseUrl: dbUri,
     port: 8080,
-    secret: 'not-a-secret',
+    secret: UNLEASH_PG_PASSWORD,
     adminAuthentication: 'custom',
     preRouterHook: auth
-}).then(unleash => {
-    console.log(`Unleash started on http://localhost:${unleash.app.get('port')}`)
 });
