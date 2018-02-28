@@ -1,9 +1,9 @@
 import authenticateUser, {createAdClient} from './ldap-auth';
-import { Response, NextFunction } from 'express';
+import {Response, NextFunction} from 'express';
 import auth from 'basic-auth';
 import {RequestWithUser} from "./models";
 
-function enableBasicAuth(app) {
+function enableBasicAuth(app: any) {
     const ADClient = createAdClient();
 
     app.use('/api/admin/', (req: RequestWithUser, res: Response, next: NextFunction) => {

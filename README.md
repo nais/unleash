@@ -9,6 +9,9 @@ Denne vil sette opp en lokal postgres database i en docker-container og
 eksponere unleash på url `http://localhost:8080`. Autentisering vil være
 skrudd av.
 
+For å bygge koden kjører du `npm run build`. Dette vil kompilere typescript-filene til ES2017
+som legges i `./dist/`. Unleash kan da kjøres med `npm start`.
+
 ### Database setup
 ```
 $ psql
