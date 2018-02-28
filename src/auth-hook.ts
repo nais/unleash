@@ -1,9 +1,11 @@
-import authenticateUser from './ldap-auth';
+import authenticateUser, {createAdClient} from './ldap-auth';
 import { Response, NextFunction } from 'express';
 import auth from 'basic-auth';
 import {RequestWithUser} from "./models";
 
-function authentication(app) {
+function enableBasicAuth(app) {
+    const ADClient = createAdClient();
+
     app.use('/api/admin/', (req: RequestWithUser, res: Response, next: NextFunction) => {
         const credentials = auth(req as any);
         if (req.session && req.session.authedUser) {
@@ -13,7 +15,7 @@ function authentication(app) {
             const username = credentials.name;
             const password = credentials.pass;
 
-            authenticateUser(username, password)
+            authenticateUser(ADClient, username, password)
                 .then((user: any) => {
                     const authedUser = {
                         name: user.displayName,
@@ -40,4 +42,4 @@ function authentication(app) {
     });
 }
 
-export default authentication;
+export default enableBasicAuth;

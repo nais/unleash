@@ -15,8 +15,12 @@ const config = {
     baseDN: process.env.LDAP_BASEDN
 };
 
-const ad = new AD(config);
 const VALID_AD_ROLLE = "0000-GA-STDAPPS"; // "0000-GA-STASH-USERS"; // eventuelt annen rolle som treffer kun utviklere
+
+
+export function createAdClient() {
+    return new AD(config);
+}
 
 function isSuccess(name: string) {
     return (success: boolean) => {
@@ -24,7 +28,7 @@ function isSuccess(name: string) {
     }
 }
 
-export default function authenticateUser(username: string, password: string) {
+export default function authenticateUser(ad: any, username: string, password: string) {
     return ad.user(username).authenticate(password)
         .then(isSuccess("auth"))
         .then(() => ad.user(username).isMemberOf(VALID_AD_ROLLE))
