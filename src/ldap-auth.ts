@@ -1,11 +1,11 @@
 const AD = require('ad');
 
-console._oldLog = console.log;
-console.log = (arg1, ...args) => {
+const oldLog = console.log;
+console.log = (arg1: string, ...args: string[]) => {
     if(arg1 === 'AUTH USER' || arg1 === 'BACK FROM AUTH') {
         return;
     }
-    console._oldLog(arg1, ...args);
+    oldLog(arg1, ...args);
 };
 
 const config = {
@@ -18,18 +18,16 @@ const config = {
 const ad = new AD(config);
 const VALID_AD_ROLLE = "0000-GA-STDAPPS"; // "0000-GA-STASH-USERS"; // eventuelt annen rolle som treffer kun utviklere
 
-function isSuccess(name) {
-    return (success) => {
+function isSuccess(name: string) {
+    return (success: boolean) => {
         return success ? Promise.resolve() : Promise.reject({ type: name, message: "did not return success" });
     }
 }
 
-function authenticateUser(username, password) {
+export default function authenticateUser(username: string, password: string) {
     return ad.user(username).authenticate(password)
         .then(isSuccess("auth"))
         .then(() => ad.user(username).isMemberOf(VALID_AD_ROLLE))
         .then(isSuccess("ad_rolle"))
         .then(() => ad.user(username).get())
 }
-
-module.exports = authenticateUser;

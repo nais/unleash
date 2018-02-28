@@ -1,10 +1,12 @@
-const authenticateUser = require('./ldap-auth');
-const auth = require('basic-auth');
+import authenticateUser from './ldap-auth';
+import { Response, NextFunction } from 'express';
+import auth from 'basic-auth';
+import {RequestWithUser} from "./models";
 
 function authentication(app) {
-    app.use('/api/admin/', (req, res, next) => {
-        const credentials = auth(req);
-        if (req.session.authedUser) {
+    app.use('/api/admin/', (req: RequestWithUser, res: Response, next: NextFunction) => {
+        const credentials = auth(req as any);
+        if (req.session && req.session.authedUser) {
             req.user = req.session.authedUser;
             next();
         } else if (credentials) {
@@ -12,7 +14,7 @@ function authentication(app) {
             const password = credentials.pass;
 
             authenticateUser(username, password)
-                .then((user) => {
+                .then((user: any) => {
                     const authedUser = {
                         name: user.displayName,
                         email: user.mail,
@@ -24,18 +26,18 @@ function authentication(app) {
                 })
                 .catch(() => {
                     return res
-                        .status('401')
+                        .status(401)
                         .set({ 'WWW-Authenticate': 'Basic realm="example"' })
                         .end('access denied');
                 });
 
         } else {
             return res
-                .status('401')
+                .status(401)
                 .set({ 'WWW-Authenticate': 'Basic realm="example"' })
                 .end('access denied');
         }
     });
 }
 
-module.exports = authentication;
+export default authentication;
