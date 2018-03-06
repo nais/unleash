@@ -7,10 +7,10 @@ services:
     depends_on:
       - "postgres"
     environment:
-      - DISABLE_AUTH=true
       - UNLEASH_PG_USERNAME=unleash
       - UNLEASH_PG_PASSWORD=unleash
       - UNLEASH_PG_URL=postgres://postgres/unleash
+      - DISABLE_AUTH=true
   postgres:
     image: "postgres:9"
     environment:

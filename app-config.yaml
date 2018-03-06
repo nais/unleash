@@ -16,6 +16,8 @@ fasitResources:
     resourceType: datasource
   - alias: ldap
     resourceType: ldap
+  - alias: unleash-azuread
+    resourceType: applicationProperties
   exposed:
   - alias: unleash-api
     resourceType: restservice

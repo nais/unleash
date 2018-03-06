@@ -4,3 +4,4 @@ test.js
 dist
 test-server.js
 .data/
+set_environment.sh
