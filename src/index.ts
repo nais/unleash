@@ -1,5 +1,5 @@
 import unleash from 'unleash-server';
-import enableBasicAuth from './auth-hook';
+import enableAuth from './azuread-auth-hook';
 
 const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
 const UNLEASH_PG_URL = process.env.UNLEASH_PG_URL;
@@ -18,5 +18,5 @@ unleash.start({
     port: 8080,
     secret: UNLEASH_PG_PASSWORD,
     adminAuthentication: 'custom',
-    preRouterHook: DISABLE_AUTH ? undefined : enableBasicAuth
+    preRouterHook: DISABLE_AUTH ? undefined : enableAuth
 });
