@@ -24,9 +24,19 @@ function enableAzureAd(app: Application) {
     passport.serializeUser((user, done) => done(null, user));
     passport.deserializeUser((user, done) => done(null, user));
 
-    app.get(
+    app.post(
         '/api/auth/callback',
-        passport.authenticate('navikt',{
+        passport.authenticate('azuread-openidconnect',{
+            failureRedirect: '/api/admin/error-login'
+        }),
+        (req: Request, res: Response) => {
+            res.redirect('/');
+        }
+    );
+
+    app.get(
+        '/api/admin/login',
+        passport.authenticate('azuread-openidconnect',{
             failureRedirect: '/api/admin/error-login'
         }),
         (req: Request, res: Response) => {

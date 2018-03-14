@@ -1,4 +1,4 @@
-import {OIDCOptions, ResponseMode, ResponseType} from "passport-azure-ad";
+import {OIDCOptions} from "passport-azure-ad";
 
 const tenantGUID = process.env.AZURE_AD_TENANT!;
 const clientID = process.env.AZURE_AD_CLIENT!;
@@ -8,8 +8,8 @@ const identityMetadata = `https://login.microsoftonline.com/${tenantGUID}/v2.0/.
 
 export const config: OIDCOptions = {
     identityMetadata,
-    responseType: ResponseType.CODE_ID_TOKEN,
-    responseMode: ResponseMode.FORM_POST,
+    responseType: 'code id_token',
+    responseMode: 'form_post',
     passReqToCallback: true,
     clientID,
     redirectUrl,

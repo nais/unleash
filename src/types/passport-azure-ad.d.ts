@@ -4,28 +4,11 @@ declare module 'passport-azure-ad' {
 
     type cbFunc = (iss: string, sub: string, profile: any, accessToken: string, refreshToken: string, done: (arg1: any, arg2: any) => void) => void;
 
-    export enum ResponseType {
-        CODE = 'code',
-        CODE_ID_TOKEN = 'code id_token',
-        ID_TOKEN_CODE = 'id_token code'
-    }
-
-    export enum ResponseMode {
-        QUERY = 'query',
-        FORM_POST = 'form_post'
-    }
-
-    export enum LogLevel {
-        INFO = 'info',
-        WARN = 'warn',
-        ERROR = 'error'
-    }
-
     export interface OIDCOptions {
         identityMetadata: string;
         clientID: string;
-        responseType: ResponseType;
-        responseMode: ResponseMode;
+        responseType: 'code' | 'code id_token' | 'id_token code';
+        responseMode: 'query' | 'form_post';
         redirectUrl: string;
         passReqToCallback: boolean;
         allowHttpForRedirectUrl?: boolean;
@@ -39,7 +22,7 @@ declare module 'passport-azure-ad' {
         useCookieIsteadOfSession?: boolean;
         cookieEncryptionKeys?: { key: string, iv: string }[];
         scope?: string[];
-        loggingLevel?: LogLevel;
+        loggingLevel?: 'info' | 'warn' | 'error';
         loggingNoPII?: boolean;
         nonceLifetime?: number;
         nonceMaxAmount?: number;
