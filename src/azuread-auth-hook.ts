@@ -57,7 +57,9 @@ function enableAzureAd(app: Application) {
     app.get(
         '/api/admin/error-login',
         (req: Request, res: Response, done: Function) => {
-            return done("Noe gikk feil ved logging", null);
+            return res
+                .status(401)
+                .send("Noe gikk galt ved innloggingen");
         }
     );
 
