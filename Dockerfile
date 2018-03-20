@@ -1,4 +1,6 @@
-FROM node
+ARG BASE_IMAGE_PREFIX=""
+FROM ${BASE_IMAGE_PREFIX}node
+
 ADD . /unleash
 WORKDIR /unleash
 
