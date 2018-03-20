@@ -14,8 +14,6 @@ fasitResources:
   used:
   - alias: unleash-pg
     resourceType: datasource
-  - alias: ldap
-    resourceType: ldap
   - alias: unleash-azuread
     resourceType: applicationProperties
   exposed:
