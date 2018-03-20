@@ -11,6 +11,7 @@ services:
       - UNLEASH_PG_PASSWORD=unleash
       - UNLEASH_PG_URL=postgres://postgres/unleash
       - DISABLE_AUTH=true
+      - AZURE_AD_ALLOW_HTTP=true
   postgres:
     image: "postgres:9"
     environment:

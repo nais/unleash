@@ -4,6 +4,7 @@ const tenantGUID = process.env.AZURE_AD_TENANT!;
 const clientID = process.env.AZURE_AD_CLIENT!;
 const redirectUrl = process.env.AZURE_AD_REDIRECT_URL!;
 const clientSecret = process.env.AZURE_AD_SECRET!;
+const allowHttp = process.env.AZURE_AD_ALLOW_HTTP === 'true';
 const identityMetadata = `https://login.microsoftonline.com/${tenantGUID}/v2.0/.well-known/openid-configuration`;
 
 export const config: OIDCOptions = {
@@ -11,7 +12,7 @@ export const config: OIDCOptions = {
     responseType: 'code id_token',
     responseMode: 'form_post',
     passReqToCallback: false,
-    allowHttpForRedirectUrl: true,
+    allowHttpForRedirectUrl: allowHttp,
     scope: ['profile', 'email'],
     clientID,
     redirectUrl,

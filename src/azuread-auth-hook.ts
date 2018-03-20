@@ -54,6 +54,13 @@ function enableAzureAd(app: Application) {
         }
     );
 
+    app.get(
+        '/api/admin/error-login',
+        (req: Request, res: Response, done: Function) => {
+            return done("Noe gikk feil ved logging", null);
+        }
+    );
+
     app.use('/api/admin/', (req: Request, res: Response, next: NextFunction) => {
         if (req.user) {
             next();
