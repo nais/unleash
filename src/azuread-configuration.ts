@@ -14,6 +14,7 @@ export const config: OIDCOptions = {
     passReqToCallback: false,
     allowHttpForRedirectUrl: allowHttp,
     scope: ['profile', 'email'],
+    loggingLevel: 'info',
     clientID,
     redirectUrl,
     clientSecret
