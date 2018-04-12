@@ -1,7 +1,7 @@
 # ref https://raw.githubusercontent.com/nais/naisd/master/nais_example.yaml
 image: docker.adeo.no:5000/pus/unleash
 replicas:
-  min: 1
+  min: 2
   max: 4
   cpuThresholdPercentage: 50
 port: 8080
@@ -16,7 +16,3 @@ fasitResources:
     resourceType: datasource
   - alias: unleash-azuread
     resourceType: applicationProperties
-  exposed:
-  - alias: unleash-api
-    resourceType: restservice
-    path: /api/
