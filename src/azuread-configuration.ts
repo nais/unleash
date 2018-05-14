@@ -10,7 +10,7 @@ const identityMetadata = `https://login.microsoftonline.com/${tenantGUID}/v2.0/.
 export const config: OIDCOptions = {
     identityMetadata,
     loggingNoPII: false,
-    responseType: 'code id_token',
+    responseType: 'id_token',
     responseMode: 'form_post',
     passReqToCallback: false,
     allowHttpForRedirectUrl: allowHttp,
