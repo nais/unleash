@@ -1,6 +1,6 @@
-# NAV-IKT Unleash
+# NAV Unleash
 
-Unleash-server som brukes av NAV-IKT. Er satt opp med azure-AD autentisering. (WIP)
+En enkel [unleash-server](https://github.com/Unleash/unleash) med AzureAD-pålogging. 
 
 ## Oppsett for utvikling lokalt
 
@@ -21,3 +21,9 @@ $ psql
 > GRANT ALL ON SCHEMA public TO unleash;
 > GRANT ALL ON ALL TABLES IN SCHEMA public TO unleash;
 ```
+
+## Henvendelser
+
+Henvendelser og spørsmål kan gjøres via issues på repoet. For direkte kontakt
+kan man også høre med Team PUS. For NAV-ansatte kan dette enklest gjøres via slack-kanalen #pus.
+For eksterne er det mulig å sende mail til Steffen Hageland (steffen.hageland@nav.no).
