@@ -16,3 +16,7 @@ fasitResources:
     resourceType: datasource
   - alias: unleash-azuread
     resourceType: applicationProperties
+  exposed:
+  - alias: unleash-apigw
+    resourceType: restservice
+    path: /api
