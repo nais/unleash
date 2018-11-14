@@ -11,6 +11,13 @@ healthcheck:
     path: /
   readiness:
     path: /
+resources:
+  limits:
+    cpu: 1
+    memory: 768Mi
+  requests:
+    cpu: 500m
+    memory: 512Mi
 fasitResources:
   used:
   - alias: unleash-pg
