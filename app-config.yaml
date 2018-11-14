@@ -28,3 +28,6 @@ fasitResources:
   - alias: unleash-apigw
     resourceType: restservice
     path: /api
+
+alertProfiles:
+  - basic
