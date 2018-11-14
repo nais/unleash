@@ -11,6 +11,9 @@ healthcheck:
     path: /
   readiness:
     path: /
+prometheus:
+  enabled: true
+  path: internal-backstage/prometheus
 resources:
   limits:
     cpu: 1
