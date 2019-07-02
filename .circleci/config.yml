@@ -1,0 +1,59 @@
+version: 2.1
+
+orbs:
+  nais: navikt/nais-deployment@1.1.0
+
+jobs:
+  build:
+    docker:
+      - image: 'circleci/node:12-browsers'
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - node-v1-{{ .Branch }}-
+            - node-v1-
+      - run: npm install
+      - save_cache:
+          paths:
+            - ~/usr/local/lib/node_modules
+          key: node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run: npm run build
+      - nais/docker-deploy:
+          image: navikt/unleash
+
+workflows:
+  version: 2
+  unleash:
+    jobs:
+      - build:
+          context: NAIS deployment
+      - nais/deploy:
+          name: dev_deploy
+          context: NAIS deployment
+          build-and-push-docker-image: false
+          repo: navikt/unleash
+          image: navikt/unleash
+          github-app-id: 1
+          nais-template: nais.yaml
+          environment: devenv
+          team: didep
+          requires:
+            - build
+      - hold:
+          type: approval
+          requires:
+            - dev_deploy
+      - nais/deploy:
+          name: prod_deploy
+          context: NAIS deployment
+          build-and-push-docker-image: false
+          repo: navikt/unleash
+          image: navikt/unleash
+          github-app-id: 1
+          nais-template: nais.yaml
+          environment: prodenv
+          team: didep
+          requires:
+            - build

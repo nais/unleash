@@ -1,0 +1,29 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: unleash
+  namespace: default
+  labels:
+    team: {{team}}
+spec:
+  image: {{version}}
+  port: 8080
+  liveness:
+    path: /
+  readiness:
+    path: /
+  prometheus:
+    enabled: false
+  replicas:
+    min: 2
+    max: 8
+  resources:
+    limits:
+      cpu: 1
+      memory: 768Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi  
+  vault:
+    enabled: true
+  
