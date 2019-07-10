@@ -17,6 +17,8 @@ logger.info(maskPassword("connecting to database " + dbUri, dbPassword!));
 
 unleash.start({
     databaseUrl: dbUri,
+    poolMin: 1,
+    poolMax: 3,
     port: 8080,
     secret: dbPassword,
     adminAuthentication: 'custom',
