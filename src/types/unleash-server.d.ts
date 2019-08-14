@@ -1,11 +1,13 @@
 declare module 'unleash-server' {
-    import { RouterOptions  } from 'express';
+    import { RouterOptions } from 'express';
 
     interface UnleashOptions extends RouterOptions {
         databaseUrl?: string;
         port?: number;
         secret?: string;
         adminAuthentication?: string;
+        poolMin?: number,
+        poolMax?: number
         preRouterHook?: any;
     }
 
