@@ -9,10 +9,10 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Build Docker
-      run: docker build . -- tag ${GITHUB_REPOSITORY}/${$GITHUB_SHA}
+      run: docker build . -- tag ${GITHUB_REPOSITORY}/${GITHUB_SHA}
     - name: Push docker image
       run: |
         docker login docker.pkg.github.com -u ${GITHUB_ACTOR} -p ${GITHUB_TOKEN}
-        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}:${$GITHUB_SHA}
+        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}:${GITHUB_SHA}
     - name: Wake GCR
       run: echo Hello
