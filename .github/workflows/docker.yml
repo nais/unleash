@@ -14,3 +14,5 @@ jobs:
       run: |
         docker login docker.pkg.github.com -u ${GITHUB_ACTOR} -p ${GITHUB_TOKEN}
         docker push docker.pkg.github.com/${GITHUB_REPOSITORY}:${$GITHUB_SHA}
+    - name: Wake GCR
+      run: echo Hello
