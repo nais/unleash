@@ -11,6 +11,8 @@ jobs:
     - name: Build Docker
       run: docker build -t ${GITHUB_REPOSITORY}/${GITHUB_SHA} .
     - name: Push docker image
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         docker login docker.pkg.github.com -u ${GITHUB_ACTOR} -p ${GITHUB_TOKEN}
         docker push docker.pkg.github.com/${GITHUB_REPOSITORY}:${GITHUB_SHA}
