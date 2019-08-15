@@ -12,8 +12,8 @@ jobs:
       run: docker build -t ${GITHUB_REPOSITORY}/${GITHUB_SHA} .
     - name: Login to docker
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: echo "$GITHUB_TOKEN" | docker login docker.pkg.github.com -u ${GITHUB_ACTOR} --password-stdin
+        GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+      run: echo "$GITHUB_TOKEN" | docker login docker.pkg.github.com -u chriswk --password-stdin
     - name: Push docker image
       run: docker push docker.pkg.github.com/${GITHUB_REPOSITORY}:${GITHUB_SHA}
     - name: Wake GCR
