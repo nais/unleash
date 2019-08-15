@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Build Docker
-      run: docker build -t ${GITHUB_REPOSITORY}/${GITHUB_SHA} .
+      run: docker build -t docker.pkg.github.com/${GITHUB_REPOSITORY}:${GITHUB_SHA} .
     - name: Login to docker
       env:
         GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
