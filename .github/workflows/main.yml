@@ -7,14 +7,18 @@ jobs:
     runs-on: ubuntu-latest
   
     steps:
-    - uses: actions/checkout@master
+    - name: Checkout
+      uses: actions/checkout@master
     - name: Build Docker
-      run: docker build -t ${GITHUB_REPOSITORY}/${GITHUB_SHA} .
-    - name: Push docker image
+      uses: actions/docker/cli@master
+      args: "build -t ${GITHUB_REPOSITORY}/${GITHUB_SHA} ."
+    - name: Login to docker.pkg.github.com
+      uses: actions/docker/build@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        docker login docker.pkg.github.com -u ${GITHUB_ACTOR} -p ${GITHUB_TOKEN}
-        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}:${GITHUB_SHA}
+        DOCKER_USERNAME: ${{ GITHUB_ACTOR }}
+        DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+    - name: Push to docker.pkg.github.com
+      uses: actions/docker/cli@master
+      args: "push docker.pkg.github.com/${GITHUB_REPOSITORY}:${GITHUB_SHA}"
     - name: Wake GCR
       run: echo Hello
