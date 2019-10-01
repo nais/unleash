@@ -9,12 +9,12 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Build Docker
-      run: docker build -t docker.pkg.github.com/${GITHUB_REPOSITORY}:${GITHUB_SHA} .
+      run: docker build -t docker.pkg.github.com/${GITHUB_REPOSITORY}/unleash:${GITHUB_SHA} .
     - name: Login to docker
       env:
         GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
       run: echo "$GITHUB_TOKEN" | docker login docker.pkg.github.com -u chriswk --password-stdin
     - name: Push docker image
-      run: docker push docker.pkg.github.com/${GITHUB_REPOSITORY}:${GITHUB_SHA}
+      run: docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/unleash:${GITHUB_SHA}
     - name: Wake GCR
       run: echo Hello
