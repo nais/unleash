@@ -32,5 +32,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
         with:
           cluster: dev-fss
-          team: di-dep
+          team: didep
           resources: nais.yaml
