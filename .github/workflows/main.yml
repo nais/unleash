@@ -5,16 +5,29 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-  
+
     steps:
-    - uses: actions/checkout@master
-    - name: Build Docker
-      run: docker build -t docker.pkg.github.com/${GITHUB_REPOSITORY}/unleash:${GITHUB_SHA} .
-    - name: Login to docker
-      env:
-        GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
-      run: echo "$GITHUB_TOKEN" | docker login docker.pkg.github.com -u chriswk --password-stdin
-    - name: Push docker image
-      run: docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/unleash:${GITHUB_SHA}
-    - name: Wake GCR
-      run: echo Hello
+      - uses: actions/checkout@master
+      - name: Create Docker tag
+        env:
+          NAME: unleash
+        run: |
+          echo "docker.pkg.github.com"/"$GITHUB_REPOSITORY"/"$NAME" > .docker_image
+          echo "$(date "+%Y.%m.%d")-$(git rev-parse --short=9 HEAD)" > .docker_tag
+
+      - name: Build Docker
+        run: docker build -t $(cat .docker_image):$(cat .docker_tag) .
+      - name: Login to docker
+        env:
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+        run: echo "$GITHUB_TOKEN" | docker login docker.pkg.github.com -u chriswk --password-stdin
+      - name: Push docker image
+        run: "docker push $(cat .docker_image):$(cat .docker_tag)"
+      - name: Deploy to dev-fss
+        uses: navikt/deployment-cli/action@0.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+        with:
+          cluster: dev-fss
+          team: di-dep
+          resources: nais.yaml
