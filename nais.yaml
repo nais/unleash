@@ -9,6 +9,8 @@ metadata:
 spec:
   image: {{image}}:{{tag}}
   port: 8080
+  ingresses:
+    - https://unleash.nais.adeo.no
   liveness:
     path: /
   readiness:
