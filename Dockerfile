@@ -1,5 +1,11 @@
-ARG BASE_IMAGE_PREFIX=""
-FROM ${BASE_IMAGE_PREFIX}node
+FROM navikt/common:0.1 AS navikt-common
+FROM node:12-alpine
+
+COPY --from=navikt-common /init-scripts /init-scripts
+COPY --from=navikt-common /entrypoint.sh /entrypoint.sh
+COPY --from=navikt-common /dumb-init /dumb-init
+
+RUN chmod +x /init-scripts/* /entrypoint.sh /dumb-init
 
 ADD . /unleash
 WORKDIR /unleash
@@ -16,4 +22,7 @@ ENV https_proxy=http://webproxy-nais.nav.no:8088
 ENV no_proxy=localhost,127.0.0.1,.local,.adeo.no,.aetat.no,.devillo.no,.oera.no
 
 EXPOSE 8080
-CMD npm start
+
+ADD run-script.sh /run-script.sh
+
+ENTRYPOINT ["/dumb-init", "--", "/entrypoint.sh"]
