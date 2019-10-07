@@ -34,3 +34,11 @@ jobs:
           cluster: dev-fss
           team: didep
           resources: nais.yaml
+      - name: Deploy to prod-fss
+        uses: navikt/deployment-cli/action@0.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+        with:
+          cluster: prod-fss
+          team: didep
+          resources: nais.yaml
