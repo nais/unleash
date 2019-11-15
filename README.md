@@ -1,5 +1,5 @@
 # NAV Unleash
-[Workflow status](https://github.com/navikt/unleash/workflows/Docker%20build/badge.svg)
+[Workflow status](https://github.com/navikt/unleash/workflows/build/badge.svg)
 En enkel [unleash-server](https://github.com/Unleash/unleash) med AzureAD-pålogging. 
 
 ## Oppsett for utvikling lokalt

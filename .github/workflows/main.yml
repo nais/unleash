@@ -43,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
         name: Checkout code
-      - uses: navikt/deployment/actions/deploy@master
+      - uses: nais/deploy/actions/deploy@master
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_KEY }}
           CLUSTER: prod-fss
