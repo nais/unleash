@@ -5,12 +5,13 @@ metadata:
   name: unleash
   namespace: default
   labels:
-    team: didep
+    team: dataplattform
 spec:
-  image: {{image}}:{{tag}}
+  image: {{image}}
   port: 8080
   ingresses:
     - https://unleash.nais.adeo.no
+    - https://unleash.nais.preprod.local
   liveness:
     path: /
   readiness:

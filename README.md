@@ -25,5 +25,5 @@ $ psql
 ## Henvendelser
 
 Henvendelser og spørsmål kan gjøres via issues på repoet. For direkte kontakt
-kan man også høre med Team PUS. For NAV-ansatte kan dette enklest gjøres via slack-kanalen #pus.
-For eksterne er det mulig å sende mail til Steffen Hageland (steffen.hageland@nav.no).
+kan man også høre med Team Dataplattform (NADA). For NAV-ansatte kan dette enklest gjøres via slack-kanalen #dataplattform.
+For eksterne er det mulig å sende mail til Christopher Kolstad (christopher.kolstad@nav.no) eller Audun F. Strand (audun.fauchald.strand@nav.no)

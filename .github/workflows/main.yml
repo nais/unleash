@@ -1,9 +1,12 @@
-name: Docker build
+name: build
 
 on:
   push:
     branches:
       - master
+
+env:
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/unleash:${{ github.sha }}
 
 jobs:
   build:
@@ -11,34 +14,37 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
-      - name: Create Docker tag
-        env:
-          NAME: unleash
-        run: |
-          echo "docker.pkg.github.com"/"$GITHUB_REPOSITORY"/"$NAME" > .docker_image
-          echo "$(date "+%Y.%m.%d")-$(git rev-parse --short=9 HEAD)" > .docker_tag
-
       - name: Build Docker
-        run: docker build -t $(cat .docker_image):$(cat .docker_tag) .
-      - name: Login to docker
+        run: docker build -t $IMAGE .
+      - name: Login to Github Packages
         env:
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
-        run: echo "$GITHUB_TOKEN" | docker login docker.pkg.github.com -u chriswk --password-stdin
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
       - name: Push docker image
-        run: "docker push $(cat .docker_image):$(cat .docker_tag)"
-      - name: Deploy to dev-fss
-        uses: navikt/deployment-cli/action@0.4.0
+        run: docker push $IMAGE
+  deploypreprod:
+    name: Deploy to dev-fss
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@master
+        name: Checkout code
+      - uses: navikt/deployment/actions/deploy@master
         env:
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
-        with:
-          cluster: dev-fss
-          team: didep
-          resources: nais.yaml
-      - name: Deploy to prod-fss
-        uses: navikt/deployment-cli/action@0.4.0
+          APIKEY: ${{ secrets.NAIS_DEPLOY_KEY }}
+          CLUSTER: dev-fss
+          RESOURCE: nais.yml
+  deployprod:
+    name: Deploy to prod-fss
+    runs-on: ubuntu-latest
+    needs: deploypreprod
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@master
+        name: Checkout code
+      - uses: navikt/deployment/actions/deploy@master
         env:
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
-        with:
-          cluster: prod-fss
-          team: didep
-          resources: nais.yaml
+          APIKEY: ${{ secrets.NAIS_DEPLOY_KEY }}
+          CLUSTER: prod-fss
+          RESOURCE: nais.yml
