@@ -1,5 +1,11 @@
 declare module 'unleash-server' {
     import { RouterOptions } from 'express';
+    interface Logger {
+        debug: (message?: any, ...parameters: any[]) => void,
+        info: (message?: any, ...parameters: any[]) => void,
+        warn: (message?: any, ...parameters: any[]) => void,
+        error: (message?: any, ...parameters: any[]) => void
+    }
 
     interface UnleashOptions extends RouterOptions {
         databaseUrl?: string;
@@ -7,7 +13,8 @@ declare module 'unleash-server' {
         secret?: string;
         adminAuthentication?: string;
         poolMin?: number,
-        poolMax?: number
+        poolMax?: number,
+        getLogger?: Logger
         preRouterHook?: any;
     }
 
@@ -17,24 +24,4 @@ declare module 'unleash-server' {
 
     export const unleash: UnleashServer;
     export default unleash;
-}
-
-declare module 'unleash-server/lib/logger' {
-    interface LoggerProvider {
-        (source: string, subString: string): boolean;
-    }
-
-    interface Logger {
-        debug: (message?: any, ...parameters: any[]) => void,
-        info: (message?: any, ...parameters: any[]) => void,
-        warn: (message?: any, ...parameters: any[]) => void,
-        error: (message?: any, ...parameters: any[]) => void
-    }
-
-    interface UnleashLogger {
-        setLoggerProvider: (name: any) => Logger;
-    }
-
-    export const unleashLogger: UnleashLogger;
-    export default unleashLogger;
 }

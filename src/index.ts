@@ -1,4 +1,4 @@
-import logger from './logger'; // logging must be imported before unleash-server https://github.com/Unleash/unleash/blob/master/docs/getting-started.md#how-do-i-set-a-logger-provider
+import logger from './logger';
 import unleash from 'unleash-server';
 import enableAuth from './azuread-auth-hook';
 
@@ -22,5 +22,6 @@ unleash.start({
     port: 8080,
     secret: dbPassword,
     adminAuthentication: 'custom',
-    preRouterHook: DISABLE_AUTH ? undefined : enableAuth
+    preRouterHook: DISABLE_AUTH ? undefined : enableAuth,
+    getLogger: logger
 });

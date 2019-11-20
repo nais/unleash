@@ -1,5 +1,3 @@
-import logger from 'unleash-server/lib/logger';
-
 function jsonLogger(level: string) {
     return (message?: any, ...parameters: any[]) => {
         console.log(JSON.stringify({
@@ -16,7 +14,7 @@ const warnLogger = jsonLogger("WARN");
 const errorLogger = jsonLogger("ERROR");
 
 function loggerProvider(name: any) {
-    infoLogger(`provinding logger: ${name}`);
+    infoLogger(`providing logger: ${name}`);
     return {
         debug: debugLogger,
         info: infoLogger,
@@ -24,7 +22,4 @@ function loggerProvider(name: any) {
         error: errorLogger
     };
 }
-
-logger.setLoggerProvider(loggerProvider);
-
 export default loggerProvider("default");
