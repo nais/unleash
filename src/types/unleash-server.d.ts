@@ -6,6 +6,10 @@ declare module 'unleash-server' {
         warn: (message?: any, ...parameters: any[]) => void,
         error: (message?: any, ...parameters: any[]) => void
     }
+    interface LoggerProvider {
+        (name?: any): Logger;
+    }
+
 
     interface UnleashOptions extends RouterOptions {
         databaseUrl?: string;
@@ -14,7 +18,7 @@ declare module 'unleash-server' {
         adminAuthentication?: string;
         poolMin?: number,
         poolMax?: number,
-        getLogger?: Logger
+        getLogger?: LoggerProvider
         preRouterHook?: any;
     }
 

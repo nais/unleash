@@ -7,12 +7,12 @@ const UNLEASH_PG_URL = process.env.UNLEASH_PG_URL;
 const UNLEASH_PG_USERNAME = process.env.UNLEASH_PG_USERNAME;
 const dbPassword = "" + process.env.UNLEASH_PG_PASSWORD;
 const dbUri = `postgres://${UNLEASH_PG_USERNAME}:${dbPassword}@${UNLEASH_PG_URL!.slice(11, UNLEASH_PG_URL!.length)}`;
-
+const log = logger("default");
 function maskPassword(output: string, password: string) {
     return output.replace(password, "**********");
 }
 
-logger.info(maskPassword("connecting to database " + dbUri, dbPassword!));
+log.info(maskPassword("connecting to database " + dbUri, dbPassword!));
 
 
 unleash.start({

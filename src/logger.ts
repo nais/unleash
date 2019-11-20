@@ -22,4 +22,4 @@ function loggerProvider(name: any) {
         error: errorLogger
     };
 }
-export default loggerProvider("default");
+export default loggerProvider;
