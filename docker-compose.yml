@@ -13,7 +13,7 @@ services:
       - DISABLE_AUTH=true
       - AZURE_AD_ALLOW_HTTP=true
   postgres:
-    image: "postgres:9"
+    image: "postgres:12"
     environment:
       - POSTGRES_USER=unleash
       - POSTHRES_PASSWORD=unleash
