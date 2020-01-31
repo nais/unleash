@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/unleash:${{ github.sha }}
+  IMAGE_BASE: docker.pkg.github.com/${{ github.repository }}/unleash
 
 jobs:
   build:
@@ -14,6 +14,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
+      - name: Lag tag for image
+        run: echo "::set-env name=TAG::$(git log -1 --pretty='%ad_%h' --date=format:'%Y%m%d%H%M%S')"
+
+      - name: Lag full image referanse
+        run: echo "::set-env name=IMAGE::$IMAGE_BASE:$TAG"
       - name: Build Docker
         run: docker build -t $IMAGE .
       - name: Login to Github Packages
@@ -26,25 +31,37 @@ jobs:
     name: Deploy to dev-fss
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@master
         name: Checkout code
+      - name: Lag tag for image
+        run: echo "::set-env name=TAG::$(git log -1 --pretty='%ad_%h' --date=format:'%Y%m%d%H%M%S')"
+
+      - name: Lag full image referanse
+        run: echo "::set-env name=IMAGE::$IMAGE_BASE:$TAG"
       - uses: navikt/deployment/actions/deploy@master
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_KEY }}
           CLUSTER: dev-fss
           RESOURCE: nais.yml
+          VARS: nais/vars-dev.yml
   deployprod:
     name: Deploy to prod-fss
     runs-on: ubuntu-latest
     needs: deploypreprod
-    if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@master
         name: Checkout code
+      - name: Lag tag for image
+        run: echo "::set-env name=TAG::$(git log -1 --pretty='%ad_%h' --date=format:'%Y%m%d%H%M%S')"
+
+      - name: Lag full image referanse
+        run: echo "::set-env name=IMAGE::$IMAGE_BASE:$TAG"
+
       - uses: nais/deploy/actions/deploy@master
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_KEY }}
           CLUSTER: prod-fss
           RESOURCE: nais.yml
+          VARS: nais/vars-prod.yml
+

@@ -10,9 +10,10 @@ spec:
   image: {{image}}
   port: 8080
   ingresses:
-    - https://unleash.nais.adeo.no
-    - https://unleash.nais.preprod.local
-  liveness:
+  {{#each ingresses as |url|}}
+     - {{url}}
+  {{/each}}
+liveness:
     path: /
   readiness:
     path: /

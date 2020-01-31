@@ -1,0 +1,3 @@
+maxreplicas: 4
+ingresses:
+  - https://unleash.nais.adeo.no
