@@ -33,3 +33,8 @@ spec:
       memory: 512Mi
   vault:
     enabled: true
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_11
+        databases:
+          name: unleash
