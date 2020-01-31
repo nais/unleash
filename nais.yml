@@ -13,7 +13,7 @@ spec:
   {{#each ingresses as |url|}}
      - {{url}}
   {{/each}}
-liveness:
+  liveness:
     path: /
   readiness:
     path: /
