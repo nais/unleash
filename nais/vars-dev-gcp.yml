@@ -1,4 +1,4 @@
-maxreplicas: 4
+namespace: dataplattform
 ingresses:
   - https://unleash.dev-gcp.nais.io
   - https://unleash.dev-adeo.no
