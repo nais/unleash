@@ -22,6 +22,16 @@ $ psql
 > GRANT ALL ON ALL TABLES IN SCHEMA public TO unleash;
 ```
 
+## Miljøer
+
+### Dev
+* fss
+* gcp
+
+### prod
+* fss
+* gcp
+
 ## Henvendelser
 
 Henvendelser og spørsmål kan gjøres via issues på repoet. For direkte kontakt
