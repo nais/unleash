@@ -37,4 +37,4 @@ spec:
     sqlInstances:
       - type: POSTGRES_11
         databases:
-          name: unleash
+          - name: unleash
