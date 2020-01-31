@@ -1,3 +1,4 @@
 maxreplicas: 4
 ingresses:
-  - https://unleash.nais.preprod.local
+  - https://unleash.dev-gcp.nais.io
+  - https://unleash.dev-adeo.no
