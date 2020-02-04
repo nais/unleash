@@ -33,6 +33,9 @@ spec:
       memory: 512Mi
   vault:
     enabled: true
+  secrets:
+    envFrom:
+      - secret: unleash
   gcp:
     sqlInstances:
       - type: POSTGRES_11
