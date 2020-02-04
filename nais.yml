@@ -38,6 +38,7 @@ spec:
       - secret: unleash
   gcp:
     sqlInstances:
-      - type: POSTGRES_11
+      - name: unleash-db
+        type: POSTGRES_11
         databases:
           - name: unleash
