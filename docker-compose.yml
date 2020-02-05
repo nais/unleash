@@ -16,6 +16,6 @@ services:
     image: "postgres:12"
     environment:
       - POSTGRES_USER=unleash
-      - POSTHRES_PASSWORD=unleash
+      - POSTGRES_PASSWORD=unleash
     volumes:
       - ./.data:/var/lib/postgresql/data

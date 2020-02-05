@@ -16,7 +16,7 @@
     "gravatar": "^1.8.0",
     "passport": "^0.4.1",
     "passport-azure-ad": "^4.2.1",
-    "unleash-server": "^3.2.22"
+    "unleash-server": "^3.2.24"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.1",
@@ -24,6 +24,6 @@
     "@types/express-session": "^1.15.16",
     "@types/gravatar": "^1.8.0",
     "@types/passport": "^1.0.2",
-    "typescript": "^3.7.3"
+    "typescript": "^3.7.5"
   }
 }
