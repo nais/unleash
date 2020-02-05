@@ -15,7 +15,7 @@ function maskPassword(output: string, password: string) {
 }
 
 log.info(maskPassword("connecting to database " + dbUri, dbPassword!));
-
+require('db-migrate-shared').log.setLogLevel('info');
 
 unleash.start({
     databaseUrl: dbUri,
