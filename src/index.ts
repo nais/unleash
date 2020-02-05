@@ -4,7 +4,7 @@ import enableAuth from './azuread-auth-hook';
 const log = logger("default");
 
 const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
-const UNLEASH_PG_URL = process.env.UNLEASH_PG_URL ? process.env.UNLEASH_PG_URL : "postgres://localhost";
+const UNLEASH_PG_URL = process.env.UNLEASH_PG_URL ? process.env.UNLEASH_PG_URL : "postgres://localhost/unleash";
 const UNLEASH_PG_USERNAME = process.env.UNLEASH_PG_USERNAME ? process.env.UNLEASH_PG_USERNAME : "unleash";
 const gcp = process.env.GCP_SQLINSTANCE_UNLEASH_DB_PASSWORD ? process.env.GCP_SQLINSTANCE_UNLEASH_DB_PASSWORD : "";
 const vaultP = process.env.UNLEASH_PG_PASSWORD ? process.env.UNLEASH_PG_PASSWORD : "";
