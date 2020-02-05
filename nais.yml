@@ -33,9 +33,8 @@ spec:
       memory: 512Mi
   vault:
     enabled: true
-  secrets:
-    envFrom:
-      - secret: unleash
+  envFrom:
+    - secret: unleash
   gcp:
     sqlInstances:
       - name: unleash-db
