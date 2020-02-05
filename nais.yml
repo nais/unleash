@@ -41,3 +41,4 @@ spec:
         type: POSTGRES_11
         databases:
           - name: unleash
+  webproxy: true
