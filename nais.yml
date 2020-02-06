@@ -35,6 +35,11 @@ spec:
     enabled: true
   envFrom:
     - secret: unleash
+  env:
+  {{#each envs}}
+     - name: "{{name}}"
+       value: "{{value}}"
+  {{/each}}
   gcp:
     sqlInstances:
       - name: unleash-db
