@@ -2,3 +2,4 @@ ingresses:
   - https://unleash.prod-gcp.nais.io
   - https://unleash.adeo.no
 namespace: dataplattform
+envs:
