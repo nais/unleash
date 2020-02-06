@@ -3,3 +3,5 @@ ingresses:
   - https://unleash.adeo.no
 namespace: dataplattform
 envs:
+  - name: UNLEASH_ENV
+    value: 'prodgcp'
