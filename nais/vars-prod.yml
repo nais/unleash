@@ -1,7 +1,7 @@
 namespace: default
 ingresses:
   - https://unleash.nais.adeo.no
-env:
+envs:
   - name: http_proxy
     value: 'http://webproxy-nais.nav.no:8088'
   - name: https_proxy
