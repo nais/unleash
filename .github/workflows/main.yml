@@ -83,7 +83,7 @@ jobs:
           RESOURCE: nais.yml
           VARS: nais/vars-prod.yml
   deploy-prod-gcp:
-    name: Deploy to dev-gcp
+    name: Deploy to prod-gcp
     runs-on: ubuntu-latest
     needs: deploy-dev-gcp
     steps:
