@@ -19,7 +19,7 @@ spec:
     path: /
   prometheus:
     enabled: true
-    path: internal-backstage/prometheus
+    path: /internal-backstage/prometheus
   replicas:
     min: 2
     max: 8
