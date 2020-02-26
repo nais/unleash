@@ -33,12 +33,4 @@ spec:
       memory: 512Mi
   vault:
     enabled: true
-  envFrom:
-    - secret: unleash
-  gcp:
-    sqlInstances:
-      - name: unleash-db
-        type: POSTGRES_11
-        databases:
-          - name: unleash
   webproxy: true

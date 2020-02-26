@@ -43,7 +43,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_KEY }}
           CLUSTER: dev-gcp
-          RESOURCE: nais.yml
+          RESOURCE: nais/nais-gcp.yml
           VARS: nais/vars-dev-gcp.yml
   deploypreprod:
     name: Deploy to dev-fss
@@ -61,7 +61,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_KEY }}
           CLUSTER: dev-fss
-          RESOURCE: nais.yml
+          RESOURCE: nais/nais-fss.yml
           VARS: nais/vars-dev.yml
   deployprod:
     name: Deploy to prod-fss
@@ -80,7 +80,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_KEY }}
           CLUSTER: prod-fss
-          RESOURCE: nais.yml
+          RESOURCE: nais/nais-fss.yml
           VARS: nais/vars-prod.yml
   deploy-prod-gcp:
     name: Deploy to prod-gcp
@@ -98,6 +98,6 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_KEY }}
           CLUSTER: prod-gcp
-          RESOURCE: nais.yml
+          RESOURCE: nais/nais-gcp.yml
           VARS: nais/vars-prod-gcp.yml
 
