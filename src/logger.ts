@@ -1,25 +1,23 @@
-function jsonLogger(level: string) {
+function jsonLogger(name: string, level: string) {
     return (message?: any, ...parameters: any[]) => {
+        let ts = new Date().toISOString();
         console.log(JSON.stringify({
             message: message,
             level: level,
-            parameters: parameters
+            parameters: parameters,
+            "@timestamp": ts,
+            "logger_name": name
         }))
     }
 }
 
-const infoLogger = jsonLogger("INFO");
-const debugLogger = jsonLogger("DEBUG");
-const warnLogger = jsonLogger("WARN");
-const errorLogger = jsonLogger("ERROR");
-
 function loggerProvider(name: any) {
-    infoLogger(`providing logger: ${name}`);
+    jsonLogger("provider", "INFO")(`providing logger: ${name}`);
     return {
-        debug: debugLogger,
-        info: infoLogger,
-        warn: warnLogger,
-        error: errorLogger
+        debug: jsonLogger(name, "DEBUG"),
+        info: jsonLogger(name, "INFO"),
+        warn: jsonLogger(name, "WARN"),
+        error: jsonLogger(name, "ERROR")
     };
 }
 export default loggerProvider;
