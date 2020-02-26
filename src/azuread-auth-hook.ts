@@ -49,7 +49,6 @@ function enableAzureAd(app: Application) {
             failureRedirect: '/api/admin/error-login'
         }),
         (req: Request, res: Response) => {
-            console.log("loginpage!!!");
             res.redirect('/');
         }
     );
