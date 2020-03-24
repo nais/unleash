@@ -4,12 +4,14 @@ import enableAuth from './azuread-auth-hook';
 const log = logger("default");
 
 const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
-const NAIS_PG_URL = process.env.NAIS_DATABASE_UNLEASH_UNLEASH_DB_URL ? process.env.NAIS_DATABASE_UNLEASH_UNLEASH_DB_URL : "";
+const NAIS_PG_URL = process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_URL ? process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_URL : "";
 let dbUri = "";
 let dbPassword = "";
+let dbUsername = "";
 if (NAIS_PG_URL != "") {
     dbUri = NAIS_PG_URL;
-    dbPassword = process.env.NAIS_DATABASE_UNLEASH_UNLEASH_DB_PASSWORD ? process.env.NAIS_DATABASE_UNLEASH_UNLEASH_DB_PASSWORD : "";
+    dbPassword = process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_PASSWORD ? process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_PASSWORD : "";
+    dbUsername = process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_USERNAME ? process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_USERNAME : ""
 } else {
     const UNLEASH_PG_URL = process.env.UNLEASH_PG_URL ? process.env.UNLEASH_PG_URL : "postgres://localhost/unleash";
     const UNLEASH_PG_USERNAME = process.env.UNLEASH_PG_USERNAME ? process.env.UNLEASH_PG_USERNAME : "unleash";
