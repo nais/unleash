@@ -7,11 +7,10 @@ const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
 const NAIS_PG_URL = process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_URL ? process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_URL : "";
 let dbUri = "";
 let dbPassword = "";
-let dbUsername = "";
-if (NAIS_PG_URL != "") {
+if (NAIS_PG_URL !== "") {
     dbUri = NAIS_PG_URL;
     dbPassword = process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_PASSWORD ? process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_PASSWORD : "";
-    dbUsername = process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_USERNAME ? process.env.NAIS_DATABASE_UNLEASH_DB_UNLEASH_USERNAME : ""
+    log.info("DB Injected from GCP");
 } else {
     const UNLEASH_PG_URL = process.env.UNLEASH_PG_URL ? process.env.UNLEASH_PG_URL : "postgres://localhost/unleash";
     const UNLEASH_PG_USERNAME = process.env.UNLEASH_PG_USERNAME ? process.env.UNLEASH_PG_USERNAME : "unleash";
@@ -19,6 +18,7 @@ if (NAIS_PG_URL != "") {
     const vaultP = process.env.UNLEASH_PG_PASSWORD ? process.env.UNLEASH_PG_PASSWORD : "";
     dbPassword = "" + gcp + vaultP;
     dbUri = `postgres://${UNLEASH_PG_USERNAME}:${dbPassword}@${UNLEASH_PG_URL!.slice(11, UNLEASH_PG_URL!.length)}`;
+    log.info("Running with old setup/Vault");
 }
 log.info(maskPassword("connecting to database " + dbUri, dbPassword!));
 function maskPassword(output: string, password: string) {
