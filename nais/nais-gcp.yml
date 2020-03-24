@@ -22,7 +22,7 @@ spec:
     path: /internal-backstage/prometheus
   replicas:
     min: 2
-    max: 8
+    max: 4
     cpuThresholdPercentage: 85
   resources:
     limits:
