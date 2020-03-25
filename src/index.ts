@@ -5,9 +5,11 @@ const log = logger("default");
 
 const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
 const NAIS_PG_URL = process.env.NAIS_DATABASE_UNLEASH_UNLEASH_URL ? process.env.NAIS_DATABASE_UNLEASH_UNLEASH_URL : "";
+const NAIS_USER = process.env.NAIS_DATABASE_UNLEASH_UNLEASH_USERNAME ? process.env.NAIS_DATABASE_UNLEASH_UNLEASH_USERNAME : "";
+log.info("Found NAIS_USER " +NAIS_USER);
 let dbUri = "";
 let dbPassword = "";
-if (NAIS_PG_URL !== "") {
+if (NAIS_PG_URL != "") {
     dbUri = NAIS_PG_URL;
     dbPassword = process.env.NAIS_DATABASE_UNLEASH_UNLEASH_PASSWORD ? process.env.NAIS_DATABASE_UNLEASH_UNLEASH_PASSWORD : "";
     log.info("DB Injected from GCP");
