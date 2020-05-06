@@ -1,3 +1,4 @@
 namespace: default
 ingresses:
   - https://unleash.nais.adeo.no
+  - https://unleash.prod-fss.nais.io
