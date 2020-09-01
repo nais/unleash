@@ -34,6 +34,5 @@ $ psql
 
 ## Henvendelser
 
-Henvendelser og spørsmål kan gjøres via issues på repoet. For direkte kontakt
-kan man også høre med Team Dataplattform (NADA). For NAV-ansatte kan dette enklest gjøres via slack-kanalen #dataplattform.
-For eksterne er det mulig å sende mail til Christopher Kolstad (christopher.kolstad@nav.no) eller Audun F. Strand (audun.fauchald.strand@nav.no)
+Henvendelser og spørsmål kan gjøres via issues på repoet. For direkte kontakt kan man også høre med Tjenesteplattform (NADA og NAIS). For NAV-ansatte kan dette enklest gjøres via slack-kanalen #unleash. Der vil man også kunne komme i kontakt med enkelte av utviklerne av Unleash (upstream).
+For eksterne er det mulig å sende mail til Audun F. Strand (audun.fauchald.strand@nav.no).
