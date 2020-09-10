@@ -1,11 +1,10 @@
----
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: unleash
-  namespace: {{namespace}}
+  namespace: aura
   labels:
-    team: dataplattform
+    team: aura
 spec:
   image: {{image}}
   port: 8080
