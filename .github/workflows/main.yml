@@ -81,7 +81,7 @@ jobs:
   deploy-prod-fss:
     name: Deploy to prod-fss
     runs-on: ubuntu-latest
-    needs: deploy-prod-fss
+    needs: deploy-dev-fss
     steps:
       - uses: actions/checkout@master
       - name: Lag tag for image
