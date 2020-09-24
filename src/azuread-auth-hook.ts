@@ -8,7 +8,7 @@ import { config } from "./azuread-configuration";
 import {User} from "./models";
 
 function enableAzureAd(app: Application) {
-    console.log(config.redirectUrl);
+    log.info(config.redirectUrl);
     passport.use(new OIDCStrategy(config,
         function(profile, done) {
             if (!profile.oid) {
