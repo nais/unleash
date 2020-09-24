@@ -7,9 +7,10 @@ import { OIDCStrategy } from 'passport-azure-ad';
 import { config } from "./azuread-configuration";
 import {User} from "./models";
 import logger from './logger';
+const log = logger("default");
 
 function enableAzureAd(app: Application) {
-    logger.info(config.redirectUrl);
+    log.info(config.redirectUrl);
     passport.use(new OIDCStrategy(config,
         function(profile, done) {
             if (!profile.oid) {
