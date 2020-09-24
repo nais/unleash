@@ -6,6 +6,7 @@ import { Request, Response, NextFunction } from 'express';
 import { OIDCStrategy } from 'passport-azure-ad';
 import { config } from "./azuread-configuration";
 import {User} from "./models";
+import logger from './logger';
 
 function enableAzureAd(app: Application) {
     log.info(config.redirectUrl);
