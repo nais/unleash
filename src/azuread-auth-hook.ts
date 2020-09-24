@@ -9,7 +9,7 @@ import {User} from "./models";
 import logger from './logger';
 
 function enableAzureAd(app: Application) {
-    log.info(config.redirectUrl);
+    logger.info(config.redirectUrl);
     passport.use(new OIDCStrategy(config,
         function(profile, done) {
             if (!profile.oid) {
