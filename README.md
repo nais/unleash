@@ -23,6 +23,11 @@ $ psql
 > GRANT ALL ON ALL TABLES IN SCHEMA public TO unleash;
 ```
 
+### Info om redirectUri
+
+Appen bruker Azure AD Proxy for å bli nådd fra innrullert maskin. Da bruker vi azure-`preauth`, som returnerer tilbake
+til root (unleash.nais.adeo.no). Derfor har vi to callback-uri-er. Der den ene er definert i env-variabler.
+
 ## Miljøer
 
 ### Dev
