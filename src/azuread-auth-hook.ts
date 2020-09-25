@@ -6,11 +6,8 @@ import { Request, Response, NextFunction } from 'express';
 import { OIDCStrategy } from 'passport-azure-ad';
 import { config } from "./azuread-configuration";
 import {User} from "./models";
-import logger from './logger';
-const log = logger("default");
 
 function enableAzureAd(app: Application) {
-    log.info(config.redirectUrl);
     passport.use(new OIDCStrategy(config,
         function(profile, done) {
             if (!profile.oid) {
