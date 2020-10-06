@@ -34,7 +34,12 @@ spec:
     - secret: unleash
   gcp:
     sqlInstances:
+      {{#db_instance}}
+      - name: {{.}}
+      {{/db_instance}}
+      {{^db_instance}}
       - name: unleash
+      {{/db_instance}}
         type: POSTGRES_11
         databases:
           - name: unleash
