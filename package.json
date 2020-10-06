@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "gravatar": "^1.8.0",
+    "gravatar": "^1.8.1",
     "passport": "^0.4.1",
     "passport-azure-ad": "^4.3.0",
     "unleash-server": "^3.5.4"
