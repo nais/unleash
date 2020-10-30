@@ -1,3 +1,2 @@
 ingresses:
-  - https://unleash.prod-gcp.nais.io
   - https://unleash.nais.io
