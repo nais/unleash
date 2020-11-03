@@ -15,7 +15,7 @@ spec:
   liveness:
     path: /
   readiness:
-    path: /
+    path: /health
   prometheus:
     enabled: true
     path: /internal-backstage/prometheus
