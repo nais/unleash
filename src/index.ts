@@ -31,7 +31,7 @@ function maskPassword(output: string, password: string) {
 unleash.start({
     databaseUrl: dbUri,
     poolMin: 1,
-    poolMax: 16,
+    poolMax: 6,
     port: 8080,
     secret: dbPassword,
     adminAuthentication: 'custom',
