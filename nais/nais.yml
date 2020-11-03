@@ -41,6 +41,7 @@ spec:
       {{/if}}
         type: POSTGRES_11
         highAvailability: true
+        tier: db-n1-standard-2
         databases:
           - name: unleash
   webproxy: true
