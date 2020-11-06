@@ -44,4 +44,5 @@ spec:
         tier: db-custom-2-3840
         databases:
           - name: unleash
+            envVarPrefix: SQL
   webproxy: true
