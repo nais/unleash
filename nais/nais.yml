@@ -34,11 +34,7 @@ spec:
     - secret: unleash
   gcp:
     sqlInstances:
-      {{#if db_instance}}
-      - name: {{db_instance}}
-      {{else}}
       - name: unleash
-      {{/if}}
         type: POSTGRES_11
         highAvailability: true
         tier: db-custom-2-3840
