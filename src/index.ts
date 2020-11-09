@@ -7,7 +7,7 @@ const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
 const DB_URI = process.env.DB_URL ? process.env.DB_URL : "postgres://postgres/unleash";
 const DB_PASSWORD = process.env.DB_PASSWORD ? process.env.DB_PASSWORD : "unleash";
 
-log.info("connecting to database " + DB_URI);
+log.info("Starting Unleash");
 
 unleash.start({
     databaseUrl: DB_URI,
