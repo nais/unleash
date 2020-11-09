@@ -7,9 +7,6 @@ services:
     depends_on:
       - "postgres"
     environment:
-      - UNLEASH_PG_USERNAME=unleash
-      - UNLEASH_PG_PASSWORD=unleash
-      - UNLEASH_PG_URL=postgres://postgres/unleash
       - DISABLE_AUTH=true
       - AZURE_AD_ALLOW_HTTP=true
   postgres:
