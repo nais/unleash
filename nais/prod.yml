@@ -1,2 +1,7 @@
-ingresses:
-  - https://unleash.nais.io
+app:
+  ingresses:
+    - https://unleash.nais.io
+alert:
+  slack:
+    prependText: "<!here> "
+    channel: "#nais-alerts-prod"

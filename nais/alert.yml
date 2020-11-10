@@ -1,0 +1,28 @@
+apiVersion: "nais.io/v1"
+kind: "Alert"
+metadata:
+  name: unleash
+  namespace: aura
+  labels:
+    team: aura
+spec:
+  receivers:
+    slack:
+      channel: '{{ alert.slack.channel }}'
+      prependText: '{{ alert.slack.prependText }}'
+  alerts:
+    - alert: en eller flere replicas er nede
+      expr: kube_deployment_status_replicas_unavailable{deployment="unleash"} > 0
+      for: 5m
+      description: "App \{{ $labels.app }} har replicas nede i namespace \{{ $labels.kubernetes_namespace }}"
+      action: "`kubectl describe pod \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}` for events, og `kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}` for logger"
+    - alert: app er helt nede
+      expr: kube_deployment_status_replicas_available{deployment="unleash"} == 0
+      for: 1m
+      description: "App \{{ $labels.app }} er helt nede i namespace \{{ $labels.kubernetes_namespace }}"
+      action: "`kubectl describe pod \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}` for events, og `kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}` for logger"
+    - alert: ingen 200
+      expr: sum (rate(http_request_duration_milliseconds_sum{app="unleash", status="200"}[5m])) == 0
+      for: 5m
+      description: Ingen http-kall med 200, er alt bra?
+      action: Sjekk om app kjører, og Grafana https://grafana.adeo.no/d/vnCneDVWk/unleash

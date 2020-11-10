@@ -1,2 +1,7 @@
-ingresses:
-  - https://unleash.dev.intern.nav.no
+app:
+  ingresses:
+    - https://unleash.dev.intern.nav.no
+alert:
+  slack:
+    prependText: ""
+    channel: "#nais-alerts-dev"
