@@ -38,6 +38,10 @@ til root (unleash.nais.adeo.no). Derfor har vi to callback-uri-er. Der den ene e
 * fss
 * gcp
 
+### Fasit-ressurser
+
+Vi har legacy avhengighet i Fasit. https://fasit.adeo.no/applications/unleash og https://fasit.adeo.no/resources?application=unleash. Gjør vi endringer på ingress, må disse også oppdateres.
+
 ## Henvendelser
 
 Henvendelser og spørsmål kan gjøres via issues på repoet. For direkte kontakt kan man også høre med Tjenesteplattform (NADA og NAIS). For NAV-ansatte kan dette enklest gjøres via slack-kanalen #unleash. Der vil man også kunne komme i kontakt med enkelte av utviklerne av Unleash (upstream).
