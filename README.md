@@ -31,11 +31,9 @@ til root (unleash.nais.adeo.no). Derfor har vi to callback-uri-er. Der den ene e
 ## Miljøer
 
 ### Dev
-* fss
 * gcp
 
 ### prod
-* fss
 * gcp
 
 ### Fasit-ressurser
