@@ -9,9 +9,9 @@ spec:
   image: {{image}}
   port: 8080
   ingresses:
-  {{#app.ingresses}}
+  {{#ingresses}}
      - {{.}}
-  {{/app.ingresses}}
+  {{/ingresses}}
   liveness:
     path: /
   readiness:
@@ -39,6 +39,6 @@ spec:
         highAvailability: true
         tier: db-custom-2-3840
         databases:
-          - name: unleash
+          - name: {{databaseName}}
             envVarPrefix: DB
   webproxy: true
