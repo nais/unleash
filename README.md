@@ -30,11 +30,7 @@ til root (unleash.nais.adeo.no). Derfor har vi to callback-uri-er. Der den ene e
 
 ## Miljøer
 
-### Dev
-* gcp
-
-### prod
-* gcp
+Kjører kun i GCP. Og vi tilbyr bare [unleash.nais.io](https://unleash.nais.io). Dev blir brukt til vår egen testing.
 
 ### Fasit-ressurser
 
