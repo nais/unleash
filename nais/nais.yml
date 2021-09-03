@@ -5,6 +5,9 @@ metadata:
   namespace: aura
   labels:
     team: aura
+  annotations:
+    config.linkerd.io/proxy-memory-limit: "512Mi"
+    config.linkerd.io/proxy-memory-request: "64Mi"
 spec:
   image: {{image}}
   port: 8080
