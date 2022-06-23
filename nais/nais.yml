@@ -37,11 +37,10 @@ spec:
     - secret: unleash
   gcp:
     sqlInstances:
-      - name: {{databaseName}}
-        type: POSTGRES_11
+      - name: {{database.name}}
+        type: {{database.type}}
         highAvailability: true
         tier: db-custom-2-3840
         databases:
           - name: unleash
             envVarPrefix: DB
-  webproxy: true

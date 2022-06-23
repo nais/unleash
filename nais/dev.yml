@@ -1,3 +1,5 @@
-databaseName: unleash-dev
+database:
+  name: unleash-dev
+  type: POSTGRES_14
 ingresses:
   - https://unleash.dev.intern.nav.no
