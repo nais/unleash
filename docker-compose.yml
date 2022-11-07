@@ -9,10 +9,11 @@ services:
     environment:
       - DISABLE_AUTH=true
       - AZURE_AD_ALLOW_HTTP=true
+      - DB_URL=postgres://unleash:unleash@postgres:5432/unleash
   postgres:
-    image: "postgres:12"
+    image: "postgres:14"
     environment:
       - POSTGRES_USER=unleash
       - POSTGRES_PASSWORD=unleash
-    volumes:
-      - ./.data:/var/lib/postgresql/data
+    #volumes:
+    #  - ./.data:/var/lib/postgresql/data
