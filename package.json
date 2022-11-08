@@ -14,7 +14,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "gravatar": "^1.8.1",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-azure-ad": "^4.3.0",
     "unleash-server": "^3.17.6"
   },
