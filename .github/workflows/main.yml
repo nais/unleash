@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Lag tag for image
         run: echo "TAG=$(git log -1 --pretty='%ad_%h' --date=format:'%Y%m%d')" >> $GITHUB_ENV
       - name: Lag full image referanse
@@ -32,7 +32,7 @@ jobs:
     needs: build
     environment: dev-gcp:aura
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Lag tag for image
         run: echo "TAG=$(git log -1 --pretty='%ad_%h' --date=format:'%Y%m%d')" >> $GITHUB_ENV
       - name: Lag full image referanse
@@ -50,7 +50,7 @@ jobs:
     needs: deploy-dev
     environment: prod-gcp:aura
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Lag tag for image
         run: echo "TAG=$(git log -1 --pretty='%ad_%h' --date=format:'%Y%m%d')" >> $GITHUB_ENV
       - name: Lag full image referanse
