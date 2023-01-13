@@ -1,7 +1,7 @@
 # NAV Unleash
 ![Workflow status](https://github.com/navikt/unleash/workflows/build/badge.svg)
 
-En enkel [unleash-server](https://github.com/Unleash/unleash) med AzureAD-pålogging. 
+En enkel [unleash-server](https://github.com/Unleash/unleash) med AzureAD-pålogging.
 
 ## Oppsett for utvikling lokalt
 
@@ -10,8 +10,8 @@ Denne vil sette opp en lokal postgres database i en docker-container og
 eksponere unleash på url `http://localhost:8080`. Autentisering vil være
 skrudd av.
 
-For å bygge koden kjører du `npm run build`. Dette vil kompilere typescript-filene til ES2017
-som legges i `./dist/`. Unleash kan da kjøres med `npm start`.
+For å bygge koden kjører du `yarn build`. Dette vil kompilere typescript-filene til ES2017
+som legges i `./dist/`. Unleash kan da kjøres med `yarn start`.
 
 ### Database setup
 ```

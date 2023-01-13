@@ -1,19 +1,37 @@
-version: '3'
+version: "3"
 services:
-  unleash2:
+  unleash:
     build: .
     ports:
       - "8080:8080"
+    networks:
+      - unleash
     depends_on:
       - "postgres"
     environment:
-      - DISABLE_AUTH=true
-      - AZURE_AD_ALLOW_HTTP=true
-      - DB_URL=postgres://unleash:unleash@postgres:5432/unleash
+      - AZURE_APP_CLIENT_ID=${AZURE_APP_CLIENT_ID}
+      - AZURE_APP_CLIENT_SECRET=${AZURE_APP_CLIENT_SECRET}
+      - AZURE_APP_TENANT_ID=${AZURE_APP_TENANT_ID}
+      - AZURE_APP_REDIRECT_HOST=http://localhost:8080
+      - AZURE_APP_ALLOW_HTTP_REDIRECT=true
+      #- DATABASE_URL=postgres://unleash:unleash@postgres:5432/unleash?ssl=false
+      - DATABASE_USERNAME=unleash
+      - DATABASE_PASSWORD=unleash
+      - DATABASE_NAME=unleash
+      - DATABASE_HOST=postgres
+      - DATABASE_SSL=false
   postgres:
     image: "postgres:14"
     environment:
       - POSTGRES_USER=unleash
       - POSTGRES_PASSWORD=unleash
+    ports:
+      - "5432:5432"
+    networks:
+      - unleash
     #volumes:
     #  - ./.data:/var/lib/postgresql/data
+
+networks:
+  unleash:
+    driver: bridge

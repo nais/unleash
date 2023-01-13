@@ -1,21 +1,39 @@
-import logger from './logger';
-import unleash from 'unleash-server';
-import enableAuth from './azuread-auth-hook';
-const log = logger("default");
+import unleash from "unleash-server";
+import { IAuthType, LogLevel } from "unleash-server";
+import azureAuthHook from "./azure-auth-hook";
 
-const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
-const DB_URI = process.env.DB_URL ? process.env.DB_URL : "postgres://postgres/unleash";
-const DB_PASSWORD = process.env.DB_PASSWORD ? process.env.DB_PASSWORD : "unleash";
+const databaseUrl =
+  process.env.DATABASE_URL ||
+  "postgres://unleash_user:passord@localhost:5432/unleash?ssl=false";
 
-log.info("Starting Unleash");
-
-unleash.start({
-    databaseUrl: DB_URI,
-    poolMin: 2,
-    poolMax: 6,
-    port: 8080,
-    secret: DB_PASSWORD,
-    adminAuthentication: 'custom',
-    preRouterHook: DISABLE_AUTH ? undefined : enableAuth,
-    getLogger: logger
-});
+console.log("this, starting");
+unleash
+  .start({
+    //databaseUrl: databaseUrl,
+    //db: {
+    //  user: "unleash",
+    //  password: "unleash",
+    //  host: "postgres",
+    //  port: 5432,
+    //  database: "unleash",
+    //  ssl: false,
+    //},
+    authentication: {
+      type: IAuthType.CUSTOM,
+      customAuthHandler: azureAuthHook,
+    },
+    server: {
+      enableRequestLogger: true,
+      baseUriPath: "",
+      port: 8080,
+    },
+    logLevel: LogLevel.info,
+  })
+  .then((server) => {
+    console.log("there, start");
+    console.log("Unleash started");
+  })
+  .catch((error) => {
+    console.log("here, err");
+    console.error(error);
+  });
