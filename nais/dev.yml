@@ -2,4 +2,4 @@ database:
   name: unleash3-dev
   type: POSTGRES_14
 ingresses:
-  - https://unleash.dev.intern.nav.no
+  - https://unleash.intern.dev.nav.no
