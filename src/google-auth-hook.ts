@@ -19,30 +19,28 @@
  *  - GOOGLE_CALLBACK_URL
  */
 
-import { passport } from "@passport-next/passport";
+const passport = require("@passport-next/passport");
 const GoogleOAuth2Strategy =
   require("@passport-next/passport-google-oauth2").Strategy;
-
 const { AuthenticationRequired } = require("unleash-server");
 
 function enableGoogleOauth(app, config, services) {
   const { baseUriPath } = config.server;
   const { userService } = services;
-  passport.use(
-    new GoogleOAuth2Strategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL,
-      },
 
-      async (accessToken, refreshToken, profile, done) => {
-        const email = profile.emails[0].value;
-        const user = await userService.loginUserWithoutPassword(email, true);
-        done(null, user);
-      }
-    )
-  );
+  passport.use(new GoogleOAuth2Strategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    },
+
+    async (accessToken, refreshToken, profile, done) => {
+      const email = profile.emails[0].value;
+      const user = await userService.loginUserWithoutPassword(email, true);
+      done(null, user);
+    }
+  ));
 
   app.use(passport.initialize());
   app.use(passport.session());
