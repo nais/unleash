@@ -1,28 +1,21 @@
-name: build
-
+name: Build, push, and sign image
 on:
   push:
     branches:
       - unleash-v4
 
-env:
-  IMAGE_BASE: ghcr.io/${{ github.repository }}/unleash
-
 jobs:
-  build:
+  build_push_sign:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - uses: actions/checkout@v3
-      - name: Create tag for image
-        run: echo "TAG=v4-$(git log -1 --pretty='%ad_%h' --date=format:'%Y%m%d')" >> $GITHUB_ENV
-      - name: Create full image reference
-        run: echo "IMAGE=$IMAGE_BASE:$TAG" >> $GITHUB_ENV
-      - name: Build Docker
-        run: docker build --tag $IMAGE .
-      - name: Login to ghcr.io
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo $GITHUB_TOKEN | docker login --username ${{ github.actor }} --password-stdin https://ghcr.io
-
-      - name: Push docker image
-        run: docker push $IMAGE
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # ratchet:actions/checkout@v3
+      - uses: nais/platform-build-push-sign@main
+        with:
+          name: unleash-v4
+          dockerfile: Dockerfile
+          google_service_account: gh-unleash
+          push: ${{ github.actor != 'dependabot[bot]' }}
+          workload_identity_provider: ${{ secrets.NAIS_IO_WORKLOAD_IDENTITY_PROVIDER }}
