@@ -3,7 +3,7 @@ name: build
 on:
   push:
     branches:
-      - v4
+      - unleash-v4
 
 env:
   IMAGE_BASE: docker.pkg.github.com/${{ github.repository }}/unleash

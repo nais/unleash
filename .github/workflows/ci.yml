@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - master
+      - unleash-v4
 
 jobs:
   build:
