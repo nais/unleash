@@ -1,0 +1,27 @@
+name: build
+
+on:
+  push:
+    branches:
+      - v4
+
+env:
+  IMAGE_BASE: docker.pkg.github.com/${{ github.repository }}/unleash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create tag for image
+        run: echo "TAG=v4-$(git log -1 --pretty='%ad_%h' --date=format:'%Y%m%d')" >> $GITHUB_ENV
+      - name: Create full image reference
+        run: echo "IMAGE=$IMAGE_BASE:$TAG" >> $GITHUB_ENV
+      - name: Build Docker
+        run: docker build --tag $IMAGE .
+      - name: Login to Github Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "$GITHUB_TOKEN" | docker login docker.pkg.github.com -u "$GITHUB_REPOSITORY" --password-stdin
+      - name: Push docker image
+        run: docker push $IMAGE
