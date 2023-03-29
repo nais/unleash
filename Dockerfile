@@ -27,4 +27,4 @@ RUN yarn build && \
 
 ADD run-script.sh /run-script.sh
 
-ENTRYPOINT ["/dumb-init", "--", "/entrypoint.sh"]
+CMD ./run-script.sh

@@ -1,23 +1,24 @@
-const unleash = require('unleash-server');
+import unleash from "unleash-server";
+import azureAuthHook from "./src/google-auth-hook";
+import { IAuthType, LogLevel } from "unleash-server";
 
-const enableGoogleOauth = require('./google-auth-hook');
-
-unleash.start({
-    db: {
-        user: 'unleash_user',
-        password: 'passord',
-        host: 'localhost',
-        port: 5432,
-        database: 'unleash',
-        ssl: false,
-    },
+console.log("starting");
+unleash
+  .start({
     authentication: {
-        type: 'custom',
-        customAuthHandler: enableGoogleOauth,
+      type: IAuthType.CUSTOM,
+      customAuthHandler: enableGoogleOauth,
     },
     server: {
-        enableRequestLogger: true,
-        baseUriPath: '',
+      enableRequestLogger: true,
+      baseUriPath: "",
+      port: 8080,
     },
-    logLevel: 'info',
-});
+    logLevel: LogLevel.info,
+  })
+  .then((server) => {
+    console.log("Unleash started");
+  })
+  .catch((error) => {
+    console.error(error);
+  });

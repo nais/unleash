@@ -7,3 +7,4 @@ test-server.js
 .data/
 set_environment.sh
 start_postgres.sh
+/.direnv/

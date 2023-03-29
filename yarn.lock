@@ -159,7 +159,23 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@passport-next/passport-strategy@1.x.x":
+"@passport-next/passport-google-oauth2@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@passport-next/passport-google-oauth2/-/passport-google-oauth2-1.0.0.tgz#cadef72d9ef42d549a5578eab338febdf234f806"
+  integrity sha512-rbAtK0eGgjQhT/MqMSuN7Mxy4XTr1/LINk5rYPVezP3MfkVYuK20V0XW9fg1ikFMvyxSdmfLTyYduud7SfFSqw==
+  dependencies:
+    "@passport-next/passport-oauth2" "1.7.x"
+
+"@passport-next/passport-oauth2@1.7.x":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@passport-next/passport-oauth2/-/passport-oauth2-1.7.1.tgz#c505d3b6339d5da5fafe80d7da10ec0e94143d5b"
+  integrity sha512-rCNznNTnUbMxTyOMCdeM2VcQvHI1CM0F07Hvao4kYDgAx59xk+QxiR6ax6ZIBrCE3glCy+pOaTQfXowXxwb4lg==
+  dependencies:
+    "@passport-next/passport-strategy" "1.1.x"
+    lodash "^4.17.11"
+    oauth "0.9.x"
+
+"@passport-next/passport-strategy@1.1.x", "@passport-next/passport-strategy@1.x.x":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@passport-next/passport-strategy/-/passport-strategy-1.1.0.tgz#4c0df069e2ec9262791b9ef1e23320c1d73bdb74"
   integrity sha512-2KhFjtPueJG6xVj2HnqXt9BlANOfYCVLyu+pXYjPGBDT8yk+vQwc/6tsceIj+mayKcoxMau2JimggXRPHgoc8w==
@@ -2215,7 +2231,7 @@ lodash.isequal@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
   integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
 
-lodash@^4.11.2, lodash@^4.17.14, lodash@^4.17.21:
+lodash@^4.11.2, lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -2612,7 +2628,7 @@ nodemailer@^6.5.0:
   resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-6.9.0.tgz#a17488ff470ff9edf1bb31d9ec23079bc94f7dd3"
   integrity sha512-jFaCEGTeT3E/m/5R2MHWiyQH3pSARECRUDM+1hokOYc3lQAAG7ASuy+2jIsYVf+RVa9zePopSQwKNVFH8DKUpA==
 
-oauth@0.9.15:
+oauth@0.9.15, oauth@0.9.x:
   version "0.9.15"
   resolved "https://registry.yarnpkg.com/oauth/-/oauth-0.9.15.tgz#bd1fefaf686c96b75475aed5196412ff60cfb9c1"
   integrity sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==

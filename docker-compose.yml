@@ -9,12 +9,9 @@ services:
     depends_on:
       - "postgres"
     environment:
-      - AZURE_APP_CLIENT_ID=${AZURE_APP_CLIENT_ID}
-      - AZURE_APP_CLIENT_SECRET=${AZURE_APP_CLIENT_SECRET}
-      - AZURE_APP_TENANT_ID=${AZURE_APP_TENANT_ID}
-      - AZURE_APP_REDIRECT_HOST=http://localhost:8080
-      - AZURE_APP_ALLOW_HTTP_REDIRECT=true
-      #- DATABASE_URL=postgres://unleash:unleash@postgres:5432/unleash?ssl=false
+      - GOOGLE_CLIENT_ID=1,
+      - GOOGLE_CLIENT_SECRET=3
+      - GOOGLE_CALLBACK_URL=2
       - DATABASE_USERNAME=unleash
       - DATABASE_PASSWORD=unleash
       - DATABASE_NAME=unleash
