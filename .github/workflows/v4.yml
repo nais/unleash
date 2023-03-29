@@ -6,7 +6,7 @@ on:
       - unleash-v4
 
 env:
-  IMAGE_BASE: docker.pkg.github.com/${{ github.repository }}/unleash
+  IMAGE_BASE: ghcr.io/${{ github.repository }}/unleash
 
 jobs:
   build:
