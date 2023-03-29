@@ -8,10 +8,8 @@ services:
       - unleash
     depends_on:
       - "postgres"
+    env_file: .env
     environment:
-      - GOOGLE_CLIENT_ID=1,
-      - GOOGLE_CLIENT_SECRET=3
-      - GOOGLE_CALLBACK_URL=2
       - DATABASE_USERNAME=unleash
       - DATABASE_PASSWORD=unleash
       - DATABASE_NAME=unleash

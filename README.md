@@ -7,8 +7,17 @@ En enkel [unleash-server](https://github.com/Unleash/unleash) med AzureAD-pålog
 
 For å teste kjøre opp en test-instans lokalt kan man bruke `docker-compose up`.
 Denne vil sette opp en lokal postgres database i en docker-container og
-eksponere unleash på url `http://localhost:8080`. Autentisering vil være
-skrudd av.
+eksponere unleash på url `http://localhost:8080`.
+
+Hent Oauth2-credentials fra GCP og gjør følgende:
+
+```
+cat >.env <<EOF
+GOOGLE_CLIENT_ID=my_client_id
+GOOGLE_CLIENT_SECRET=my_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:8080/api/auth/callback
+EOF
+```
 
 For å bygge koden kjører du `yarn build`. Dette vil kompilere typescript-filene til ES2017
 som legges i `./dist/`. Unleash kan da kjøres med `yarn start`.
