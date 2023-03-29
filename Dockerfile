@@ -5,16 +5,11 @@ LABEL org.opencontainers.image.source=https://github.com/nais/unleash
 LABEL org.opencontainers.image.description="Unleash for NAIS"
 LABEL org.opencontainers.image.licenses=MIT
 
-COPY --from=navikt-common /init-scripts /init-scripts
-COPY --from=navikt-common /entrypoint.sh /entrypoint.sh
-COPY --from=navikt-common /dumb-init /dumb-init
-
 EXPOSE 8080
 
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 
-RUN chmod +x /init-scripts/* /entrypoint.sh /dumb-init && \
-    mkdir -p /unleash && \
+RUN mkdir -p /unleash && \
     chown -R node:node /unleash && \
     yarn config set loglevel "error"
 
