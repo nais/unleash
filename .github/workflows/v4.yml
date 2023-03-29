@@ -19,9 +19,10 @@ jobs:
         run: echo "IMAGE=$IMAGE_BASE:$TAG" >> $GITHUB_ENV
       - name: Build Docker
         run: docker build --tag $IMAGE .
-      - name: Login to Github Packages
+      - name: Login to ghcr.io
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "$GITHUB_TOKEN" | docker login docker.pkg.github.com -u "$GITHUB_REPOSITORY" --password-stdin
+        run: echo $GITHUB_TOKEN | docker login --username ${{ github.actor }} --password-stdin https://ghcr.io
+
       - name: Push docker image
         run: docker push $IMAGE
