@@ -15,7 +15,7 @@ jobs:
       - uses: nais/platform-build-push-sign@main
         with:
           name: unleash-v4
-          extra-tags: |
+          extra_tags: |
             v4.19.1
           dockerfile: Dockerfile
           google_service_account: gh-unleash
