@@ -1,13 +1,13 @@
 import unleash from "unleash-server";
-import enableGoogleOauth from "./google-auth-hook";
+import enableIapAuth from "./googleIAP-auth-hook";
 import { IAuthType, LogLevel } from "unleash-server";
 
-console.log("starting", enableGoogleOauth);
+console.log("starting", enableIapAuth);
 unleash
   .start({
     authentication: {
       type: IAuthType.CUSTOM,
-      customAuthHandler: enableGoogleOauth,
+      customAuthHandler: enableIapAuth,
     },
     server: {
       enableRequestLogger: true,

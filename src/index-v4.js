@@ -1,5 +1,4 @@
 import unleash from "unleash-server";
-import azureAuthHook from "./src/google-auth-hook";
 import { IAuthType, LogLevel } from "unleash-server";
 
 console.log("starting");

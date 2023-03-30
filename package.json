@@ -21,6 +21,7 @@
     "gravatar": "^1.8.1",
     "passport": "^0.6.0",
     "passport-azure-ad": "^4.3.3",
+    "passport-jwt": "^4.0.1",
     "unleash-server": "^4.19.3"
   },
   "devDependencies": {
