@@ -15,9 +15,6 @@ jobs:
       - uses: nais/platform-build-push-sign@add-extra-tags
         with:
           name: unleash-v4
-          extra_tags: |
-            v4.19.1
-            cool-release
           dockerfile: Dockerfile
           google_service_account: gh-unleash
           push: ${{ github.actor != 'dependabot[bot]' }}
