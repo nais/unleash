@@ -8,6 +8,7 @@ LABEL org.opencontainers.image.licenses=MIT
 EXPOSE 8080
 
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+ENV GOOGLE_PROJECT_ID=718161667033
 
 RUN mkdir -p /unleash && \
     chown -R node:node /unleash && \
