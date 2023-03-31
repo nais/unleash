@@ -14,7 +14,7 @@ services:
       - DATABASE_NAME=unleash
       - DATABASE_HOST=postgres
       - DATABASE_SSL=false
-      - GOOGLE_PROJECT_ID=nais-management-7178
+      - GOOGLE_IAP_AUDIENCE=/projects/718161667033/global/backendServices/2287975999985226128
   postgres:
     image: "postgres:14"
     environment:

@@ -2,10 +2,11 @@ import passport from "passport";
 import { RoleName } from "unleash-server/dist/lib/types/model";
 import { OAuth2Client } from "google-auth-library";
 
-export const IAP_JWT_HEADER = "x-goog-iap-jwt-assertion";
-export const IAP_JWT_ISSUER = "https://cloud.google.com/iap";
-export const IAP_AUDIENCE =
-  "/projects/718161667033/global/backendServices/2287975999985226128";
+export const IAP_JWT_HEADER =
+  process.env.GOOGLE_IAP_JWT_HEADER || "x-goog-iap-jwt-assertion";
+export const IAP_JWT_ISSUER =
+  process.env.GOOGLE_IAP_JWT_ISSUER || "https://cloud.google.com/iap";
+export const IAP_AUDIENCE = process.env.GOOGLE_IAP_AUDIENCE;
 
 async function createIapAuthHandler() {
   const authClient = new OAuth2Client();
@@ -38,6 +39,7 @@ async function createIapAuthHandler() {
         });
         next();
       } catch (error) {
+        // @TODO this dumps all the things to the user, which is not great
         console.error(error);
         next(error);
       }
