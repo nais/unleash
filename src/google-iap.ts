@@ -1,5 +1,5 @@
 import { RoleName } from "unleash-server/dist/lib/types/model";
-import { getLogger, Logger } from "log4js";
+import { Logger } from "log4js";
 import { OAuth2Client, LoginTicket } from "google-auth-library";
 
 export const IAP_JWT_HEADER: string =
@@ -14,9 +14,9 @@ async function createIapAuthHandler(): Promise<
   const authClient: OAuth2Client = new OAuth2Client();
   const iapPublicKeys: { pubkeys: { [key: string]: string } } =
     await authClient.getIapPublicKeys();
-  const logger: Logger = getLogger("nais/google-iap.js");
 
   return function iapAuthHandler(app: any, config: any, services: any): void {
+    const logger: Logger = config.getLogger("nais/google-iap.js");
     const { userService }: any = services;
 
     app.use(async (req: any, res: any, next: any) => {

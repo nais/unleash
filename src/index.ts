@@ -6,10 +6,12 @@ import {
   IUnleashOptions,
 } from "unleash-server/dist/lib/types/option";
 import createIapAuthHandler from "./google-iap";
-import { getLogger, Logger } from "log4js";
+import { createConfig } from "unleash-server/dist/lib/create-config";
+import {
+  parseEnvVarBoolean,
+  parseEnvVarNumber,
+} from "unleash-server/dist/lib/util";
 import { IAuthType, LogLevel } from "unleash-server";
-
-const logger: Logger = getLogger("nais/index.js");
 
 createIapAuthHandler()
   .then(
@@ -20,21 +22,21 @@ createIapAuthHandler()
         services: IUnleashServices
       ) => void
     ) => {
-      logger.info("Google IAP auth handler created successfully");
-      logger.info("Starting Unleash server");
-
-      const unleashConfig: IUnleashOptions = {
+      const unleashOptions: IUnleashOptions = {
         authentication: {
           type: IAuthType.CUSTOM,
           customAuthHandler: iapAuthHandler,
           createAdminUser: false,
-          enableApiToken: false,
+          enableApiToken: parseEnvVarBoolean(
+            process.env.AUTH_ENABLE_API_TOKEN,
+            true
+          ),
           initApiTokens: [],
         } as IAuthOption,
         server: {
           enableRequestLogger: true,
           baseUriPath: "",
-          port: parseInt(process.env.PORT || "4242"),
+          port: parseEnvVarNumber(process.env.SERVER_PORT, 4242),
         } as IServerOption,
         versionCheck: {
           enable: false,
@@ -42,8 +44,14 @@ createIapAuthHandler()
         logLevel: LogLevel.info,
       };
 
+      const config = createConfig(unleashOptions);
+      const logger = config.getLogger("nais/index.js");
+
+      logger.info("Google IAP auth handler created successfully");
+      logger.info("Starting Unleash server with options: ", unleashOptions);
+
       unleash
-        .start(unleashConfig)
+        .start(unleashOptions)
         .then((server) => {
           const port: number = server.app.get("port");
           logger.info(
@@ -56,5 +64,5 @@ createIapAuthHandler()
     }
   )
   .catch((error: Error) => {
-    logger.error("Failed to create Google IAP auth handler: ", error);
+    console.error("Failed to create Google IAP auth handler: ", error);
   });
