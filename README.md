@@ -1,49 +1,61 @@
 # NAV Unleash
-![Workflow status](https://github.com/navikt/unleash/workflows/build/badge.svg)
 
-En enkel [unleash-server](https://github.com/Unleash/unleash) med AzureAD-pålogging.
+![Workflow status](https://github.com/navikt/unleash/workflows/build/badge.svg?branch=unleash-v4)
+
+En enkel [Unleash v4 server][unleash] med Google IAP
+autentisering. Denne er bygget for å fungere godt sammen med [Unleasherator][unleasherator] vår Kubernetes operator for å håndtere Unleash instanser.
+
+[unleash]: https://github.com/Unleash/unleash
+[unleasherator]: https://github.com/nais/unleasherator
+[google-iap]: https://cloud.google.com/iap/docs/
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Google IAP
+    participant Google Auth
+    participant Unleash
+
+    autonumber
+
+    User->>Google IAP: request
+    alt is not authenticated
+        Google IAP->>Google Auth: Redirect to login
+        Google Auth->>Google IAP: Redirect to callback
+    end
+
+    alt is not authorized
+        Google IAP->>User: 403
+    end
+
+    Google IAP->>Unleash: request
+    Unleash->>User: response
+```
+
+## Konfigurasjon
+
+| Environment variable | Description | Default |
+|----------------------|-------------|---------|
+| `GOOGLE_IAP_JWT_HEADER` | Header name for JWT token from Google IAP | `x-goog-iap-jwt-assertion` |
+| `GOOGLE_IAP_JWT_ISSUER` | Issuer for JWT token from Google IAP | `https://cloud.google.com/iap` |
+| `GOOGLE_IAP_JWT_AUDIENCE` | Audience for JWT token from Google IAP | **REQUIRED** |
+
+### IAP JWT Audience
+
+`GOOGLE_IAP_JWT_AUDIENCE` skal være en string på følgende format:
+
+```text
+/projects/PROJECT_NUMBER/global/backendServices/SERVICE_ID
+```
 
 ## Oppsett for utvikling lokalt
 
-For å teste kjøre opp en test-instans lokalt kan man bruke `docker-compose up`.
+For å teste kjøre opp en test-instans lokalt kan man bruke `docker-compose up --build`.
 Denne vil sette opp en lokal postgres database i en docker-container og
 eksponere unleash på url `http://localhost:8080`.
 
-Hent Oauth2-credentials fra GCP og gjør følgende:
-
-```
-cat >.env <<EOF
-GOOGLE_CLIENT_ID=my_client_id
-GOOGLE_CLIENT_SECRET=my_client_secret
-GOOGLE_CALLBACK_URL=http://localhost:8080/api/auth/callback
-EOF
-```
-
 For å bygge koden kjører du `yarn build`. Dette vil kompilere typescript-filene til ES2017
 som legges i `./dist/`. Unleash kan da kjøres med `yarn start`.
-
-### Database setup
-```
-$ psql
-
-> CREATE USER unleash PASSWORD '...';
-> CREATE DATABASE unleash;
-> GRANT ALL ON SCHEMA public TO unleash;
-> GRANT ALL ON ALL TABLES IN SCHEMA public TO unleash;
-```
-
-### Info om redirectUri
-
-Appen bruker Azure AD Proxy for å bli nådd fra innrullert maskin. Da bruker vi azure-`preauth`, som returnerer tilbake
-til root (unleash.nais.adeo.no). Derfor har vi to callback-uri-er. Der den ene er definert i env-variabler.
-
-## Miljøer
-
-Kjører kun i GCP. Og vi tilbyr bare [unleash.nais.io](https://unleash.nais.io). Dev blir brukt til vår egen testing.
-
-### Fasit-ressurser
-
-Vi har legacy avhengighet i Fasit. https://fasit.adeo.no/applications/unleash og https://fasit.adeo.no/resources?application=unleash. Gjør vi endringer på ingress, må disse også oppdateres.
 
 ## Henvendelser
 

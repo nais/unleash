@@ -1,5 +1,5 @@
 import unleash from "unleash-server";
-import createIapAuthHandler from "./googleIAP-auth-hook";
+import createIapAuthHandler from "./google-iap";
 import { IAuthType, LogLevel } from "unleash-server";
 
 createIapAuthHandler()
