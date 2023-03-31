@@ -1,10 +1,5 @@
-FROM node:18-alpine
-
-LABEL org.opencontainers.image.source=https://github.com/nais/unleash
-LABEL org.opencontainers.image.description="Unleash for NAIS"
-LABEL org.opencontainers.image.licenses=MIT
-
-EXPOSE 8080
+# Build Stage
+FROM node:18-alpine AS builder
 
 RUN mkdir -p /unleash && \
     chown -R node:node /unleash && \
@@ -15,11 +10,27 @@ WORKDIR /unleash
 ADD package.json .
 ADD yarn.lock .
 
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 ADD . .
 
-RUN yarn build && \
-    yarn cache clean
+RUN yarn build
 
-CMD node dist/index.js
+RUN rm -rf node_modules
+RUN yarn cache clean
+
+RUN yarn install --production --frozen-lockfile
+
+# Production Stage
+FROM gcr.io/distroless/nodejs:18
+
+LABEL org.opencontainers.image.source=https://github.com/nais/unleash
+LABEL org.opencontainers.image.description="Unleash for NAIS"
+LABEL org.opencontainers.image.licenses=MIT
+
+WORKDIR /app
+
+COPY --from=builder /unleash/dist ./dist
+COPY --from=builder /unleash/node_modules ./node_modules
+
+CMD ["dist/index.js"]

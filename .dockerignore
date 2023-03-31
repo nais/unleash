@@ -1,5 +1,7 @@
-node_modules/
-dist/
-.env
-.idea/
-.data/
+*
+!LICENSE.md
+!README.md
+!package.json
+!src/*
+!yarn.lock
+!tsconfig.json
