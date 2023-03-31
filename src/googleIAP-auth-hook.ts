@@ -44,6 +44,11 @@ async function createIapAuthHandler() {
     passport.serializeUser((user, done) => done(null, user));
     passport.deserializeUser((user, done) => done(null, user));
 
+    app.use((req, res, next) => {
+      console.log("Request headers: ", req.headers);
+      return next();
+    });
+
     app.use(
       "/api",
       passport.authenticate("jwt", { session: false }),
