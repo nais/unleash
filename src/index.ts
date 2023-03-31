@@ -14,7 +14,7 @@ createIapAuthHandler()
         server: {
           enableRequestLogger: true,
           baseUriPath: "",
-          port: 8080,
+          port: 4242, // @TODO make en env var or something?
         },
         versionCheck: {
           enable: false,
