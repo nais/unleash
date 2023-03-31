@@ -1,33 +1,60 @@
-import unleash from "unleash-server";
+import unleash, { IUnleashConfig, IUnleashServices } from "unleash-server";
+import {
+  IAuthOption,
+  IServerOption,
+  IVersionOption,
+  IUnleashOptions,
+} from "unleash-server/dist/lib/types/option";
 import createIapAuthHandler from "./google-iap";
+import { getLogger, Logger } from "log4js";
 import { IAuthType, LogLevel } from "unleash-server";
 
+const logger: Logger = getLogger("nais/index.js");
+
 createIapAuthHandler()
-  .then((iapAuthHandler) => {
-    console.log("starting unleash server with IAP auth");
-    unleash
-      .start({
+  .then(
+    (
+      iapAuthHandler: (
+        app: any,
+        config: IUnleashConfig,
+        services: IUnleashServices
+      ) => void
+    ) => {
+      logger.info("Google IAP auth handler created successfully");
+      logger.info("Starting Unleash server");
+
+      const unleashConfig: IUnleashOptions = {
         authentication: {
           type: IAuthType.CUSTOM,
           customAuthHandler: iapAuthHandler,
-        },
+          createAdminUser: false,
+          enableApiToken: false,
+          initApiTokens: [],
+        } as IAuthOption,
         server: {
           enableRequestLogger: true,
           baseUriPath: "",
-          port: 4242, // @TODO make en env var or something?
-        },
+          port: parseInt(process.env.PORT || "4242"),
+        } as IServerOption,
         versionCheck: {
           enable: false,
-        },
+        } as IVersionOption,
         logLevel: LogLevel.info,
-      })
-      .then((server) => {
-        console.log("Unleash started");
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  })
-  .catch((error) => {
-    console.error(error);
+      };
+
+      unleash
+        .start(unleashConfig)
+        .then((server) => {
+          const port: number = server.app.get("port");
+          logger.info(
+            `Unleash server started successfully and listening on port ${port}`
+          );
+        })
+        .catch((error: Error) => {
+          logger.error("Unleash server failed to start: ", error);
+        });
+    }
+  )
+  .catch((error: Error) => {
+    logger.error("Failed to create Google IAP auth handler: ", error);
   });
