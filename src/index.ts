@@ -16,6 +16,9 @@ createIapAuthHandler()
           baseUriPath: "",
           port: 8080,
         },
+        versionCheck: {
+          enable: false,
+        },
         logLevel: LogLevel.info,
       })
       .then((server) => {
