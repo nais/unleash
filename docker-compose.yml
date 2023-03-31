@@ -14,7 +14,9 @@ services:
       - DATABASE_NAME=unleash
       - DATABASE_HOST=postgres
       - DATABASE_SSL=false
-      - GOOGLE_IAP_AUDIENCE=/projects/718161667033/global/backendServices/2287975999985226128
+      - INIT_ADMIN_API_TOKENS=*:*.unleash4all
+      - GOOGLE_IAP_AUDIENCE=32555940559.apps.googleusercontent.com
+      - GOOGLE_IAP_ISSUER=https://accounts.google.com
   postgres:
     image: "postgres:14"
     environment:
