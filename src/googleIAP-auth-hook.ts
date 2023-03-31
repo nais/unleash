@@ -1,84 +1,58 @@
 import passport from "passport";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import { AuthenticationRequired } from "unleash-server";
+import { RoleName } from "unleash-server/dist/lib/types/model";
+import { OAuth2Client } from "google-auth-library";
+
+export const IAP_JWT_HEADER = "x-goog-iap-jwt-assertion";
+export const IAP_JWT_ISSUER = "https://cloud.google.com/iap";
+export const IAP_AUDIENCE =
+  "/projects/718161667033/global/backendServices/2287975999985226128";
 
 async function createIapAuthHandler() {
-  const publicKey = await downloadIapPublicKey();
+  const authClient = new OAuth2Client();
+  const iapPublicKeys = await authClient.getIapPublicKeys();
 
   return function iapAuthHandler(app, config, services) {
-    console.log("Enabling IAP auth hook...");
     const { userService } = services;
 
-    const jwtOptions = {
-      jwtFromRequest: ExtractJwt.fromHeader("x-goog-iap-jwt-assertion"),
-      secretOrKey: publicKey,
-      issuer: "https://cloud.google.com/iap",
-      audience: process.env.GOOGLE_PROJECT_ID,
-    };
-    console.log("JWT options: ", jwtOptions);
-
-    passport.use(
-      new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
-        try {
-          if (
-            jwtPayload.iss !== jwtOptions.issuer ||
-            jwtPayload.aud !== jwtOptions.audience
-          ) {
-            console.log("Invalid issuer or audience.");
-            return done(null, false);
-          }
-
-          const email = jwtPayload.email;
-          const user = await userService.loginUserWithoutPassword(email, true);
-          console.log("User logged in: ", user);
-          return done(null, user);
-        } catch (err) {
-          console.log("Error logging in user: ", err);
-          return done(err, false);
-        }
-      })
-    );
-
-    app.use(passport.initialize());
-
-    passport.serializeUser((user, done) => done(null, user));
-    passport.deserializeUser((user, done) => done(null, user));
-
-    app.use((req, res, next) => {
+    app.use(async (req, res, next) => {
       console.log("Request headers: ", req.headers);
-      return next();
-    });
+      const iapJwt = req.get(IAP_JWT_HEADER);
 
-    app.use(
-      "/api",
-      passport.authenticate("jwt", { session: false }),
-      (req, res, next) => {
-        console.log("Authenticated user: ", req.user);
+      if (!iapJwt) {
         return next();
       }
-    );
+
+      try {
+        const login = await authClient.verifySignedJwtWithCertsAsync(
+          iapJwt,
+          iapPublicKeys.pubkeys,
+          [IAP_AUDIENCE],
+          [IAP_JWT_ISSUER]
+        );
+        console.log("Login: ", login);
+        req.user = await userService.loginUserSSO({
+          email: login.getPayload().email,
+          // name: login.getPayload().name,
+          rootRole: RoleName.ADMIN,
+          autoCreate: true,
+        });
+        next();
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    });
 
     app.use("/api", (req, res, next) => {
-      // Instruct unleash-frontend to pop-up auth dialog
-      console.log("Unauthenticated user: ", req.user);
-      return res
-        .status(401)
-        .json(
-          new AuthenticationRequired({
-            path: "/api/admin/login",
-            type: "custom",
-            message: `You have to identify yourself in order to use Unleash. Click the button and follow the instructions.`,
-          })
-        )
-        .end();
+      console.log("Request user: ", req.user);
+
+      if (req.user) {
+        return next();
+      } else {
+        return res.status(401).send("Unauthorized");
+      }
     });
   };
-}
-
-async function downloadIapPublicKey(): Promise<string> {
-  const res = await fetch("https://www.gstatic.com/iap/verify/public_key");
-  const publicKey = await res.text();
-  return publicKey;
 }
 
 export default createIapAuthHandler;

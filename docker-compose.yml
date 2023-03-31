@@ -3,7 +3,7 @@ services:
   unleash:
     build: .
     ports:
-      - "8080:8080"
+      - "8080:4242"
     networks:
       - unleash
     depends_on:
