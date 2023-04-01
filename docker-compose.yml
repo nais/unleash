@@ -22,6 +22,7 @@ services:
     environment:
       - POSTGRES_USER=unleash
       - POSTGRES_PASSWORD=unleash
+      - POSTGRES_DB=unleash
     ports:
       - "5432:5432"
     networks:

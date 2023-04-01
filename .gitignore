@@ -1,10 +1,7 @@
 .idea/
 node_modules/
-test.js
 dist
-test-server.js
 .env
 .data/
-set_environment.sh
-start_postgres.sh
 /.direnv/
+coverage/
