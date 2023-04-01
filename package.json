@@ -7,8 +7,8 @@
     "start": "node ./dist/index.js",
     "build-and-start": "tsc && node ./dist/index.js",
     "build": "tsc",
-    "test": "jest --coverage --no-cache --silent --forceExit",
-    "test:debug": "jest --runInBand --coverage --no-cache --detectOpenHandles",
+    "test": "jest --coverage --no-cache --silent --forceExit src/*.test.ts",
+    "test:debug": "jest --runInBand --coverage --no-cache --detectOpenHandles src/*.test.ts",
     "lint": "eslint ./src --ext .ts,.tsx",
     "lint:fix": "eslint ./src --ext .js,.jsx,.ts,.tsx --fix"
   },

@@ -22,7 +22,7 @@ async function naisleash(start: boolean): Promise<IUnleash> {
       customAuthHandler: iapAuthHandler,
       createAdminUser: false,
       enableApiToken: parseEnvVarBoolean(
-        process.env.AUTH_ENABLE_API_TOKEN,
+        process.env.AUTH_ENABLE_API_TOKEN || "true",
         true
       ),
       initApiTokens: [],
@@ -30,7 +30,7 @@ async function naisleash(start: boolean): Promise<IUnleash> {
     server: {
       enableRequestLogger: true,
       baseUriPath: "",
-      port: parseEnvVarNumber(process.env.SERVER_PORT, 4242),
+      port: parseEnvVarNumber(process.env.SERVER_PORT || "4242", 4242),
     } as IServerOption,
     versionCheck: {
       enable: false,

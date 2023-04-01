@@ -36,9 +36,15 @@ async function createIapAuthHandler(): Promise<
             [IAP_JWT_ISSUER]
           );
         logger.info("Login ticket: ", login);
+        const tokenPayload = login.getPayload();
+
+        if (!tokenPayload || !tokenPayload.email) {
+          throw new Error("No email in JWT tokenPayload");
+        }
+
         req.user = await userService.loginUserSSO({
-          email: login.getPayload().email,
-          // name: login.getPayload().name,
+          email: tokenPayload.email,
+          // name: tokenPayload.name,
           rootRole: RoleName.ADMIN,
           autoCreate: true,
         });
