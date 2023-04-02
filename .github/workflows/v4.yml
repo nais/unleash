@@ -53,7 +53,8 @@ jobs:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # ratchet:actions/checkout@v3
       - id: version
         run: |
-          echo "unleash=$(cat package.json | grep "unleash-server" | awk '{ print $2 }' | sed 's/\^//' | sed 's/\"//g')" >> "$GITHUB_OUTPUT"
+          unleash=$(cat package.json | grep "unleash-server" | awk '{ print $2 }' | sed 's/\^//' | sed 's/\"//g')
+          echo "unleash=${unleash}" >> "$GITHUB_OUTPUT"
           echo "date=$(date '+%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - uses: nais/platform-build-push-sign@main
