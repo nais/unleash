@@ -1,23 +1,69 @@
-name: Build, push, and sign image
+name: Unleash v4
+
 on:
   push:
     branches:
       - unleash-v4
+  pull_request:
+    branches:
+      - unleash-v4
+
+env:
+  DATABASE_USERNAME: unleash
+  DATABASE_PASSWORD: unleash
+  DATABASE_NAME: unleash
+  DATABASE_HOST: localhost
+  DATABASE_SSL: false
+  INIT_ADMIN_API_TOKENS: "*:*.unleash4all"
 
 jobs:
-  build_push_sign:
+  build-and-test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: ${{ env.DATABASE_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          POSTGRES_DB: ${{ env.DATABASE_NAME }}
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout
+      - uses: actions/cache@v3
+        name: Cache dependencies
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: yarn install
+      - run: yarn lint
+      - run: yarn build
+      - run: yarn test
+
+  build-push-sign:
+    runs-on: ubuntu-latest
+    needs: build-and-test
     permissions:
       contents: read
       id-token: write
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # ratchet:actions/checkout@v3
+      - id: version
+        run: |
+          unleash=$(cat package.json | grep "unleash-server" | awk '{ print $2 }' | sed 's/\^//' | sed 's/\"//g')
+          echo "unleash=${unleash}" >> "$GITHUB_OUTPUT"
+          echo "date=$(date '+%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
+          echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
       - uses: nais/platform-build-push-sign@main
         with:
           name: unleash-v4
           extra_tags: |
-            v4.19.1
+            v${{ steps.version.outputs.unleash }}
+            v${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}
           dockerfile: Dockerfile
           google_service_account: gh-unleash
-          push: ${{ github.actor != 'dependabot[bot]' }}
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/unleash-v4' }}
           workload_identity_provider: ${{ secrets.NAIS_IO_WORKLOAD_IDENTITY_PROVIDER }}
