@@ -41,7 +41,7 @@ jobs:
       - run: yarn install
       - run: yarn lint
       - run: yarn build
-      - run: yarn test
+      - run: yarn test:debug
 
   build-push-sign:
     runs-on: ubuntu-latest
