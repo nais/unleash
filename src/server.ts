@@ -35,7 +35,7 @@ async function naisleash(start: boolean): Promise<IUnleash> {
     versionCheck: {
       enable: false,
     } as IVersionOption,
-    logLevel: LogLevel.info,
+    logLevel: LogLevel.debug,
   };
   const config = createConfig(unleashOptions);
   const logger = config.getLogger("nais/server.js");

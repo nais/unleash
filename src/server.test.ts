@@ -11,7 +11,11 @@ beforeAll(async () => {
   expect(process.env.DATABASE_USERNAME).toBeDefined();
   expect(process.env.DATABASE_PASSWORD).toBeDefined();
   expect(process.env.INIT_ADMIN_API_TOKENS).toBeDefined();
-  server = await naisleash(true);
+  server = await naisleash(false);
+});
+
+afterAll(async () => {
+  await server.stop();
 });
 
 describe("Unleash server", () => {
@@ -40,6 +44,7 @@ describe("Unleash server", () => {
     const response = await request(server.app)
       .get("/api/admin/instance-admin/statistics")
       .set("Authorization", `${process.env.INIT_ADMIN_API_TOKENS}`);
+
     expect(response.status).toBe(200);
   });
 });

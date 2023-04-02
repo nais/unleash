@@ -1,6 +1,7 @@
 import { RoleName } from "unleash-server/dist/lib/types/model";
 import { Logger } from "log4js";
 import { OAuth2Client, LoginTicket } from "google-auth-library";
+import { IapPublicKeysResponse } from "google-auth-library/build/src/auth/oauth2client";
 
 export const IAP_JWT_HEADER: string =
   process.env.GOOGLE_IAP_JWT_HEADER || "x-goog-iap-jwt-assertion";
@@ -11,9 +12,9 @@ export const IAP_AUDIENCE: string | undefined = process.env.GOOGLE_IAP_AUDIENCE;
 async function createIapAuthHandler(): Promise<
   (app: any, config: any, services: any) => void
 > {
-  const authClient: OAuth2Client = new OAuth2Client();
-  const iapPublicKeys: { pubkeys: { [key: string]: string } } =
-    await authClient.getIapPublicKeys();
+  const oAuth2Client: OAuth2Client = new OAuth2Client();
+  const iapPublicKeys: IapPublicKeysResponse =
+    await oAuth2Client.getIapPublicKeys();
 
   return function iapAuthHandler(app: any, config: any, services: any): void {
     const logger: Logger = config.getLogger("nais/google-iap.js");
@@ -29,7 +30,7 @@ async function createIapAuthHandler(): Promise<
 
       try {
         const login: LoginTicket =
-          await authClient.verifySignedJwtWithCertsAsync(
+          await oAuth2Client.verifySignedJwtWithCertsAsync(
             iapJwt,
             iapPublicKeys.pubkeys,
             [IAP_AUDIENCE as string],
