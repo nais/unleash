@@ -20,7 +20,7 @@
   "dependencies": {
     "google-auth-library": "^8.7.0",
     "log4js": "^6.9.1",
-    "unleash-server": "^4.19.3"
+    "unleash-server": "^4.22.0"
   },
   "devDependencies": {
     "@types/cors": "2.8.13",
