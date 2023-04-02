@@ -60,7 +60,7 @@ jobs:
           name: unleash-v4
           extra_tags: |
             v${{ steps.get_version.outputs.version }}
-            v${{ steps.get_version.outputs.version }}-${{ github.sha }}
+            v${{ steps.get_version.outputs.version }}-{{date 'YYYYMMDD-hhmmss' tz='Europe/Oslo'}}-{{sha}}
           dockerfile: Dockerfile
           google_service_account: gh-unleash
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/unleash-v4' }}
