@@ -55,8 +55,8 @@ jobs:
         run: |
           unleash=$(cat package.json | grep "unleash-server" | awk '{ print $2 }' | sed 's/\^//' | sed 's/\"//g')
           echo "unleash=${unleash}" >> "$GITHUB_OUTPUT"
-          echo "date=$(date '+%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "date=$(date '+%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
+          echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
       - uses: nais/platform-build-push-sign@main
         with:
           name: unleash-v4
