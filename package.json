@@ -7,8 +7,10 @@
     "start": "node ./dist/index.js",
     "build-and-start": "tsc && node ./dist/index.js",
     "build": "tsc",
-    "lint": "eslint --ext .ts src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage --no-cache --silent --forceExit src/*.test.ts",
+    "test:debug": "jest --runInBand --coverage --no-cache --detectOpenHandles src/*.test.ts",
+    "lint": "eslint ./src --ext .ts,.tsx",
+    "lint:fix": "eslint ./src --ext .js,.jsx,.ts,.tsx --fix"
   },
   "author": "NAIS <aura@nav.no>",
   "license": "MIT",
@@ -25,7 +27,7 @@
     "@types/express": "4.17.14",
     "@types/express-session": "1.17.5",
     "@types/faker": "5.5.9",
-    "@types/jest": "29.2.4",
+    "@types/jest": "^29.5.0",
     "@types/js-yaml": "4.0.5",
     "@types/make-fetch-happen": "10.0.1",
     "@types/node": "16.18.8",
@@ -43,7 +45,11 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-no-only-tests": "^3.1.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.5.0",
     "prettier": "^2.8.7",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.1",
     "typescript": "4.9.4"
   }
 }
