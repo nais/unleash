@@ -41,7 +41,7 @@ jobs:
       - run: yarn install
       - run: yarn lint
       - run: yarn build
-      - run: yarn test:debug
+      - run: yarn test:debug --forceExit
 
   build-push-sign:
     runs-on: ubuntu-latest
