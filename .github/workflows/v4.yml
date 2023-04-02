@@ -51,16 +51,17 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # ratchet:actions/checkout@v3
-      - id: get_version
+      - id: version
         run: |
-          version=$(cat package.json | grep "unleash-server" | awk '{ print $2 }' | sed 's/\^//' | sed 's/\"//g')
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "unleash=$(cat package.json | grep "unleash-server" | awk '{ print $2 }' | sed 's/\^//' | sed 's/\"//g')" >> "$GITHUB_OUTPUT"
+          echo "date=$(date '+%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - uses: nais/platform-build-push-sign@main
         with:
           name: unleash-v4
           extra_tags: |
-            v${{ steps.get_version.outputs.version }}
-            v${{ steps.get_version.outputs.version }}-{{date 'YYYYMMDD-hhmmss' tz='Europe/Oslo'}}-{{sha}}
+            v${{ steps.version.outputs.unleash }}
+            v${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}
           dockerfile: Dockerfile
           google_service_account: gh-unleash
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/unleash-v4' }}
