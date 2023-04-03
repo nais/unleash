@@ -4,10 +4,11 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
+    "all": "yarn lint && yarn test && yarn build",
     "start": "node ./dist/index.js",
     "build-and-start": "tsc && node ./dist/index.js",
     "build": "tsc",
-    "test": "jest --coverage --no-cache --silent --forceExit src/*.test.ts",
+    "test": "jest --coverage --no-cache --silent src/*.test.ts",
     "test:debug": "jest --runInBand --coverage --no-cache --detectOpenHandles src/*.test.ts",
     "lint": "eslint ./src --ext .ts,.tsx",
     "lint:fix": "eslint ./src --ext .js,.jsx,.ts,.tsx --fix"
@@ -20,24 +21,24 @@
   "dependencies": {
     "google-auth-library": "^8.7.0",
     "log4js": "^6.9.1",
-    "unleash-server": "^4.19.3"
+    "unleash-server": "4.22.0"
   },
   "devDependencies": {
     "@types/cors": "2.8.13",
-    "@types/express": "4.17.14",
-    "@types/express-session": "1.17.5",
-    "@types/faker": "5.5.9",
+    "@types/express": "4.17.17",
+    "@types/express-session": "1.17.7",
+    "@types/faker": "6.6.9",
     "@types/jest": "^29.5.0",
     "@types/js-yaml": "4.0.5",
     "@types/make-fetch-happen": "10.0.1",
-    "@types/node": "16.18.8",
+    "@types/node": "18.15.11",
     "@types/semver": "7.3.13",
     "@types/stoppable": "1.1.1",
     "@types/supertest": "2.0.12",
     "@types/type-is": "1.6.3",
-    "@types/uuid": "8.3.4",
-    "@typescript-eslint/eslint-plugin": "5.42.1",
-    "@typescript-eslint/parser": "5.42.1",
+    "@types/uuid": "9.0.1",
+    "@typescript-eslint/eslint-plugin": "5.57.0",
+    "@typescript-eslint/parser": "5.57.0",
     "eslint": "^8.37.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
@@ -50,6 +51,6 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-    "typescript": "4.9.4"
+    "typescript": "5.0.3"
   }
 }
