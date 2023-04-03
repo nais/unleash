@@ -4,6 +4,8 @@ import request from "supertest";
 
 let server: IUnleash;
 
+jest.setTimeout(10000);
+
 beforeAll(async () => {
   // check for env vars
   expect(process.env.DATABASE_HOST).toBeDefined();
@@ -11,6 +13,7 @@ beforeAll(async () => {
   expect(process.env.DATABASE_USERNAME).toBeDefined();
   expect(process.env.DATABASE_PASSWORD).toBeDefined();
   expect(process.env.INIT_ADMIN_API_TOKENS).toBeDefined();
+
   server = await naisleash(false);
 });
 
@@ -41,9 +44,23 @@ describe("Unleash server", () => {
   });
 
   it("should return 200 OK for api with valid api token", async () => {
-    const response = await request(server.app)
-      .get("/api/admin/instance-admin/statistics")
-      .set("Authorization", `${process.env.INIT_ADMIN_API_TOKENS}`);
+    // Apparently the server takes a while to start up, so we retry a few times before giving up
+    let retryCount = 0;
+    let response;
+
+    while (retryCount < 5) {
+      response = await request(server.app)
+        .get("/api/admin/instance-admin/statistics")
+        .set("Authorization", `${process.env.INIT_ADMIN_API_TOKENS}`);
+
+      if (response.status === 200) {
+        break;
+      } else if (response.status === 401) {
+        retryCount++;
+      } else {
+        fail(`Unexpected response status ${response.status}`);
+      }
+    }
 
     expect(response.status).toBe(200);
   });
