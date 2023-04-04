@@ -26,6 +26,20 @@ describe("Unleash server", () => {
     expect(server).toBeDefined();
   });
 
+  it("should return 200 OK for health endpoint", async () => {
+    const response = await request(server.app).get("/health");
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ health: "GOOD" });
+  });
+
+  it("should return 200 OK for prometheus endpoint", async () => {
+    const response = await request(server.app).get(
+      "/internal-backstage/prometheus"
+    );
+    expect(response.status).toBe(200);
+    expect(response.text).toMatch(/^# HELP/);
+  });
+
   it("should return 200 OK for index", async () => {
     const response = await request(server.app).get("/");
     expect(response.status).toBe(200);
@@ -63,5 +77,13 @@ describe("Unleash server", () => {
     }
 
     expect(response.status).toBe(200);
+  });
+
+  it.skip("should return 401 for invalid JWT token", async () => {
+    // TODO: Implement
+  });
+
+  it.skip("should return 200 for valid JWT token", async () => {
+    // TODO: Implement
   });
 });
