@@ -1,5 +1,9 @@
 name: Unleash v4
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -43,6 +47,7 @@ jobs:
       - run: yarn build
       - run: yarn test
 
+  # build-push-sign can not be used for pull requests, as it requires a secret
   docker-build-pr:
     runs-on: ubuntu-latest
     needs: build-and-test
