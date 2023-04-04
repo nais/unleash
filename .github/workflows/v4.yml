@@ -43,7 +43,7 @@ jobs:
       - run: yarn build
       - run: yarn test
 
-  docker-build:
+  docker-build-pr:
     runs-on: ubuntu-latest
     needs: build-and-test
     if: github.event_name == 'pull_request'
