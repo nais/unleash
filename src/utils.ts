@@ -5,14 +5,12 @@ import jwt from "jsonwebtoken";
 function newSignedToken(
   audience: string,
   issuer: string,
-  email: string
+  email: string,
+  kid: string
 ): { token: string; publicKey: crypto.KeyObject } {
   const { privateKey, publicKey } = crypto.generateKeyPairSync("ec", {
     namedCurve: "prime256v1",
   } as ECKeyPairKeyObjectOptions);
-
-  console.log(typeof privateKey);
-  console.log(privateKey);
 
   const decryptedPrivateKey = crypto.createPrivateKey({
     key: privateKey.export({ type: "sec1", format: "pem" }),
@@ -23,7 +21,7 @@ function newSignedToken(
   const options: jwt.SignOptions = {
     expiresIn: "1h",
     algorithm: "ES256",
-    header: { alg: "ES256", typ: "JWT", kid: "0oeLcQ" },
+    header: { alg: "ES256", typ: "JWT", kid },
     audience,
     issuer,
   };

@@ -12,13 +12,11 @@ export const IAP_AUDIENCE: string = process.env.GOOGLE_IAP_AUDIENCE || "";
 async function createIapAuthHandler(): Promise<
   (app: any, config: any, services: any) => void
 > {
+  if (IAP_AUDIENCE === "") {
+    throw new Error("GOOGLE_IAP_AUDIENCE is not set");
+  }
+
   const oAuth2Client: OAuth2Client = new OAuth2Client();
-
-  // @TODO how long should we cache this?
-  const iapPublicKeys: IapPublicKeysResponse =
-    await oAuth2Client.getIapPublicKeys();
-
-  console.log(iapPublicKeys);
 
   return function iapAuthHandler(app: any, config: any, services: any): void {
     const logger: Logger = config.getLogger("nais/google-iap.js");
@@ -33,6 +31,10 @@ async function createIapAuthHandler(): Promise<
       }
 
       try {
+        // @TODO c an we cache this?
+        const iapPublicKeys: IapPublicKeysResponse =
+          await oAuth2Client.getIapPublicKeys();
+
         const login: LoginTicket =
           await oAuth2Client.verifySignedJwtWithCertsAsync(
             iapJwt,

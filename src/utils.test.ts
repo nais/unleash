@@ -5,7 +5,7 @@ describe("utils", () => {
     const audience = "audience";
     const issuer = "issuer";
     const email = "email";
-    const { token, publicKey } = newSignedToken(audience, issuer, email);
+    const { token, publicKey } = newSignedToken(audience, issuer, email, "kid");
     const decoded = verifySignedToken(token, publicKey);
     expect(decoded).toBeDefined();
     expect(decoded).toHaveProperty("email", email);
