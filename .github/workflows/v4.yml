@@ -19,6 +19,7 @@ env:
   DATABASE_HOST: localhost
   DATABASE_SSL: false
   INIT_ADMIN_API_TOKENS: "*:*.unleash4all"
+  GOOGLE_IAP_AUDIENCE: "/projects/123/global/backendServices/123"
 
 jobs:
   build-and-test:

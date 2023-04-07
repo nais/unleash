@@ -4,10 +4,13 @@ import request from "supertest";
 import { newSignedToken } from "./utils";
 import nock from "nock";
 import { KeyObject } from "crypto";
+import { IAP_JWT_HEADER, IAP_JWT_ISSUER, IAP_AUDIENCE } from "./google-iap";
 
 let server: IUnleash;
 let scope: nock.Scope;
 let token: { token: string; publicKey: KeyObject };
+
+const email = "test@example.com";
 
 jest.setTimeout(10000);
 
@@ -20,15 +23,8 @@ beforeAll(async () => {
   expect(process.env.INIT_ADMIN_API_TOKENS).toBeDefined();
 
   expect(process.env.GOOGLE_IAP_AUDIENCE).toBeDefined();
-  expect(process.env.GOOGLE_IAP_ISSUER).toBeDefined();
-  expect(process.env.GOOGLE_IAP_TEST_EMAIL).toBeDefined();
 
-  const audience: string = process.env.GOOGLE_IAP_AUDIENCE || "";
-  const issuer: string = process.env.GOOGLE_IAP_ISSUER || "";
-  const email: string = process.env.GOOGLE_IAP_TEST_EMAIL || "";
-
-  token = newSignedToken(audience, issuer, email);
-  console.log(token);
+  token = newSignedToken(IAP_AUDIENCE, IAP_JWT_ISSUER, email);
 
   const mockResponse = {
     "0oeLcQ": token.publicKey
@@ -116,7 +112,7 @@ describe("Unleash server", () => {
   it("should return 200 for valid JWT token", async () => {
     const response = await request(server.app)
       .get("/api/admin/instance-admin/statistics")
-      .set("x-goog-iap-jwt-assertion", token.token);
+      .set(IAP_JWT_HEADER, token.token);
     expect(response.status).toBe(200);
   });
 });

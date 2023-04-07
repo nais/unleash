@@ -7,7 +7,7 @@ export const IAP_JWT_HEADER: string =
   process.env.GOOGLE_IAP_JWT_HEADER || "x-goog-iap-jwt-assertion";
 export const IAP_JWT_ISSUER: string =
   process.env.GOOGLE_IAP_JWT_ISSUER || "https://cloud.google.com/iap";
-export const IAP_AUDIENCE: string | undefined = process.env.GOOGLE_IAP_AUDIENCE;
+export const IAP_AUDIENCE: string = process.env.GOOGLE_IAP_AUDIENCE || "";
 
 async function createIapAuthHandler(): Promise<
   (app: any, config: any, services: any) => void
