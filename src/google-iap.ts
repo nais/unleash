@@ -15,6 +15,7 @@ async function createIapAuthHandler(): Promise<
   const oAuth2Client: OAuth2Client = new OAuth2Client();
   const iapPublicKeys: IapPublicKeysResponse =
     await oAuth2Client.getIapPublicKeys();
+  console.log(iapPublicKeys);
 
   return function iapAuthHandler(app: any, config: any, services: any): void {
     const logger: Logger = config.getLogger("nais/google-iap.js");
