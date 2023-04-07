@@ -8,5 +8,8 @@ describe("utils", () => {
     const { token, publicKey } = newSignedToken(audience, issuer, email);
     const decoded = verifySignedToken(token, publicKey);
     expect(decoded).toBeDefined();
+    expect(decoded).toHaveProperty("email", email);
+    expect(decoded).toHaveProperty("aud", audience);
+    expect(decoded).toHaveProperty("iss", issuer);
   });
 });
