@@ -31,7 +31,7 @@ async function createIapAuthHandler(): Promise<
       }
 
       try {
-        // @TODO c an we cache this?
+        // @TODO can we cache this to speed things up?
         const iapPublicKeys: IapPublicKeysResponse =
           await oAuth2Client.getIapPublicKeys();
 
