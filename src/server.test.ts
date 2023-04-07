@@ -105,8 +105,13 @@ describe("Unleash server", () => {
     expect(response.status).toBe(200);
   });
 
-  it.skip("should return 401 for invalid JWT token", async () => {
-    // TODO: Implement
+  it("should return 401 for invalid JWT token", async () => {
+    const token = newSignedToken("aud", "iss", "email");
+
+    const response = await request(server.app)
+      .get("/api/admin/instance-admin/statistics")
+      .set(IAP_JWT_HEADER, token.token);
+    expect(response.status).toBe(401);
   });
 
   it("should return 200 for valid JWT token", async () => {

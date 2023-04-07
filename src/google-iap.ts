@@ -13,8 +13,11 @@ async function createIapAuthHandler(): Promise<
   (app: any, config: any, services: any) => void
 > {
   const oAuth2Client: OAuth2Client = new OAuth2Client();
+
+  // @TODO how long should we cache this?
   const iapPublicKeys: IapPublicKeysResponse =
     await oAuth2Client.getIapPublicKeys();
+
   console.log(iapPublicKeys);
 
   return function iapAuthHandler(app: any, config: any, services: any): void {
@@ -50,12 +53,11 @@ async function createIapAuthHandler(): Promise<
           rootRole: RoleName.ADMIN,
           autoCreate: true,
         });
-        next();
       } catch (error) {
-        // @TODO this dumps all the things to the user, which is not great
-        logger.error(error);
-        next(error);
+        logger.error("JWT token validation failed with error", error);
       }
+
+      next();
     });
 
     app.use("/api", (req: any, res: any, next: any) => {
