@@ -1,5 +1,0 @@
-database:
-  name: unleash
-  type: POSTGRES_11
-ingresses:
-  - https://unleash.nais.io
