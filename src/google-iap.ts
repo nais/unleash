@@ -7,14 +7,16 @@ export const IAP_JWT_HEADER: string =
   process.env.GOOGLE_IAP_JWT_HEADER || "x-goog-iap-jwt-assertion";
 export const IAP_JWT_ISSUER: string =
   process.env.GOOGLE_IAP_JWT_ISSUER || "https://cloud.google.com/iap";
-export const IAP_AUDIENCE: string | undefined = process.env.GOOGLE_IAP_AUDIENCE;
+export const IAP_AUDIENCE: string = process.env.GOOGLE_IAP_AUDIENCE || "";
 
 async function createIapAuthHandler(): Promise<
   (app: any, config: any, services: any) => void
 > {
+  if (IAP_AUDIENCE === "") {
+    throw new Error("GOOGLE_IAP_AUDIENCE is not set");
+  }
+
   const oAuth2Client: OAuth2Client = new OAuth2Client();
-  const iapPublicKeys: IapPublicKeysResponse =
-    await oAuth2Client.getIapPublicKeys();
 
   return function iapAuthHandler(app: any, config: any, services: any): void {
     const logger: Logger = config.getLogger("nais/google-iap.js");
@@ -29,6 +31,10 @@ async function createIapAuthHandler(): Promise<
       }
 
       try {
+        // @TODO can we cache this to speed things up?
+        const iapPublicKeys: IapPublicKeysResponse =
+          await oAuth2Client.getIapPublicKeys();
+
         const login: LoginTicket =
           await oAuth2Client.verifySignedJwtWithCertsAsync(
             iapJwt,
@@ -49,12 +55,11 @@ async function createIapAuthHandler(): Promise<
           rootRole: RoleName.ADMIN,
           autoCreate: true,
         });
-        next();
       } catch (error) {
-        // @TODO this dumps all the things to the user, which is not great
-        logger.error(error);
-        next(error);
+        logger.error("JWT token validation failed with error", error);
       }
+
+      next();
     });
 
     app.use("/api", (req: any, res: any, next: any) => {
