@@ -2,8 +2,7 @@
 
 ![Workflow status](https://github.com/navikt/unleash/workflows/build/badge.svg?branch=unleash-v4)
 
-En enkel [Unleash v4 server][unleash] med Google IAP
-autentisering. Denne er bygget for å fungere godt sammen med [Unleasherator][unleasherator] vår Kubernetes operator for å håndtere Unleash instanser.
+Simple [Unleash v4 server][unleash] with [Google IAP authentication][google-iap]. Built to work well with [Unleasherator][unleasherator] our Kubernetes operator for managing Unleash instances.
 
 [unleash]: https://github.com/Unleash/unleash
 [unleasherator]: https://github.com/nais/unleasherator
@@ -32,32 +31,74 @@ sequenceDiagram
     Unleash->>User: response
 ```
 
-## Konfigurasjon
+## Configuration
 
 | Environment variable | Description | Default |
 |----------------------|-------------|---------|
 | `GOOGLE_IAP_JWT_HEADER` | Header name for JWT token from Google IAP | `x-goog-iap-jwt-assertion` |
 | `GOOGLE_IAP_JWT_ISSUER` | Issuer for JWT token from Google IAP | `https://cloud.google.com/iap` |
 | `GOOGLE_IAP_JWT_AUDIENCE` | Audience for JWT token from Google IAP | **REQUIRED** |
+| `IAP_PUBLIC_KEY_CACHE_TIME` | Cache time for JWT token public keys from Google IAP | `3600` |
 
 ### IAP JWT Audience
 
-`GOOGLE_IAP_JWT_AUDIENCE` skal være en string på følgende format:
+`GOOGLE_IAP_JWT_AUDIENCE` should be a string in the following format:
 
 ```text
 /projects/PROJECT_NUMBER/global/backendServices/SERVICE_ID
 ```
 
-## Oppsett for utvikling lokalt
+## Setup for local development
 
-For å teste kjøre opp en test-instans lokalt kan man bruke `docker-compose up --build`.
-Denne vil sette opp en lokal postgres database i en docker-container og
-eksponere unleash på url `http://localhost:8080`.
+### Prerequisites
 
-For å bygge koden kjører du `yarn build`. Dette vil kompilere typescript-filene til ES2017
-som legges i `./dist/`. Unleash kan da kjøres med `yarn start`.
+- [Node.js][nodejs] 16 or later
+- [Docker][docker]
 
-## Henvendelser
+[nodejs]: https://nodejs.org/en/
+[docker]: https://www.docker.com/
 
-Henvendelser og spørsmål kan gjøres via issues på repoet. For direkte kontakt kan man også høre med Tjenesteplattform (NADA og NAIS). For NAV-ansatte kan dette enklest gjøres via slack-kanalen #unleash. Der vil man også kunne komme i kontakt med enkelte av utviklerne av Unleash (upstream).
-For eksterne er det mulig å sende mail til Audun F. Strand (audun.fauchald.strand@nav.no).
+### Running Unleash
+
+The simplest way to run Unleash is to use `docker-compose`:
+
+```bash
+docker-compose up --build
+```
+
+This will start a local Postgres database in a Docker container and expose Unleash on `http://localhost:8080`.
+
+To build the code, run `yarn build`. This will compile the TypeScript files to ES2017 and place them in `./dist/`. Unleash can then be run with `yarn start`. For convenience you can also use the `yarn build-and-start` command.
+
+Running Unleash locally requires a database. The easiest way to get one is to use Docker:
+
+```bash
+docker-compose up -d postgres
+```
+
+This will start a local Postgres database in a Docker container. You can then connect to it using the following credentials:
+
+```bash
+export DATABASE_USERNAME=unleash
+export DATABASE_PASSWORD=unleash
+export DATABASE_NAME=unleash
+export DATABASE_HOST=localhost
+export DATABASE_SSL=false
+```
+
+You also need the following environment variables:
+
+```bash
+export INIT_ADMIN_API_TOKENS=*:*.unleash4all
+export GOOGLE_IAP_AUDIENCE=/projects/123/global/backendServices/123
+```
+
+## Contact
+
+Requests and questions can be made via issues on the repo. For NAV employees this can be done easiest via the slack channel [#unleash][nav-slack-unleash].
+
+[nav-slack-unleash]: https://nav-it.slack.com/archives/C9BPTSULS
+
+## License
+
+[MIT](LICENSE)
