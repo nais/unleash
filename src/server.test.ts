@@ -1,5 +1,6 @@
 import { IUnleash } from "unleash-server";
 import naisleash from "./server";
+import Cache from "./cache";
 import request from "supertest";
 import { newSignedToken } from "./utils";
 import nock from "nock";
@@ -34,7 +35,8 @@ beforeAll(async () => {
 });
 
 afterEach(() => {
-  nock.cleanAll();
+  nock.cleanAll(); // clean up nock mocks
+  Cache.clear(); // clean up cache
 });
 
 afterAll(async () => {
