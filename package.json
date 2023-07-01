@@ -22,7 +22,7 @@
     "google-auth-library": "^8.7.0",
     "jsonwebtoken": "^9.0.0",
     "log4js": "^6.9.1",
-    "unleash-server": "^4.23.1"
+    "unleash-server": "^5.2.2"
   },
   "devDependencies": {
     "@types/cors": "2.8.13",
