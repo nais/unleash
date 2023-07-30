@@ -6,7 +6,9 @@ import { newSignedToken } from "./utils";
 import nock from "nock";
 import { KeyObject } from "crypto";
 import { IAP_JWT_HEADER, IAP_JWT_ISSUER, IAP_AUDIENCE } from "./google-iap";
+import { TeamsService, User } from "nais-teams";
 
+let mockTeamsService: TeamsService;
 let server: IUnleash;
 
 jest.setTimeout(10000);
@@ -35,7 +37,8 @@ beforeAll(async () => {
 
   expect(process.env.GOOGLE_IAP_AUDIENCE).toBeDefined();
 
-  server = await naisleash(false, new MockTeamsService());
+  mockTeamsService = new MockTeamsService();
+  server = await naisleash(false, mockTeamsService);
 });
 
 afterEach(() => {
@@ -56,6 +59,7 @@ describe("Unleash server", () => {
     const response = await request(server.app).get("/health");
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ health: "GOOD" });
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 200 OK for prometheus endpoint", async () => {
@@ -64,16 +68,19 @@ describe("Unleash server", () => {
     );
     expect(response.status).toBe(200);
     expect(response.text).toMatch(/^# HELP/);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 200 OK for index", async () => {
     const response = await request(server.app).get("/");
     expect(response.status).toBe(200);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 401 Unauthorized for api without authentication", async () => {
     const response = await request(server.app).get("/api/");
     expect(response.status).toBe(401);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 401 Unauthorized for api with invalid api token", async () => {
@@ -81,6 +88,7 @@ describe("Unleash server", () => {
       .get("/api/admin/instance-admin/statistics")
       .set("Authorization", "invalid-token");
     expect(response.status).toBe(401);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 200 OK for api with valid api token", async () => {
@@ -103,6 +111,7 @@ describe("Unleash server", () => {
     }
 
     expect(response.status).toBe(200);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 401 for invalid JWT token", async () => {
@@ -111,10 +120,29 @@ describe("Unleash server", () => {
     const response = await request(server.app)
       .get("/api/admin/instance-admin/statistics")
       .set(IAP_JWT_HEADER, token.token);
+
     expect(response.status).toBe(401);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 200 for valid JWT token", async () => {
+    const mockUser: User = {
+      name: "test",
+      email: "test@example.com",
+      teams: [
+        {
+          role: "admin",
+          team: {
+            slug: "team",
+          },
+        },
+      ],
+    };
+
+    jest.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
+      status: true,
+      user: mockUser,
+    });
     const token = newSignedToken(
       IAP_AUDIENCE,
       IAP_JWT_ISSUER,
@@ -126,6 +154,8 @@ describe("Unleash server", () => {
     const response = await request(server.app)
       .get("/api/admin/instance-admin/statistics")
       .set(IAP_JWT_HEADER, token.token);
+
     expect(response.status).toBe(200);
+    expect(mockTeamsService.authorize).toHaveBeenCalled();
   });
 });
