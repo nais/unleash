@@ -125,7 +125,8 @@ describe("Unleash server", () => {
     expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
-  it("should return 200 for valid JWT token", async () => {
+  it("should return 200 for valid JWT token and authorized user", async () => {
+    const keyId = "abc123";
     const mockUser: User = {
       name: "test",
       email: "test@example.com",
@@ -146,16 +147,51 @@ describe("Unleash server", () => {
     const token = newSignedToken(
       IAP_AUDIENCE,
       IAP_JWT_ISSUER,
-      "test@example.com",
-      "abc123"
+      mockUser.email,
+      keyId
     );
-    mockPublicKey(token.publicKey, "abc123");
+    mockPublicKey(token.publicKey, keyId);
 
     const response = await request(server.app)
       .get("/api/admin/instance-admin/statistics")
       .set(IAP_JWT_HEADER, token.token);
 
     expect(response.status).toBe(200);
+    expect(mockTeamsService.authorize).toHaveBeenCalled();
+  });
+
+  it("should return 401 for valid JWT token and unauthorized user", async () => {
+    const keyId = "abc123";
+    const mockUser: User = {
+      name: "test",
+      email: "test@example.com",
+      teams: [
+        {
+          role: "member",
+          team: {
+            slug: "team",
+          },
+        },
+      ],
+    };
+
+    jest.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
+      status: false,
+      user: mockUser,
+    });
+    const token = newSignedToken(
+      IAP_AUDIENCE,
+      IAP_JWT_ISSUER,
+      mockUser.email,
+      keyId
+    );
+    mockPublicKey(token.publicKey, keyId);
+
+    const response = await request(server.app)
+      .get("/api/admin/instance-admin/statistics")
+      .set(IAP_JWT_HEADER, token.token);
+
+    expect(response.status).toBe(401);
     expect(mockTeamsService.authorize).toHaveBeenCalled();
   });
 });
