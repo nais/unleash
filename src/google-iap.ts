@@ -34,7 +34,7 @@ export const IAP_PUBLIC_KEY_CACHE_TIME: number = parseInt(
 );
 
 /**
- * The time in milliseconds to cache the IAP public keys.
+ * The time in milliseconds to cache the user validation result.
  * @type {number}
  */
 export const TEAMS_USER_VALIDATION_CACHE_TIME: number = parseInt(
