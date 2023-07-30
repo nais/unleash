@@ -152,12 +152,19 @@ describe("Unleash server", () => {
     );
     mockPublicKey(token.publicKey, keyId);
 
-    const response = await request(server.app)
+    const response1 = await request(server.app)
       .get("/api/admin/instance-admin/statistics")
       .set(IAP_JWT_HEADER, token.token);
 
-    expect(response.status).toBe(200);
+    expect(response1.status).toBe(200);
     expect(mockTeamsService.authorize).toHaveBeenCalled();
+
+    const response2 = await request(server.app)
+      .get("/api/admin/instance-admin/statistics")
+      .set(IAP_JWT_HEADER, token.token);
+
+    expect(response2.status).toBe(200);
+    expect(mockTeamsService.authorize).toHaveBeenCalledTimes(1);
   });
 
   it("should return 401 for valid JWT token and unauthorized user", async () => {

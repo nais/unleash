@@ -33,6 +33,14 @@ export const IAP_PUBLIC_KEY_CACHE_TIME: number = parseInt(
   process.env.IAP_PUBLIC_KEY_CACHE_TIME || `${30 * 60 * 1000}` // 30 minutes in milliseconds
 );
 
+/**
+ * The time in milliseconds to cache the IAP public keys.
+ * @type {number}
+ */
+export const TEAMS_USER_VALIDATION_CACHE_TIME: number = parseInt(
+  process.env.TEAMS_USER_VALIDATION_CACHE_TIME || `${30 * 60 * 1000}` // 30 minutes in milliseconds
+);
+
 // This is a wrapper around the cache that adds a fetch function. This is
 // useful when you want to cache the result of an async function.
 async function getCachedValue<T>(
@@ -119,8 +127,13 @@ async function createIapAuthHandler(
         }
 
         // Check if the user is authorized to access the application.
-        const { status: isAuthorized, user: userData } =
-          await teamsServer.authorize(tokenPayload.email);
+        const { status: isAuthorized, user: userData } = await getCachedValue(
+          tokenPayload.email!,
+          () => {
+            return teamsServer.authorize(tokenPayload.email!);
+          },
+          IAP_PUBLIC_KEY_CACHE_TIME
+        );
 
         if (!isAuthorized || !userData) {
           if (userData) {
