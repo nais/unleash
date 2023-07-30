@@ -11,6 +11,10 @@ let server: IUnleash;
 
 jest.setTimeout(10000);
 
+class MockTeamsService {
+  authorize = jest.fn();
+}
+
 function mockPublicKey(publicKey: KeyObject, kid: string) {
   const mockResponse = {
     [kid]: publicKey.export({ type: "spki", format: "pem" }).toString("utf8"),
@@ -31,7 +35,7 @@ beforeAll(async () => {
 
   expect(process.env.GOOGLE_IAP_AUDIENCE).toBeDefined();
 
-  server = await naisleash(false);
+  server = await naisleash(false, new MockTeamsService());
 });
 
 afterEach(() => {

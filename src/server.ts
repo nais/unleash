@@ -13,9 +13,13 @@ import {
   parseEnvVarNumber,
 } from "unleash-server/dist/lib/util";
 import { IAuthType, LogLevel } from "unleash-server";
+import { TeamsService } from "nais-teams";
 
-async function naisleash(start: boolean): Promise<IUnleash> {
-  const iapAuthHandler = await createIapAuthHandler();
+async function naisleash(
+  start: boolean,
+  teamsService: TeamsService
+): Promise<IUnleash> {
+  const iapAuthHandler = await createIapAuthHandler(teamsService);
   const unleashOptions: IUnleashOptions = {
     authentication: {
       type: IAuthType.CUSTOM,
