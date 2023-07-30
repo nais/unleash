@@ -50,12 +50,12 @@ sequenceDiagram
 
 ### Authorization
 
-| environment variable               | description                          | default |
-| ---------------------------------- | ------------------------------------ | ------- |
-| `TEAMS_URL`                        | URL for Teams API                    | `""`    |
-| `TEAMS_TOKEN`                      | Token for Teams API                  | `""`    |
-| `TEAMS_ALLOWED_TEAMS`              | Teams allowed to access Unleash      | `""`    |
-| `TEAMS_USER_VALIDATION_CACHE_TIME` | Cache time for Teams user validation | `3600`  |
+| environment variable               | description                          | default      |
+| ---------------------------------- | ------------------------------------ | ------------ |
+| `TEAMS_URL`                        | URL for Teams API                    | **REQUIRED** |
+| `TEAMS_TOKEN`                      | Token for Teams API                  | **REQUIRED** |
+| `TEAMS_ALLOWED_TEAMS`              | Teams allowed to access Unleash      | **REQUIRED** |
+| `TEAMS_USER_VALIDATION_CACHE_TIME` | Cache time for Teams user validation | `3600`       |
 
 ### Unleash configuration
 
