@@ -93,7 +93,7 @@ export class NaisTeams {
    * @returns A Promise that resolves to an object containing a status and user object.
    */
   authorize = async (
-    email: string
+    email: string,
   ): Promise<{ status: boolean; user: User | null }> => {
     let userByEmail: User | null = null;
 
@@ -114,7 +114,7 @@ export class NaisTeams {
     }
 
     const allowedTeams = teams.filter((team: any) =>
-      this.allowedTeams.includes(team.team.slug)
+      this.allowedTeams.includes(team.team.slug),
     );
 
     if (allowedTeams.length === 0) {

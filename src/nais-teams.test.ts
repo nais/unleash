@@ -91,7 +91,7 @@ describe("NaisTeams", () => {
       } as any);
 
       await expect(naisTeams.lookupUser(email)).rejects.toThrow(
-        mockResponse.errors[0].message
+        mockResponse.errors[0].message,
       );
     });
   });

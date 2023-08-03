@@ -17,7 +17,7 @@ import { TeamsService } from "nais-teams";
 
 async function naisleash(
   start: boolean,
-  teamsService: TeamsService
+  teamsService: TeamsService,
 ): Promise<IUnleash> {
   const iapAuthHandler = await createIapAuthHandler(teamsService);
   const unleashOptions: IUnleashOptions = {
@@ -27,7 +27,7 @@ async function naisleash(
       createAdminUser: false,
       enableApiToken: parseEnvVarBoolean(
         process.env.AUTH_ENABLE_API_TOKEN || "true",
-        true
+        true,
       ),
       initApiTokens: [],
     } as IAuthOption,

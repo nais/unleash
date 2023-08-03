@@ -64,7 +64,7 @@ describe("Unleash server", () => {
 
   it("should return 200 OK for prometheus endpoint", async () => {
     const response = await request(server.app).get(
-      "/internal-backstage/prometheus"
+      "/internal-backstage/prometheus",
     );
     expect(response.status).toBe(200);
     expect(response.text).toMatch(/^# HELP/);
@@ -148,7 +148,7 @@ describe("Unleash server", () => {
       IAP_AUDIENCE,
       IAP_JWT_ISSUER,
       mockUser.email,
-      keyId
+      keyId,
     );
     mockPublicKey(token.publicKey, keyId);
 
@@ -190,7 +190,7 @@ describe("Unleash server", () => {
       IAP_AUDIENCE,
       IAP_JWT_ISSUER,
       mockUser.email,
-      keyId
+      keyId,
     );
     mockPublicKey(token.publicKey, keyId);
 

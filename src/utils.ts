@@ -6,7 +6,7 @@ function newSignedToken(
   audience: string,
   issuer: string,
   email: string,
-  kid: string
+  kid: string,
 ): { token: string; publicKey: crypto.KeyObject } {
   const { privateKey, publicKey } = crypto.generateKeyPairSync("ec", {
     namedCurve: "prime256v1",
@@ -33,7 +33,7 @@ function newSignedToken(
 
 function verifySignedToken(
   token: string,
-  publicKey: crypto.KeyObject
+  publicKey: crypto.KeyObject,
 ): jwt.JwtPayload {
   const options: jwt.VerifyOptions = {
     algorithms: ["ES256"],
