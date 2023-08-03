@@ -1,13 +1,17 @@
 import naisleash from "./server";
 import { NaisTeams } from "./nais-teams";
 
-const TEAMS_URL: string = process.env.TEAMS_URL || "";
-const TEAMS_TOKEN: string = process.env.TEAMS_TOKEN || "";
+const TEAMS_API_URL: string = process.env.TEAMS_API_URL || "";
+const TEAMS_API_TOKEN: string = process.env.TEAMS_API_TOKEN || "";
 const TEAMS_ALLOWED_TEAMS: string[] = (
   process.env.TEAMS_ALLOWED_TEAMS || ""
 ).split(",");
 
-const teamsService = new NaisTeams(TEAMS_URL, TEAMS_TOKEN, TEAMS_ALLOWED_TEAMS);
+const teamsService = new NaisTeams(
+  TEAMS_API_URL,
+  TEAMS_API_TOKEN,
+  TEAMS_ALLOWED_TEAMS,
+);
 
 naisleash(true, teamsService)
   .then((server) => {

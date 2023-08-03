@@ -52,8 +52,8 @@ sequenceDiagram
 
 | environment variable               | description                          | default      |
 | ---------------------------------- | ------------------------------------ | ------------ |
-| `TEAMS_URL`                        | URL for Teams API                    | **REQUIRED** |
-| `TEAMS_TOKEN`                      | Token for Teams API                  | **REQUIRED** |
+| `TEAMS_API_URL`                    | URL for Teams API                    | **REQUIRED** |
+| `TEAMS_API_TOKEN`                  | Token for Teams API                  | **REQUIRED** |
 | `TEAMS_ALLOWED_TEAMS`              | Teams allowed to access Unleash      | **REQUIRED** |
 | `TEAMS_USER_VALIDATION_CACHE_TIME` | Cache time for Teams user validation | `3600`       |
 
