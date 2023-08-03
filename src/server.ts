@@ -39,7 +39,9 @@ async function naisleash(
     versionCheck: {
       enable: false,
     } as IVersionOption,
-    logLevel: LogLevel.debug,
+    logLevel: process.env.LOG_LEVEL
+      ? (LogLevel as any)[process.env.LOG_LEVEL]
+      : LogLevel.warn,
   };
   const config = createConfig(unleashOptions);
   const logger = config.getLogger("nais/server.js");
