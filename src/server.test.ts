@@ -6,10 +6,16 @@ import { newSignedToken } from "./utils";
 import nock from "nock";
 import { KeyObject } from "crypto";
 import { IAP_JWT_HEADER, IAP_JWT_ISSUER, IAP_AUDIENCE } from "./google-iap";
+import { TeamsService, User } from "nais-teams";
 
+let mockTeamsService: TeamsService;
 let server: IUnleash;
 
 jest.setTimeout(10000);
+
+class MockTeamsService {
+  authorize = jest.fn();
+}
 
 function mockPublicKey(publicKey: KeyObject, kid: string) {
   const mockResponse = {
@@ -31,7 +37,8 @@ beforeAll(async () => {
 
   expect(process.env.GOOGLE_IAP_AUDIENCE).toBeDefined();
 
-  server = await naisleash(false);
+  mockTeamsService = new MockTeamsService();
+  server = await naisleash(false, mockTeamsService);
 });
 
 afterEach(() => {
@@ -52,24 +59,28 @@ describe("Unleash server", () => {
     const response = await request(server.app).get("/health");
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ health: "GOOD" });
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 200 OK for prometheus endpoint", async () => {
     const response = await request(server.app).get(
-      "/internal-backstage/prometheus"
+      "/internal-backstage/prometheus",
     );
     expect(response.status).toBe(200);
     expect(response.text).toMatch(/^# HELP/);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 200 OK for index", async () => {
     const response = await request(server.app).get("/");
     expect(response.status).toBe(200);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 401 Unauthorized for api without authentication", async () => {
     const response = await request(server.app).get("/api/");
     expect(response.status).toBe(401);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 401 Unauthorized for api with invalid api token", async () => {
@@ -77,6 +88,7 @@ describe("Unleash server", () => {
       .get("/api/admin/instance-admin/statistics")
       .set("Authorization", "invalid-token");
     expect(response.status).toBe(401);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 200 OK for api with valid api token", async () => {
@@ -99,6 +111,7 @@ describe("Unleash server", () => {
     }
 
     expect(response.status).toBe(200);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
   it("should return 401 for invalid JWT token", async () => {
@@ -107,21 +120,85 @@ describe("Unleash server", () => {
     const response = await request(server.app)
       .get("/api/admin/instance-admin/statistics")
       .set(IAP_JWT_HEADER, token.token);
+
     expect(response.status).toBe(401);
+    expect(mockTeamsService.authorize).not.toHaveBeenCalled();
   });
 
-  it("should return 200 for valid JWT token", async () => {
+  it("should return 200 for valid JWT token and authorized user", async () => {
+    const keyId = "abc123";
+    const mockUser: User = {
+      name: "test",
+      email: "test@example.com",
+      teams: [
+        {
+          role: "admin",
+          team: {
+            slug: "team",
+          },
+        },
+      ],
+    };
+
+    jest.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
+      status: true,
+      user: mockUser,
+    });
     const token = newSignedToken(
       IAP_AUDIENCE,
       IAP_JWT_ISSUER,
-      "test@example.com",
-      "abc123"
+      mockUser.email,
+      keyId,
     );
-    mockPublicKey(token.publicKey, "abc123");
+    mockPublicKey(token.publicKey, keyId);
+
+    const response1 = await request(server.app)
+      .get("/api/admin/instance-admin/statistics")
+      .set(IAP_JWT_HEADER, token.token);
+
+    expect(response1.status).toBe(200);
+    expect(mockTeamsService.authorize).toHaveBeenCalled();
+
+    const response2 = await request(server.app)
+      .get("/api/admin/instance-admin/statistics")
+      .set(IAP_JWT_HEADER, token.token);
+
+    expect(response2.status).toBe(200);
+    expect(mockTeamsService.authorize).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return 401 for valid JWT token and unauthorized user", async () => {
+    const keyId = "abc123";
+    const mockUser: User = {
+      name: "test",
+      email: "test@example.com",
+      teams: [
+        {
+          role: "member",
+          team: {
+            slug: "team",
+          },
+        },
+      ],
+    };
+
+    jest.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
+      status: false,
+      user: mockUser,
+    });
+    const token = newSignedToken(
+      IAP_AUDIENCE,
+      IAP_JWT_ISSUER,
+      mockUser.email,
+      keyId,
+    );
+    mockPublicKey(token.publicKey, keyId);
 
     const response = await request(server.app)
       .get("/api/admin/instance-admin/statistics")
       .set(IAP_JWT_HEADER, token.token);
-    expect(response.status).toBe(200);
+
+    expect(response.status).toBe(401);
+    expect(mockTeamsService.authorize).toHaveBeenCalled();
   });
 });

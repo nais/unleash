@@ -33,20 +33,43 @@ sequenceDiagram
 
 ## Configuration
 
-| Environment variable | Description | Default |
-|----------------------|-------------|---------|
-| `GOOGLE_IAP_JWT_HEADER` | Header name for JWT token from Google IAP | `x-goog-iap-jwt-assertion` |
-| `GOOGLE_IAP_JWT_ISSUER` | Issuer for JWT token from Google IAP | `https://cloud.google.com/iap` |
-| `GOOGLE_IAP_JWT_AUDIENCE` | Audience for JWT token from Google IAP | **REQUIRED** |
-| `IAP_PUBLIC_KEY_CACHE_TIME` | Cache time for JWT token public keys from Google IAP | `3600` |
+### Authentication
 
-### IAP JWT Audience
+| environment variable        | description                                          | default                        |
+| --------------------------- | ---------------------------------------------------- | ------------------------------ |
+| `GOOGLE_IAP_JWT_HEADER`     | Header name for JWT token from Google IAP            | `x-goog-iap-jwt-assertion`     |
+| `GOOGLE_IAP_JWT_ISSUER`     | Issuer for JWT token from Google IAP                 | `https://cloud.google.com/iap` |
+| `GOOGLE_IAP_JWT_AUDIENCE`   | Audience for JWT token from Google IAP               | **REQUIRED**                   |
+| `IAP_PUBLIC_KEY_CACHE_TIME` | Cache time for JWT token public keys from Google IAP | `3600`                         |
 
 `GOOGLE_IAP_JWT_AUDIENCE` should be a string in the following format:
 
 ```text
 /projects/PROJECT_NUMBER/global/backendServices/SERVICE_ID
 ```
+
+### Authorization
+
+| environment variable               | description                          | default      |
+| ---------------------------------- | ------------------------------------ | ------------ |
+| `TEAMS_URL`                        | URL for Teams API                    | **REQUIRED** |
+| `TEAMS_TOKEN`                      | Token for Teams API                  | **REQUIRED** |
+| `TEAMS_ALLOWED_TEAMS`              | Teams allowed to access Unleash      | **REQUIRED** |
+| `TEAMS_USER_VALIDATION_CACHE_TIME` | Cache time for Teams user validation | `3600`       |
+
+### Unleash configuration
+
+| environment variable    | description                           | default      |
+| ----------------------- | ------------------------------------- | ------------ |
+| `INIT_ADMIN_API_TOKENS` | Admin API tokens to create on startup | **REQUIRED** |
+| `AUTH_ENABLE_API_TOKEN` | Enable API token authentication       | `true`       |
+| `SERVER_PORT`           | Port to listen on                     | `4242`       |
+| `DATABASE_USERNAME`     | Username for database connection      | `unleash`    |
+| `DATABASE_PASSWORD`     | Password for database connection      | `unleash`    |
+| `DATABASE_NAME`         | Database name                         | `unleash`    |
+| `DATABASE_HOST`         | Database host                         | `localhost`  |
+| `DATABASE_SSL`          | Use SSL for database connection       | `false`      |
+| `DATABASE_PORT`         | Database port                         | `5432`       |
 
 ## Setup for local development
 
