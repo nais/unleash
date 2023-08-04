@@ -17,9 +17,8 @@ naisleash(true, teamsService)
   .then((server) => {
     const port: number = server.app.get("port");
     const logger = server.config.getLogger("nais/index.js");
-    logger.info(
-      `Unleash server started successfully and listening on port ${port}`,
-    );
+    console.log(`Unleash server successfully started on port '${port}'`);
+    logger.debug("Unleash server config: ", server.config);
   })
   .catch((error: Error) => {
     console.error("Unleash server failed to start: ", error);
