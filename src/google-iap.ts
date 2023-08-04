@@ -84,10 +84,11 @@ async function createIapAuthHandler(
     const { userService }: any = services;
 
     app.use(async (req: any, res: any, next: any) => {
-      logger.info("Request headers: ", req.headers);
+      logger.debug("iapAuthHandler: request headers: ", req.headers);
       const iapJwtHeader: string | undefined = req.get(IAP_JWT_HEADER);
 
       if (!iapJwtHeader) {
+        logger.debug("iapAuthHandler: no IAP JWT header found");
         return next();
       }
 
@@ -104,7 +105,7 @@ async function createIapAuthHandler(
           IAP_PUBLIC_KEY_CACHE_TIME,
         );
       } catch (error) {
-        logger.error("Failed to fetch IAP public keys", error);
+        logger.error("iapAuthHandler: failed to fetch IAP public keys", error);
         return next(new Error("Failed to fetch IAP public keys"));
       }
 
@@ -117,12 +118,15 @@ async function createIapAuthHandler(
             [IAP_AUDIENCE as string],
             [IAP_JWT_ISSUER],
           );
-        logger.info("Login ticket: ", login);
+        logger.debug("iapAuthHandler: login ticket: ", login);
         const tokenPayload = login.getPayload();
 
         // Check if the tokenPayload contains an email.
         if (!tokenPayload || !tokenPayload.email) {
-          logger.info("No email in JWT tokenPayload", tokenPayload);
+          logger.error(
+            "iapAuthHandler: no email in JWT tokenPayload",
+            tokenPayload,
+          );
           throw new Error("No email in JWT tokenPayload");
         }
 
@@ -137,14 +141,21 @@ async function createIapAuthHandler(
 
         if (!isAuthorized || !userData) {
           if (userData) {
-            logger.info("User is not authorized", tokenPayload.email, userData);
+            logger.warn(
+              "iapAuthHandler: user is not authorized",
+              tokenPayload.email,
+              userData,
+            );
           } else {
-            logger.info("User is not authorized", tokenPayload.email);
+            logger.warn(
+              "iapAuthHandler: user is not authorized",
+              tokenPayload.email,
+            );
           }
           throw new Error("User is not authorized");
         }
 
-        // Login the user in Unleash.
+        logger.info("iapAuthHandler: logging in user: ", userData);
         req.user = await userService.loginUserSSO({
           email: userData.email,
           name: userData.name,
@@ -152,14 +163,17 @@ async function createIapAuthHandler(
           autoCreate: true,
         });
       } catch (error) {
-        logger.error("JWT token validation failed with error", error);
+        logger.error(
+          "iapAuthHandler: JWT token validation failed with error",
+          error,
+        );
       }
 
       next();
     });
 
     app.use("/api", (req: any, res: any, next: any) => {
-      logger.info("Request user: ", req.user);
+      logger.debug("apiHandler: request user: ", req.user);
 
       if (req.user) {
         return next();

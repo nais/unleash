@@ -81,17 +81,18 @@ export class NaisTeams {
       }),
     });
 
-    logger.debug("lookupUser response status", response.status);
-    logger.debug("lookupUser response headers", response.headers);
+    logger.debug("lookupUser: response status", response.status);
+    logger.debug("lookupUser: response headers", response.headers);
 
     const json: any = await response.json();
 
     if (json.errors) {
-      logger.debug("lookupUser json errors", json.errors);
+      logger.error("lookupUser: json errors", json.errors);
       throw new Error(json.errors[0].message);
     }
 
-    logger.debug("lookupUser response", json);
+    logger.info("lookupUser: user found");
+    logger.debug("lookupUser: response", json);
 
     return json.data.userByEmail;
   };
@@ -108,30 +109,30 @@ export class NaisTeams {
 
     let userByEmail: User | null = null;
 
-    logger.debug("authorize config", {
+    logger.debug("authorize: config", {
       teamsUrl: this.teamsUrl,
       allowedTeams: this.allowedTeams,
     });
 
-    logger.debug("authorize user", email);
+    logger.info("authorize: user", email);
 
     try {
       userByEmail = await this.lookupUser(email);
     } catch (error) {
-      logger.debug("authorize error looking up user", error);
+      logger.warn("authorize: error looking up user", error);
       return { status: false, user: userByEmail };
     }
 
     if (!userByEmail) {
-      logger.debug("authorize user not found", email);
+      logger.warn("authorize: user not found", email);
       return { status: false, user: userByEmail };
     }
 
-    logger.debug("authorize user found", userByEmail);
+    logger.info("authorize: user found", userByEmail);
     const { teams } = userByEmail;
 
     if (!teams) {
-      logger.debug("authorize user has no teams", userByEmail);
+      logger.warn("authorize: user has no teams", userByEmail);
       return { status: false, user: userByEmail };
     }
 
@@ -139,13 +140,14 @@ export class NaisTeams {
       this.allowedTeams.includes(team.team.slug),
     );
 
-    logger.debug("authorize allowed user teams", allowedTeams);
+    logger.debug("authorize: allowed user teams", allowedTeams);
 
     if (allowedTeams.length === 0) {
-      logger.debug("authorize user has no allowed teams", userByEmail);
+      logger.warn("authorize: user has no allowed teams", userByEmail);
       return { status: false, user: userByEmail };
     }
 
+    logger.info("authorize: user authorized", userByEmail);
     return { status: true, user: userByEmail };
   };
 }
