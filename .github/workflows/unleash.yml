@@ -8,6 +8,11 @@ on:
   push:
     branches:
       - unleash-v5
+    paths:
+      - 'Dockerfile'
+      - 'package.json'
+      - 'yarn.lock'
+      - 'src/**'
   pull_request:
     branches:
       - unleash-v5
