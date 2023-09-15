@@ -1,5 +1,5 @@
 # Build Stage
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 RUN mkdir -p /unleash && \
     chown -R node:node /unleash && \
@@ -22,7 +22,7 @@ RUN yarn cache clean
 RUN yarn install --production --frozen-lockfile
 
 # Production Stage
-FROM gcr.io/distroless/nodejs:18
+FROM gcr.io/distroless/nodejs:20
 
 LABEL org.opencontainers.image.source=https://github.com/nais/unleash
 LABEL org.opencontainers.image.description="Unleash for NAIS"

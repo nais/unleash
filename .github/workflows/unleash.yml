@@ -1,4 +1,4 @@
-name: Unleash v4
+name: Unleash
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -7,10 +7,10 @@ concurrency:
 on:
   push:
     branches:
-      - unleash-v4
+      - unleash-v5
   pull_request:
     branches:
-      - unleash-v4
+      - unleash-v5
 
 env:
   DATABASE_USERNAME: unleash
@@ -81,7 +81,7 @@ jobs:
       - uses: nais/platform-build-push-sign@main
         id: push
         with:
-          name: unleash-v4
+          name: ${{ github.ref }}
           extra_tags: |
             v${{ steps.version.outputs.unleash }}
             v${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}
