@@ -81,7 +81,7 @@ jobs:
       - uses: nais/platform-build-push-sign@main
         id: push
         with:
-          name: ${{ github.ref }}
+          name: unleash-v4
           extra_tags: |
             v${{ steps.version.outputs.unleash }}
             v${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}

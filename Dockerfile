@@ -22,7 +22,7 @@ RUN yarn cache clean
 RUN yarn install --production --frozen-lockfile
 
 # Production Stage
-FROM gcr.io/distroless/nodejs:20
+FROM gcr.io/distroless/nodejs20-debian11
 
 LABEL org.opencontainers.image.source=https://github.com/nais/unleash
 LABEL org.opencontainers.image.description="Unleash for NAIS"
