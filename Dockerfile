@@ -1,5 +1,5 @@
 # Build Stage
-FROM node:20-alpine AS builder
+FROM node:21-alpine AS builder
 
 RUN mkdir -p /unleash && \
     chown -R node:node /unleash && \
