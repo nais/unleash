@@ -3,13 +3,29 @@ updates:
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Oslo"
   - package-ecosystem: "github-actions"
-    directory: "/" # must be root (ref. docs)
-    schedule:
-      interval: "monthly"
-  - package-ecosystem: "npm" # poetry / pyproject
     directory: "/"
     schedule:
-      interval: "monthly"
-  
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Oslo"
+    groups:
+      actions:
+        patterns:
+          - "*"
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Oslo"
+    groups:
+      npm:
+        patterns:
+          - "*"
