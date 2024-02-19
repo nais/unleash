@@ -2,7 +2,7 @@
 
 ![Workflow status](https://github.com/navikt/unleash/workflows/build/badge.svg?branch=unleash-v4)
 
-Simple [Unleash v4 server][unleash] with [Google IAP authentication][google-iap]. Built to work well with [Unleasherator][unleasherator] our Kubernetes operator for managing Unleash instances.
+Simple [Unleash v5 server][unleash] with [Google IAP authentication][google-iap]. Built to work well with [Unleasherator][unleasherator] our Kubernetes operator for managing Unleash instances.
 
 [unleash]: https://github.com/Unleash/unleash
 [unleasherator]: https://github.com/nais/unleasherator
