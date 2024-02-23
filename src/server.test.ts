@@ -1,12 +1,12 @@
-import { IUnleash } from "unleash-server";
-import naisleash from "./server";
-import Cache from "./cache";
-import request from "supertest";
-import { newSignedToken } from "./utils";
-import nock from "nock";
 import { KeyObject } from "crypto";
-import { IAP_JWT_HEADER, IAP_JWT_ISSUER, IAP_AUDIENCE } from "./google-iap";
 import { TeamsService, User } from "nais-teams";
+import nock from "nock";
+import request from "supertest";
+import { IUnleash } from "unleash-server";
+import Cache from "./cache";
+import { IAP_AUDIENCE, IAP_JWT_HEADER, IAP_JWT_ISSUER } from "./google-iap";
+import naisleash from "./server";
+import { newSignedToken } from "./utils";
 
 let mockTeamsService: TeamsService;
 let server: IUnleash;
@@ -130,14 +130,19 @@ describe("Unleash server", () => {
     const mockUser: User = {
       name: "test",
       email: "test@example.com",
-      teams: [
-        {
-          role: "admin",
-          team: {
-            slug: "team",
+      teams: {
+        nodes: [
+          {
+            role: "admin",
+            team: {
+              slug: "team",
+            },
           },
+        ],
+        pageInfo: {
+          hasNextPage: false,
         },
-      ],
+      },
     };
 
     jest.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
@@ -172,14 +177,19 @@ describe("Unleash server", () => {
     const mockUser: User = {
       name: "test",
       email: "test@example.com",
-      teams: [
-        {
-          role: "member",
-          team: {
-            slug: "team",
+      teams: {
+        nodes: [
+          {
+            role: "member",
+            team: {
+              slug: "team",
+            },
           },
+        ],
+        pageInfo: {
+          hasNextPage: false,
         },
-      ],
+      },
     };
 
     jest.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({

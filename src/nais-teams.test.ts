@@ -12,18 +12,23 @@ describe("NaisTeams", () => {
       const expectedUser: User = {
         name: "John Doe",
         email: "user@example.com",
-        teams: [
-          {
-            role: "admin",
-            team: {
-              slug: "team-a",
+        teams: {
+          nodes: [
+            {
+              role: "admin",
+              team: {
+                slug: "team-a",
+              },
             },
+          ],
+          pageInfo: {
+            hasNextPage: false,
           },
-        ],
+        },
       };
       const mockResponse = {
         data: {
-          userByEmail: expectedUser,
+          user: expectedUser,
         },
       };
       jest.spyOn(global, "fetch").mockResolvedValueOnce({
@@ -52,7 +57,7 @@ describe("NaisTeams", () => {
       const email = "non-existent-user@example.com";
       const mockResponse = {
         data: {
-          userByEmail: null,
+          user: null,
         },
       };
       jest.spyOn(global, "fetch").mockResolvedValueOnce({
@@ -91,7 +96,7 @@ describe("NaisTeams", () => {
       } as any);
 
       await expect(naisTeams.lookupUser(email)).rejects.toThrow(
-        mockResponse.errors[0].message,
+        mockResponse.errors[0].message
       );
     });
   });
@@ -99,21 +104,24 @@ describe("NaisTeams", () => {
   describe("authorize", () => {
     it("should return status true and user object when user is authorized", async () => {
       const email = "user@example.com";
-      const expectedUser = {
+      const expectedUser: User = {
         name: "John Doe",
         email: "user@example.com",
-        teams: [
-          {
-            role: "admin",
-            team: {
-              slug: "team-a",
+        teams: {
+          nodes: [
+            {
+              role: "admin",
+              team: {
+                slug: "team-a",
+              },
             },
-          },
-        ],
+          ],
+          pageInfo: { hasNextPage: false },
+        },
       };
       const mockResponse = {
         data: {
-          userByEmail: expectedUser,
+          user: expectedUser,
         },
       };
       jest.spyOn(global, "fetch").mockResolvedValueOnce({
@@ -142,7 +150,7 @@ describe("NaisTeams", () => {
       const email = "non-existent-user@example.com";
       const mockResponse = {
         data: {
-          userByEmail: null,
+          user: null,
         },
       };
       jest.spyOn(global, "fetch").mockResolvedValueOnce({
@@ -169,21 +177,24 @@ describe("NaisTeams", () => {
 
     it("should return status false and null user when user is not in allowed teams", async () => {
       const email = "user@example.com";
-      const user = {
+      const user: User = {
         name: "John Doe",
         email: "user@example.com",
-        teams: [
-          {
-            role: "admin",
-            team: {
-              slug: "team-c",
+        teams: {
+          nodes: [
+            {
+              role: "admin",
+              team: {
+                slug: "team-c",
+              },
             },
-          },
-        ],
+          ],
+          pageInfo: { hasNextPage: false },
+        },
       };
       const mockResponse = {
         data: {
-          userByEmail: user,
+          user: user,
         },
       };
       jest.spyOn(global, "fetch").mockResolvedValueOnce({
