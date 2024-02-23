@@ -103,7 +103,7 @@ export class NaisTeams {
 
     if (json.data.pageInfo.hasNextPage) {
       logger.error(
-        "lookupUser: user has more than 100 teams, pagination not implemented"
+        "lookupUser: user has more than 100 teams, pagination not implemented",
       );
     }
 
@@ -119,7 +119,7 @@ export class NaisTeams {
    * @returns A Promise that resolves to an object containing a status and user object.
    */
   authorize = async (
-    email: string
+    email: string,
   ): Promise<{ status: boolean; user: User | null }> => {
     const logger = getLogger("nais/nais-teams.ts");
 
@@ -155,7 +155,7 @@ export class NaisTeams {
     }
 
     const allowedTeams = teams.filter((team: any) =>
-      this.allowedTeams.includes(team.team.slug)
+      this.allowedTeams.includes(team.team.slug),
     );
 
     logger.debug("authorize: allowed user teams", allowedTeams);
