@@ -7,21 +7,31 @@ export type User = {
   name: string;
   email: string;
   teams: {
-    role: string;
-    team: {
-      slug: string;
-    };
-  }[];
+    nodes: {
+      role: string;
+      team: {
+        slug: string;
+      };
+    }[];
+  };
+  pageInfo: {
+    hasNextPage: boolean;
+  };
 };
 
 export const lookupUserQuery = `query LookupUser($email: String!) {
-  userByEmail(email:$email) {
-    name,
-    email,
-    teams {
-      role,
-      team {
-        slug,
+  user(email: $email) {
+    name
+    email
+    teams(limit: 100) {
+      nodes {
+        role
+        team {
+          slug
+        }
+      }
+      pageInfo {
+        hasNextPage
       }
     }
   }
@@ -91,6 +101,12 @@ export class NaisTeams {
       throw new Error(json.errors[0].message);
     }
 
+    if (json.data.pageInfo.hasNextPage) {
+      logger.error(
+        "lookupUser: user has more than 100 teams, pagination not implemented"
+      );
+    }
+
     logger.info("lookupUser: user found");
     logger.debug("lookupUser: response", json);
 
@@ -103,7 +119,7 @@ export class NaisTeams {
    * @returns A Promise that resolves to an object containing a status and user object.
    */
   authorize = async (
-    email: string,
+    email: string
   ): Promise<{ status: boolean; user: User | null }> => {
     const logger = getLogger("nais/nais-teams.ts");
 
@@ -129,7 +145,9 @@ export class NaisTeams {
     }
 
     logger.info("authorize: user found", userByEmail);
-    const { teams } = userByEmail;
+    const {
+      teams: { nodes: teams },
+    } = userByEmail;
 
     if (!teams) {
       logger.warn("authorize: user has no teams", userByEmail);
@@ -137,7 +155,7 @@ export class NaisTeams {
     }
 
     const allowedTeams = teams.filter((team: any) =>
-      this.allowedTeams.includes(team.team.slug),
+      this.allowedTeams.includes(team.team.slug)
     );
 
     logger.debug("authorize: allowed user teams", allowedTeams);
