@@ -64,6 +64,7 @@
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
   "exclude": [
+    "eslint.config.mjs",
     "node_modules",
     "dist",
     "jest.config.ts",
