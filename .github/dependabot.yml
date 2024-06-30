@@ -29,3 +29,6 @@ updates:
       npm:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "unleash-server"
+        versions: ["^5.0.0"]
