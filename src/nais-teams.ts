@@ -23,7 +23,7 @@ export const lookupUserQuery = `query LookupUser($email: String!) {
   user(email: $email) {
     name
     email
-    teams(limit: 100) {
+    teams(first: 100) {
       nodes {
         role
         team {
