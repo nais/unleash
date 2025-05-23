@@ -3,6 +3,7 @@ import { NaisTeams } from "./nais-teams";
 
 const TEAMS_API_URL: string = process.env.TEAMS_API_URL || "";
 const TEAMS_API_TOKEN: string = process.env.TEAMS_API_TOKEN || "";
+const OAUTH_JWT_AUTH: boolean = (process.env.OAUTH_JWT_AUTH ?? "false") == "true";
 const TEAMS_ALLOWED_TEAMS: string[] = (
   process.env.TEAMS_ALLOWED_TEAMS || ""
 ).split(",");
@@ -13,7 +14,7 @@ const teamsService = new NaisTeams(
   TEAMS_ALLOWED_TEAMS,
 );
 
-naisleash(true, teamsService)
+naisleash(true, teamsService, OAUTH_JWT_AUTH)
   .then((server) => {
     const port: number = server.app.get("port");
     const logger = server.config.getLogger("nais/index.js");
