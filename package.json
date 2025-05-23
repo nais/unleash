@@ -23,6 +23,7 @@
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/auto-instrumentations-node": "^0.48.0",
     "google-auth-library": "^9.11.0",
+    "jose": "5.10.0",
     "jsonwebtoken": "^9.0.2",
     "log4js": "^6.9.1",
     "unleash-server": "5.12.8"

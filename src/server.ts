@@ -7,6 +7,7 @@ import {
   IUnleashOptions,
 } from "unleash-server/dist/lib/types/option";
 import createIapAuthHandler from "./google-iap";
+import createJWTAuthHandler from "./oauth-fa";
 import { createConfig } from "unleash-server/dist/lib/create-config";
 import {
   parseEnvVarBoolean,
@@ -18,8 +19,16 @@ import { TeamsService } from "nais-teams";
 async function naisleash(
   start: boolean,
   teamsService: TeamsService,
+  useJWTAuth: boolean = false,
 ): Promise<IUnleash> {
-  const iapAuthHandler = await createIapAuthHandler(teamsService);
+	let createFunc : ((teamsServer: TeamsService) => Promise<(app: any, config: any, services: any) => void>) | undefined = undefined;
+	if(useJWTAuth) {
+		createFunc = createJWTAuthHandler
+	} else {
+		createFunc = createIapAuthHandler
+	}
+	
+  const iapAuthHandler = await createFunc(teamsService);
   const unleashOptions: IUnleashOptions = {
     authentication: {
       type: IAuthType.CUSTOM,

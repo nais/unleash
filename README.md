@@ -33,7 +33,7 @@ sequenceDiagram
 
 ## Configuration
 
-### Authentication
+### Google IAP Authentication
 
 | environment variable        | description                                          | default                        |
 | --------------------------- | ---------------------------------------------------- | ------------------------------ |
@@ -47,6 +47,16 @@ sequenceDiagram
 ```text
 /projects/PROJECT_NUMBER/global/backendServices/SERVICE_ID
 ```
+
+### OAUTH JWT Authentication
+
+| environment variable | description                         | default                              |
+| -------------------- | ----------------------------------- | ------------------------------------ |
+| `OAUTH_JWT_AUTH`     | Enable generic Oauth JWT validation | `false`                              |
+| `OAUTH_JWT_HEADER`   | Header name for JWT token           | `X-Wonderwall-Forward-Auth-Token`    |
+| `OAUTH_JWT_ISSUER`   | Issuer for JWT token                | `https://auth.nais.io`               |
+| `OAUTH_JWT_AUDIENCE` | Audience for JWT token              | **REQUIRED**                         |
+| `OAUTH_JWT_KEYSET`   | Keyset URL to fetch keyset from     | `https://auth.nais.io/oauth/v2/keys` |
 
 ### Authorization
 
