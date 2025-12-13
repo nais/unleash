@@ -11,13 +11,13 @@
   },
   "dependencies": {
     "google-auth-library": "^9.11.0",
-    "jose": "5.10.0",
+    "jose": "6.1.3",
     "jsonwebtoken": "^9.0.2",
     "log4js": "^6.9.1"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "20.14.10",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "25.0.1",
     "unleash-server": "5.12.8"
   }
 }
