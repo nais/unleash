@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest --coverage --no-cache --silent",
-    "test:verbose": "jest --coverage --no-cache",
+    "test": "jest --coverage --no-cache --silent --forceExit",
+    "test:verbose": "jest --coverage --no-cache --forceExit",
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
