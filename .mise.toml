@@ -1,5 +1,5 @@
 [tools]
-nodejs = "24"
+nodejs = "25"
 go = "1.25"
 pnpm = "latest"
 "go:github.com/sethvargo/ratchet" = "latest"
