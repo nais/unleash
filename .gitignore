@@ -10,4 +10,3 @@ coverage/
 packages/*/dist
 packages/*/node_modules
 packages/*/coverage
-pnpm-lock.yaml
