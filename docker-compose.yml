@@ -1,13 +1,15 @@
-version: "3"
 services:
   unleash:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:4242"
     networks:
       - unleash
     depends_on:
-      - "postgres"
+      postgres:
+        condition: service_healthy
     environment:
       - DATABASE_USERNAME=unleash
       - DATABASE_PASSWORD=unleash
@@ -17,6 +19,7 @@ services:
       - INIT_ADMIN_API_TOKENS=*:*.unleash4all
       - GOOGLE_IAP_AUDIENCE=32555940559.apps.googleusercontent.com
       - GOOGLE_IAP_ISSUER=https://accounts.google.com
+
   postgres:
     image: "postgres:14"
     environment:
@@ -27,6 +30,11 @@ services:
       - "5432:5432"
     networks:
       - unleash
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U unleash"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     #volumes:
     #  - ./.data:/var/lib/postgresql/data
 

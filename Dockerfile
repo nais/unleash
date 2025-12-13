@@ -1,36 +1,53 @@
 # Build Stage
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
-RUN mkdir -p /unleash && \
-    chown -R node:node /unleash && \
-    yarn config set loglevel "error"
+# Version argument - defaults to v5, can be overridden for v6, v7, etc.
+ARG UNLEASH_VERSION=v5
 
-WORKDIR /unleash
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-ADD package.json .
-ADD yarn.lock .
+WORKDIR /workspace
 
-RUN yarn install --frozen-lockfile
+# Copy workspace and npm configuration first (better caching)
+COPY pnpm-workspace.yaml .npmrc package.json pnpm-lock.yaml ./
 
-ADD . .
+# Copy package manifests for dependency installation (cached layer)
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/unleash-${UNLEASH_VERSION}/package.json ./packages/unleash-${UNLEASH_VERSION}/
 
-RUN yarn build
+# Install dependencies (this layer is cached unless dependencies change)
+RUN pnpm install --frozen-lockfile
 
-RUN rm -rf node_modules
-RUN yarn cache clean
+# Copy TypeScript config (needed for builds)
+COPY tsconfig.json ./
 
-RUN yarn install --production --frozen-lockfile
+# Copy source code (changes frequently, so done after dependency install)
+COPY packages/shared ./packages/shared
+COPY packages/unleash-${UNLEASH_VERSION} ./packages/unleash-${UNLEASH_VERSION}
+
+# Build both packages (shared first as it's a dependency)
+RUN pnpm --filter @nais/unleash-shared build && \
+    pnpm --filter unleash-${UNLEASH_VERSION} build
+
+# Deploy target version with production dependencies only
+# Using --legacy for pnpm v10+ compatibility
+RUN pnpm deploy --filter=unleash-${UNLEASH_VERSION} --prod --legacy /prod/unleash
 
 # Production Stage
-FROM gcr.io/distroless/nodejs20-debian11
+FROM gcr.io/distroless/nodejs24-debian12:nonroot
+
+# Re-declare ARG for this stage
+ARG UNLEASH_VERSION=v5
 
 LABEL org.opencontainers.image.source=https://github.com/nais/unleash
-LABEL org.opencontainers.image.description="Unleash for NAIS"
+LABEL org.opencontainers.image.description="NAIS Unleash ${UNLEASH_VERSION} server with custom authentication"
 LABEL org.opencontainers.image.licenses=MIT
+LABEL org.opencontainers.image.version=${UNLEASH_VERSION}
 
 WORKDIR /app
 
-COPY --from=builder /unleash/dist ./dist
-COPY --from=builder /unleash/node_modules ./node_modules
+# Copy the deployed production build from builder
+COPY --from=builder /prod/unleash ./
 
 CMD ["dist/index.js"]

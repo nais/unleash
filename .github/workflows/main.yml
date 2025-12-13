@@ -1,0 +1,164 @@
+name: Main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Dockerfile'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'packages/**'
+  pull_request:
+    branches:
+      - main
+
+env:
+  DATABASE_USERNAME: unleash
+  DATABASE_PASSWORD: unleash
+  DATABASE_NAME: unleash
+  DATABASE_HOST: localhost
+  DATABASE_SSL: false
+  INIT_ADMIN_API_TOKENS: "*:*.unleash4all"
+  GOOGLE_IAP_AUDIENCE: "/projects/123/global/backendServices/123"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: ${{ env.DATABASE_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          POSTGRES_DB: ${{ env.DATABASE_NAME }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        name: Setup Node.js
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint all packages
+        run: pnpm -r lint
+
+      - name: Build all packages
+        run: pnpm -r build
+
+      - name: Test all packages
+        run: pnpm -r test
+
+  # build-push-sign can not be used for pull requests, as it requires a secret
+  docker-build-pr:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+
+  # Detect which versions exist
+  detect-versions:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push'
+    outputs:
+      versions: ${{ steps.detect.outputs.versions }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect available Unleash versions
+        id: detect
+        run: |
+          versions=$(ls -d packages/unleash-v* 2>/dev/null | sed 's|packages/unleash-||' | jq -R -s -c 'split("\n")[:-1]')
+          echo "versions=${versions}" >> "$GITHUB_OUTPUT"
+          echo "Detected versions: ${versions}"
+
+  build-push-sign:
+    runs-on: ubuntu-latest
+    needs: detect-versions
+    if: github.event_name == 'push'
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.detect-versions.outputs.versions) }}
+    outputs:
+      tag: ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: |
+          unleash=$(jq -r '.dependencies["unleash-server"]' packages/unleash-${{ matrix.version }}/package.json)
+          echo "unleash=${unleash}" >> "$GITHUB_OUTPUT"
+          echo "date=$(date '+%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
+          echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - uses: nais/platform-build-push-sign@main
+        id: push
+        with:
+          name: nais-unleash
+          context: .
+          dockerfile: Dockerfile
+          build_args: |
+            UNLEASH_VERSION=${{ matrix.version }}
+          extra_tags: |
+            ${{ matrix.version }}-${{ steps.version.outputs.unleash }}
+            ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}
+          google_service_account: gh-unleash
+          push: true
+          workload_identity_provider: ${{ secrets.NAIS_IO_WORKLOAD_IDENTITY_PROVIDER }}
+
+  git-tag:
+    runs-on: ubuntu-latest
+    needs: [detect-versions, build-push-sign]
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.detect-versions.outputs.versions) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version for tag
+        id: version
+        run: |
+          unleash=$(jq -r '.dependencies["unleash-server"]' packages/unleash-${{ matrix.version }}/package.json)
+          echo "unleash=${unleash}" >> "$GITHUB_OUTPUT"
+          echo "date=$(date '+%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
+          echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: git tag and push
+        run: |
+          tag="${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}"
+          git tag "${tag}"
+          git push origin "${tag}"

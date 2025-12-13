@@ -1,7 +1,28 @@
+# Ignore everything by default
 *
+
+# Include necessary files for monorepo build
+!pnpm-workspace.yaml
+!pnpm-lock.yaml
+!.npmrc
+!package.json
+!tsconfig.json
 !LICENSE.md
 !README.md
-!package.json
-!src/*
-!yarn.lock
-!tsconfig.json
+!Dockerfile
+
+# Include all package source code
+!packages/
+
+# Exclude build artifacts and dependencies
+packages/*/node_modules
+packages/*/dist
+packages/*/coverage
+packages/*/.turbo
+
+# Exclude test files to reduce context size
+packages/**/*.test.ts
+packages/**/*.test.js
+
+# Exclude documentation
+packages/**/README.md

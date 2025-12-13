@@ -5,3 +5,9 @@ dist
 .data/
 /.direnv/
 coverage/
+
+# Workspace specific
+packages/*/dist
+packages/*/node_modules
+packages/*/coverage
+pnpm-lock.yaml

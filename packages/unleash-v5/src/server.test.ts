@@ -1,19 +1,17 @@
 import { KeyObject } from "crypto";
-import { TeamsService, User } from "nais-teams";
+import { TeamsService, cache, IAP_AUDIENCE, IAP_JWT_HEADER, IAP_JWT_ISSUER, newSignedToken } from "@nais/unleash-shared";
+import type { User } from "@nais/unleash-shared";
 import nock from "nock";
 import request from "supertest";
 import { IUnleash } from "unleash-server";
-import Cache from "./cache";
-import { IAP_AUDIENCE, IAP_JWT_HEADER, IAP_JWT_ISSUER } from "./google-iap";
 import naisleash from "./server";
-import { newSignedToken } from "./utils";
 
 let mockTeamsService: TeamsService;
 let server: IUnleash;
 
 jest.setTimeout(10000);
 
-class MockTeamsService {
+class MockTeamsService implements TeamsService {
   authorize = jest.fn();
 }
 
@@ -43,11 +41,13 @@ beforeAll(async () => {
 
 afterEach(() => {
   nock.cleanAll(); // clean up nock mocks
-  Cache.clear(); // clean up cache
+  cache.clear(); // clean up cache
 });
 
 afterAll(async () => {
-  await server.stop();
+  if (server) {
+    await server.stop();
+  }
 });
 
 describe("Unleash server", () => {

@@ -1,5 +1,5 @@
 import naisleash from "./server";
-import { NaisTeams } from "./nais-teams";
+import { NaisTeamsService } from "@nais/unleash-shared";
 
 const TEAMS_API_URL: string = process.env.TEAMS_API_URL || "";
 const TEAMS_API_TOKEN: string = process.env.TEAMS_API_TOKEN || "";
@@ -8,7 +8,7 @@ const TEAMS_ALLOWED_TEAMS: string[] = (
   process.env.TEAMS_ALLOWED_TEAMS || ""
 ).split(",");
 
-const teamsService = new NaisTeams(
+const teamsService = new NaisTeamsService(
   TEAMS_API_URL,
   TEAMS_API_TOKEN,
   TEAMS_ALLOWED_TEAMS,

@@ -1,0 +1,160 @@
+[tools]
+nodejs = "24"
+pnpm = "latest"
+
+[env]
+DATABASE_USERNAME = "unleash"
+DATABASE_PASSWORD = "unleash"
+DATABASE_NAME = "unleash"
+DATABASE_HOST = "localhost"
+DATABASE_SSL = "false"
+INIT_ADMIN_API_TOKENS = "*:*.unleash4all"
+GOOGLE_IAP_AUDIENCE = "/projects/123/global/backendServices/123"
+
+[tasks.install]
+description = "Install all dependencies"
+run = "pnpm install"
+
+[tasks.build]
+description = "Build all packages"
+run = "pnpm -r build"
+depends = ["install"]
+
+[tasks.lint]
+description = "Lint all packages"
+run = "pnpm -r lint"
+
+# Database tasks
+[tasks."db:start"]
+description = "Start PostgreSQL database in Docker"
+run = "docker compose up -d postgres"
+
+[tasks."db:stop"]
+description = "Stop PostgreSQL database"
+run = "docker compose down"
+
+[tasks."db:wait"]
+description = "Wait for database to be ready"
+run = """
+echo "Waiting for PostgreSQL to be ready..."
+for i in {1..30}; do
+  if docker compose exec -T postgres pg_isready -U unleash > /dev/null 2>&1; then
+    echo "Database is ready!"
+    exit 0
+  fi
+  echo "Waiting... ($i/30)"
+  sleep 1
+done
+echo "Database failed to start"
+exit 1
+"""
+depends = ["db:start"]
+
+# Test tasks
+[tasks."test:shared"]
+description = "Test shared package (no database required)"
+run = "pnpm --filter @nais/unleash-shared test"
+depends = ["build"]
+
+[tasks."test:v5"]
+description = "Test unleash-v5 package (requires database)"
+run = "pnpm --filter unleash-v5 test"
+depends = ["build", "db:wait"]
+
+[tasks."test:all"]
+description = "Test all packages with database"
+run = "pnpm -r test"
+depends = ["build", "db:wait"]
+
+[tasks.test]
+description = "Quick test - shared only (no DB)"
+alias = "test:shared"
+
+# Development tasks
+[tasks.dev]
+description = "Start development environment with database"
+run = """
+echo "Starting PostgreSQL..."
+mise run db:start
+mise run db:wait
+echo ""
+echo "Database ready! You can now run:"
+echo "  cd packages/unleash-v5 && pnpm start"
+echo ""
+echo "To run tests: mise run test:all"
+echo "To stop database: mise run db:stop"
+"""
+
+[tasks.clean]
+description = "Clean all build artifacts and stop database"
+run = """
+pnpm -r exec rm -rf dist coverage
+rm -rf node_modules packages/*/node_modules
+docker compose down -v
+"""
+
+# Package-specific tasks
+[tasks."build:shared"]
+description = "Build shared package only"
+run = "pnpm --filter @nais/unleash-shared build"
+depends = ["install"]
+
+[tasks."build:v5"]
+description = "Build unleash-v5 package only"
+run = "pnpm --filter unleash-v5 build"
+depends = ["build:shared"]
+
+[tasks."build:v6"]
+description = "Build unleash-v6 package only (when available)"
+run = "pnpm --filter unleash-v6 build 2>/dev/null || echo 'v6 not yet available'"
+depends = ["build:shared"]
+
+[tasks."build:v7"]
+description = "Build unleash-v7 package only (when available)"
+run = "pnpm --filter unleash-v7 build 2>/dev/null || echo 'v7 not yet available'"
+depends = ["build:shared"]
+
+[tasks."start:v5"]
+description = "Start unleash-v5 server (requires database)"
+run = "cd packages/unleash-v5 && pnpm start"
+depends = ["build:v5", "db:wait"]
+
+[tasks."start:v6"]
+description = "Start unleash-v6 server (requires database, when available)"
+run = "cd packages/unleash-v6 && pnpm start 2>/dev/null || echo 'v6 not yet available'"
+depends = ["build:v6", "db:wait"]
+
+[tasks."start:v7"]
+description = "Start unleash-v7 server (requires database, when available)"
+run = "cd packages/unleash-v7 && pnpm start 2>/dev/null || echo 'v7 not yet available'"
+depends = ["build:v7", "db:wait"]
+
+# Docker tasks
+[tasks."docker:build"]
+description = "Build Docker image for v5"
+run = "docker build -t nais-unleash:v5-local ."
+
+[tasks."docker:build:v5"]
+description = "Build Docker image for v5"
+run = "docker build --build-arg UNLEASH_VERSION=v5 -t nais-unleash:v5-local ."
+
+[tasks."docker:build:v6"]
+description = "Build Docker image for v6"
+run = "docker build --build-arg UNLEASH_VERSION=v6 -t nais-unleash:v6-local ."
+
+[tasks."docker:build:v7"]
+description = "Build Docker image for v7"
+run = "docker build --build-arg UNLEASH_VERSION=v7 -t nais-unleash:v7-local ."
+
+[tasks."docker:build:all"]
+description = "Build Docker images for all versions"
+run = """
+for version in $(ls -d packages/unleash-v* 2>/dev/null | sed 's|packages/unleash-||'); do
+  echo "Building Docker image for ${version}..."
+  docker build --build-arg UNLEASH_VERSION=${version} -t nais-unleash:${version}-local .
+done
+"""
+
+[tasks."docker:run"]
+description = "Run full stack with docker-compose"
+run = "docker compose up --build"

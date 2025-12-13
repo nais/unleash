@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { Logger } from "log4js";
-import { TeamsService } from "nais-teams";
+import { TeamsService } from "./nais-teams";
 import { RoleName } from "unleash-server/dist/lib/types/model";
 import cache from "./cache";
 

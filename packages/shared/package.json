@@ -1,0 +1,23 @@
+{
+  "name": "@nais/unleash-shared",
+  "version": "1.0.0",
+  "description": "Shared authentication and authorization modules for NAIS Unleash",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --coverage --no-cache",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "google-auth-library": "^9.11.0",
+    "jose": "5.10.0",
+    "jsonwebtoken": "^9.0.2",
+    "log4js": "^6.9.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "20.14.10",
+    "unleash-server": "5.12.8"
+  }
+}

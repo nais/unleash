@@ -1,32 +1,29 @@
 {
   "name": "nais-unleash",
   "version": "4.0.0",
-  "description": "",
-  "main": "src/index.js",
+  "description": "NAIS customized Unleash feature flag server - monorepo",
+  "private": true,
   "scripts": {
-    "all": "yarn lint && yarn test && yarn build",
-    "start": "node ./dist/index.js",
-    "build-and-start": "tsc && node ./dist/index.js",
-    "build": "tsc",
-    "test": "jest --coverage --no-cache --silent src/*.test.ts",
-    "test:debug": "jest --runInBand --coverage --no-cache --detectOpenHandles src/*.test.ts",
-    "eslint": "eslint",
-    "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix"
+    "build:all": "pnpm -r build",
+    "build:shared": "pnpm --filter @nais/unleash-shared build",
+    "build:v5": "pnpm --filter unleash-v5 build",
+    "build:v6": "pnpm --filter unleash-v6 build",
+    "build:v7": "pnpm --filter unleash-v7 build",
+    "test:all": "pnpm -r test",
+    "test:shared": "pnpm --filter @nais/unleash-shared test",
+    "test:v5": "pnpm --filter unleash-v5 test",
+    "test:v6": "pnpm --filter unleash-v6 test",
+    "test:v7": "pnpm --filter unleash-v7 test",
+    "lint:all": "pnpm -r lint",
+    "lint:shared": "pnpm --filter @nais/unleash-shared lint",
+    "lint:v5": "pnpm --filter unleash-v5 lint",
+    "lint:v6": "pnpm --filter unleash-v6 lint",
+    "lint:v7": "pnpm --filter unleash-v7 lint"
   },
   "author": "NAIS <aura@nav.no>",
   "license": "MIT",
   "engines": {
-    "node": "^20.0.0"
-  },
-  "dependencies": {
-    "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.48.0",
-    "google-auth-library": "^9.11.0",
-    "jose": "5.10.0",
-    "jsonwebtoken": "^9.0.2",
-    "log4js": "^6.9.1",
-    "unleash-server": "5.12.8"
+    "node": "^24.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.7.0",
