@@ -94,7 +94,7 @@ export class NaisTeams {
     logger.debug("lookupUser: response status", response.status);
     logger.debug("lookupUser: response headers", response.headers);
 
-    const json: { data: { user: User }; errors: any[] } = await response.json();
+    const json = (await response.json()) as { data: { user: User }; errors: any[] };
 
     if (json.errors) {
       logger.error("lookupUser: json errors", json.errors);

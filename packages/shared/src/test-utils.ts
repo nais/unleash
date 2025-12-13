@@ -70,8 +70,7 @@ export function generateTestToken(): TestToken {
  */
 export function setupTestJWKS(testToken: TestToken): void {
   const jwks = createTestJWKS(testToken.publicKey);
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const jose = require("jose");
+  const jose = jest.requireMock<{ __setTestJWKS: (jwks: unknown) => void }>("jose");
   jose.__setTestJWKS(jwks);
 }
 
