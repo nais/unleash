@@ -18,7 +18,8 @@
     "lint:shared": "pnpm --filter @nais/unleash-shared lint",
     "lint:v5": "pnpm --filter unleash-v5 lint",
     "lint:v6": "pnpm --filter unleash-v6 lint",
-    "lint:v7": "pnpm --filter unleash-v7 lint"
+    "lint:v7": "pnpm --filter unleash-v7 lint",
+    "knip": "knip"
   },
   "author": "NAIS <aura@nav.no>",
   "license": "MIT",
@@ -27,19 +28,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@types/cors": "2.8.19",
-    "@types/express": "5.0.6",
-    "@types/express-session": "1.18.2",
+    "@jest/types": "^30.0.0",
     "@types/jest": "^30.0.0",
-    "@types/js-yaml": "4.0.9",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/make-fetch-happen": "10.0.4",
     "@types/node": "24.10.1",
-    "@types/semver": "7.7.1",
-    "@types/stoppable": "1.1.3",
-    "@types/supertest": "6.0.3",
-    "@types/type-is": "1.6.7",
-    "@types/uuid": "11.0.0",
     "@typescript-eslint/eslint-plugin": "8.48.1",
     "@typescript-eslint/parser": "8.48.1",
     "eslint": "^9.39.1",
@@ -51,13 +42,11 @@
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.5.0",
     "jest": "^30.2.0",
-    "nock": "^14.0.10",
+    "knip": "^5.71.0",
     "prettier": "^3.7.4",
-    "supertest": "^7.1.4",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "5.9.3",
-    "typescript-eslint": "^8.48.1",
-    "undici": "^7.16.0"
+    "typescript-eslint": "^8.48.1"
   }
 }
