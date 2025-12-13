@@ -26,6 +26,10 @@ env:
   DATABASE_SSL: false
   INIT_ADMIN_API_TOKENS: "*:*.unleash4all"
   GOOGLE_IAP_AUDIENCE: "/projects/123/global/backendServices/123"
+  OAUTH_JWT_AUTH: "true"
+  OAUTH_JWT_AUDIENCE: "test-audience"
+  OAUTH_JWT_ISSUER: "https://auth.nais.io"
+  OAUTH_JWT_KEYSET: "https://auth.nais.io/oauth/v2/keys"
 
 jobs:
   build-and-test:
