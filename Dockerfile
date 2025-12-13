@@ -4,8 +4,8 @@ FROM node:25-alpine AS builder
 # Version argument - defaults to v5, can be overridden for v6, v7, etc.
 ARG UNLEASH_VERSION=v5
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install pnpm globally
+RUN npm install -g pnpm@latest
 
 WORKDIR /workspace
 
