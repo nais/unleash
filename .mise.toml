@@ -1,6 +1,8 @@
 [tools]
 nodejs = "24"
+go = "1.25"
 pnpm = "latest"
+"go:github.com/sethvargo/ratchet" = "latest"
 
 [env]
 DATABASE_USERNAME = "unleash"
@@ -9,15 +11,7 @@ DATABASE_NAME = "unleash"
 DATABASE_HOST = "localhost"
 DATABASE_SSL = "false"
 INIT_ADMIN_API_TOKENS = "*:*.unleash4all"
-OAUTH_JWT_AUTH = "true"
-OAUTH_JWT_AUDIENCE = "test-audience"
-OAUTH_JWT_ISSUER = "https://auth.nais.io"
-OAUTH_JWT_KEYSET = "https://auth.nais.io/oauth/v2/keys"
-
-[tasks.all]
-description = "Run lint, build, test, and docker build"
-run = "mise run docker:build:all"
-depends = ["lint", "test:all"]
+GOOGLE_IAP_AUDIENCE = "/projects/123/global/backendServices/123"
 
 [tasks.install]
 description = "Install all dependencies"
@@ -67,11 +61,6 @@ depends = ["build"]
 [tasks."test:v5"]
 description = "Test unleash-v5 package (requires database)"
 run = "pnpm --filter unleash-v5 test"
-depends = ["build", "db:wait"]
-
-[tasks."test:v6"]
-description = "Test unleash-v6 package (requires database)"
-run = "pnpm --filter unleash-v6 test"
 depends = ["build", "db:wait"]
 
 [tasks."test:all"]
@@ -171,3 +160,34 @@ done
 [tasks."docker:run"]
 description = "Run full stack with docker-compose"
 run = "docker compose up --build"
+
+[tasks."ratchet:pin"]
+description = "Pin GitHub Actions to specific commit SHAs"
+run = [
+  "echo '📌 Pinning GitHub Actions to commit SHAs...'",
+  "ratchet pin .github/workflows/*.yml",
+  "echo '✅ All actions pinned'",
+]
+
+[tasks."ratchet:update"]
+description = "Update pinned GitHub Actions to latest versions"
+run = [
+  "echo '🔄 Updating pinned GitHub Actions...'",
+  "ratchet update .github/workflows/*.yml",
+  "echo '✅ All actions updated'",
+]
+
+[tasks."ratchet:lint"]
+description = "Check if GitHub Actions are properly pinned"
+run = [
+  "echo '🔍 Checking GitHub Actions pinning...'",
+  "ratchet lint .github/workflows/*.yml",
+]
+
+[tasks."ratchet:unpin"]
+description = "Unpin GitHub Actions (restore to tags)"
+run = [
+  "echo '🔓 Unpinning GitHub Actions...'",
+  "ratchet unpin .github/workflows/*.yml",
+  "echo '✅ All actions unpinned'",
+]
