@@ -4,3 +4,4 @@ export { NaisTeams as NaisTeamsService, TeamsService } from './nais-teams';
 export type { User } from './nais-teams';
 export { default as cache } from './cache';
 export * from './utils';
+export * from './test-utils';

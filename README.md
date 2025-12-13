@@ -4,7 +4,7 @@
 
 Customized [Unleash][unleash] feature flag server with [Google IAP authentication][google-iap] and OAuth JWT support. Built to work well with [Unleasherator][unleasherator], our Kubernetes operator for managing Unleash instances.
 
-This repository is structured as a **pnpm monorepo** supporting multiple major versions of Unleash (currently v5, with v6 and v7 support planned).
+This repository is structured as a **pnpm monorepo** supporting multiple major versions of Unleash (currently v5 and v6, with v7 support planned).
 
 [unleash]: https://github.com/Unleash/unleash
 [unleasherator]: https://github.com/nais/unleasherator
@@ -95,7 +95,12 @@ packages/
 │   │   ├── cache.ts         # Simple in-memory cache
 │   │   └── utils.ts         # Utility functions
 │   └── package.json
-└── unleash-v5/      # Unleash v5 server implementation
+├── unleash-v5/      # Unleash v5 server implementation
+│   ├── src/
+│   │   ├── server.ts        # Server factory with custom auth
+│   │   └── index.ts         # Application entry point
+│   └── package.json
+└── unleash-v6/      # Unleash v6 server implementation
     ├── src/
     │   ├── server.ts        # Server factory with custom auth
     │   └── index.ts         # Application entry point
@@ -118,6 +123,7 @@ pnpm -r lint
 # Build/test/lint specific package
 pnpm --filter @nais/unleash-shared build
 pnpm --filter unleash-v5 test
+pnpm --filter unleash-v6 build
 ```
 
 Using mise tasks (recommended):
@@ -137,11 +143,17 @@ mise run test:shared
 # Test v5 package with database
 mise run test:v5
 
+# Test v6 package with database
+mise run test:v6
+
 # Start development environment
 mise run dev
 
 # Start unleash-v5 server
 mise run start:v5
+
+# Start unleash-v6 server
+mise run start:v6
 
 # Database management
 mise run db:start    # Start PostgreSQL
@@ -195,8 +207,10 @@ mise run start:v5
 | `mise run build`       | Build all packages             |
 | `mise run test:shared` | Test shared package (no DB)    |
 | `mise run test:v5`     | Test v5 with database          |
+| `mise run test:v6`     | Test v6 with database          |
 | `mise run test:all`    | Test everything                |
 | `mise run start:v5`    | Start Unleash v5 server        |
+| `mise run start:v6`    | Start Unleash v6 server        |
 | `mise run db:start`    | Start PostgreSQL               |
 | `mise run db:stop`     | Stop PostgreSQL                |
 | `mise tasks`           | List all available tasks       |
@@ -213,18 +227,18 @@ mise run dev
 mise run start:v5
 ```
 
-Unleash v5 will be available at `http://localhost:4242`.
+Unleash will be available at `http://localhost:4242`.
 
 **Using docker-compose:**
 
 ```bash
-# Start everything (database + unleash)
+# Start everything (database + unleash v5)
 mise run docker:run
 # or
 docker-compose up --build
 ```
 
-This will expose Unleash v5 on `http://localhost:8080`.
+This will expose Unleash on `http://localhost:8080`.
 
 **Manual setup:**
 
@@ -235,8 +249,8 @@ mise run db:start
 # 2. Install and build
 mise run build
 
-# 3. Start Unleash v5
-cd packages/unleash-v5
+# 3. Start Unleash (v5 or v6)
+cd packages/unleash-v5  # or unleash-v6
 pnpm start
 ```
 
@@ -285,6 +299,8 @@ Docker images are built and pushed to the NAIS registry with the following namin
 
 - `nais-unleash:v5-{version}` - Latest build for v5 with specific Unleash version
 - `nais-unleash:v5-{version}-{date}-{sha}` - Timestamped build with commit SHA
+- `nais-unleash:v6-{version}` - Latest build for v6 with specific Unleash version
+- `nais-unleash:v6-{version}-{date}-{sha}` - Timestamped build with commit SHA
 
 The Dockerfile is designed to support all major versions using the same build process, leveraging pnpm workspaces and the `pnpm deploy` command for optimized production images.
 

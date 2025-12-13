@@ -1,7 +1,7 @@
 {
-  "name": "unleash-v5",
-  "version": "5.12.8",
-  "description": "NAIS Unleash v5 server with custom authentication",
+  "name": "unleash-v6",
+  "version": "6.2.3",
+  "description": "NAIS Unleash v6 server with custom authentication",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -14,7 +14,7 @@
     "@nais/unleash-shared": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/auto-instrumentations-node": "^0.48.0",
-    "unleash-server": "5.12.8"
+    "unleash-server": "6.2.3"
   },
   "devDependencies": {
     "@types/node": "20.14.10",

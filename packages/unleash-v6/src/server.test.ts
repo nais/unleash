@@ -1,5 +1,5 @@
 /**
- * Integration tests for Unleash v5 server.
+ * Integration tests for Unleash v6 server.
  *
  * These tests verify the server's authentication and authorization behavior
  * using OAuth Forward Auth (JWT validation via JWKS) and the NAIS Teams API.

@@ -9,7 +9,15 @@ DATABASE_NAME = "unleash"
 DATABASE_HOST = "localhost"
 DATABASE_SSL = "false"
 INIT_ADMIN_API_TOKENS = "*:*.unleash4all"
-GOOGLE_IAP_AUDIENCE = "/projects/123/global/backendServices/123"
+OAUTH_JWT_AUTH = "true"
+OAUTH_JWT_AUDIENCE = "test-audience"
+OAUTH_JWT_ISSUER = "https://auth.nais.io"
+OAUTH_JWT_KEYSET = "https://auth.nais.io/oauth/v2/keys"
+
+[tasks.all]
+description = "Run lint, build, test, and docker build"
+run = "mise run docker:build:all"
+depends = ["lint", "test:all"]
 
 [tasks.install]
 description = "Install all dependencies"
@@ -61,6 +69,11 @@ description = "Test unleash-v5 package (requires database)"
 run = "pnpm --filter unleash-v5 test"
 depends = ["build", "db:wait"]
 
+[tasks."test:v6"]
+description = "Test unleash-v6 package (requires database)"
+run = "pnpm --filter unleash-v6 test"
+depends = ["build", "db:wait"]
+
 [tasks."test:all"]
 description = "Test all packages with database"
 run = "pnpm -r test"
@@ -105,8 +118,8 @@ run = "pnpm --filter unleash-v5 build"
 depends = ["build:shared"]
 
 [tasks."build:v6"]
-description = "Build unleash-v6 package only (when available)"
-run = "pnpm --filter unleash-v6 build 2>/dev/null || echo 'v6 not yet available'"
+description = "Build unleash-v6 package only"
+run = "pnpm --filter unleash-v6 build"
 depends = ["build:shared"]
 
 [tasks."build:v7"]
@@ -120,8 +133,8 @@ run = "cd packages/unleash-v5 && pnpm start"
 depends = ["build:v5", "db:wait"]
 
 [tasks."start:v6"]
-description = "Start unleash-v6 server (requires database, when available)"
-run = "cd packages/unleash-v6 && pnpm start 2>/dev/null || echo 'v6 not yet available'"
+description = "Start unleash-v6 server (requires database)"
+run = "cd packages/unleash-v6 && pnpm start"
 depends = ["build:v6", "db:wait"]
 
 [tasks."start:v7"]
