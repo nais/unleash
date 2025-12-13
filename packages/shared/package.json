@@ -18,6 +18,6 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "20.14.10",
-    "unleash-server": "5.12.8"
+    "unleash-server": "7.4.0"
   }
 }
