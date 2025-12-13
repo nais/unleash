@@ -15,9 +15,16 @@
     "jsonwebtoken": "^9.0.2",
     "log4js": "^6.9.1"
   },
+  "peerDependencies": {
+    "unleash-server": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "unleash-server": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "20.14.10",
-    "unleash-server": "5.12.8"
+    "@types/node": "20.14.10"
   }
 }

@@ -86,6 +86,9 @@ importers:
       log4js:
         specifier: ^6.9.1
         version: 6.9.1
+      unleash-server:
+        specifier: '>=5.0.0'
+        version: 6.2.3
     devDependencies:
       '@types/jsonwebtoken':
         specifier: ^9.0.6
@@ -93,9 +96,6 @@ importers:
       '@types/node':
         specifier: 20.14.10
         version: 20.14.10
-      unleash-server:
-        specifier: 5.12.8
-        version: 5.12.8(core-js@3.47.0)(encoding@0.1.13)(mobx@6.15.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(styled-components@6.1.19(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
 
   packages/unleash-v5:
     dependencies:

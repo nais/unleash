@@ -33,7 +33,7 @@ updates:
         patterns:
           - "*"
 
-  # Shared package - no unleash-server version constraint
+  # Shared package - no unleash-server updates (peer dependency)
   - package-ecosystem: "npm"
     directory: "/packages/shared"
     schedule:
@@ -41,12 +41,12 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Europe/Oslo"
+    ignore:
+      - dependency-name: "unleash-server"
     groups:
       npm-shared:
         patterns:
           - "*"
-        exclude-patterns:
-          - "unleash-server"
 
   # Unleash v5 - only allow 5.x updates
   - package-ecosystem: "npm"
