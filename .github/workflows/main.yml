@@ -37,6 +37,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # ratchet:actions/checkout@v4
 
@@ -55,6 +57,8 @@ jobs:
   # Detect versions early so docker builds can start as soon as tests pass
   detect-versions:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       versions: ${{ steps.detect.outputs.versions }}
     steps:
@@ -71,6 +75,8 @@ jobs:
   test-shared:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # ratchet:actions/checkout@v4
 
@@ -92,6 +98,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: detect-versions
+    permissions:
+      contents: read
     strategy:
       matrix:
         version: ${{ fromJson(needs.detect-versions.outputs.versions) }}
@@ -132,6 +140,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint, detect-versions, test-shared, test-unleash]
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
     strategy:
       matrix:
         version: ${{ fromJson(needs.detect-versions.outputs.versions) }}
@@ -188,6 +198,8 @@ jobs:
   git-tag:
     runs-on: ubuntu-latest
     needs: [detect-versions, build-push-sign]
+    permissions:
+      contents: write
     strategy:
       matrix:
         version: ${{ fromJson(needs.detect-versions.outputs.versions) }}
