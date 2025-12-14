@@ -4,4 +4,5 @@ export { NaisTeams as NaisTeamsService, TeamsService } from './nais-teams';
 export type { User } from './nais-teams';
 export { default as cache } from './cache';
 export * from './utils';
-export * from './test-utils';
+// Note: test-utils is NOT exported here as it depends on vitest (dev dependency)
+// Import from '@nais/unleash-shared/test-utils' in test files

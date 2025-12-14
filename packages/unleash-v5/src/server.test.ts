@@ -13,6 +13,11 @@ import {
   TeamsService,
   cache,
   OAUTH_JWT_HEADER,
+  newSignedToken,
+  OAUTH_JWT_AUDIENCE,
+  OAUTH_JWT_ISSUER,
+} from "@nais/unleash-shared";
+import {
   MockTeamsService,
   TestToken,
   TEST_EMAIL,
@@ -20,10 +25,7 @@ import {
   createMockUser,
   createTestJWKS,
   createTokenForEmail,
-  newSignedToken,
-  OAUTH_JWT_AUDIENCE,
-  OAUTH_JWT_ISSUER,
-} from "@nais/unleash-shared";
+} from "@nais/unleash-shared/test-utils";
 import nock from "nock";
 import request from "supertest";
 import { IUnleash } from "unleash-server";
