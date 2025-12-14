@@ -18,6 +18,10 @@ export default defineConfig({
 
     // Resolve workspace aliases
     alias: {
+      "@nais/unleash-shared/test-utils": path.resolve(
+        __dirname,
+        "packages/shared/src/test-utils.ts",
+      ),
       "@nais/unleash-shared": path.resolve(
         __dirname,
         "packages/shared/src/index.ts",
