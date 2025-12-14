@@ -54,8 +54,7 @@ jobs:
       - name: Detect Unleash versions and build version map
         id: versions
         run: |
-          # Build a JSON object with version -> tag mapping using timestamped tags
-          date_str=$(date +'%Y%m%d-%H%M%S')
+          # Build a JSON object with version -> tag mapping
           sha_short=$(git rev-parse --short HEAD)
 
           versions_json="{"
@@ -63,8 +62,8 @@ jobs:
           for dir in packages/unleash-v*; do
             version_suffix=$(basename "$dir" | sed 's/unleash-//')
             unleash_version=$(jq -r '.dependencies["unleash-server"]' "$dir/package.json")
-            # Use timestamped tag format: v5-5.12.8-20251214-143749-f21986b
-            tag="${version_suffix}-${unleash_version}-${date_str}-${sha_short}"
+            # Use deterministic tag format: v5-5.12.8-f21986b
+            tag="${version_suffix}-${unleash_version}-${sha_short}"
             if [ "$first" = true ]; then
               first=false
             else

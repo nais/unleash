@@ -237,8 +237,87 @@ Once you commit the new `packages/unleash-v6` directory:
 2. **Parallel Builds**: CI builds all versions in parallel
 3. **Version-Specific Tags**: Images tagged as `v6-{version}-{date}-{sha}`
 4. **Git Tags**: Automatically creates git tags for each version
+5. **ReleaseChannel Chart**: Automatically updated with new version
 
 No workflow changes needed!
+
+## ReleaseChannel Chart
+
+The Helm chart at `charts/unleash-releasechannel` automatically creates ReleaseChannel resources for each version.
+
+### Automatic Version Detection
+
+The chart workflow (`chart.yaml`) automatically:
+1. Detects all `packages/unleash-v*` directories
+2. Reads the `unleash-server` version from each `package.json`
+3. Updates `values.yaml` with timestamped image tags
+4. Creates ReleaseChannel resources for each version
+
+### Manual values.yaml Structure
+
+If you need to manually add a version before the workflow runs:
+
+```yaml
+# charts/unleash-releasechannel/values.yaml
+versions:
+  v5:
+    enabled: true
+    tag: v5-5.12.8-20251214-143749-f21986b
+  v6:
+    enabled: true
+    tag: v6-6.10.1-20251214-143754-f21986b
+  v7:  # Add new version
+    enabled: true
+    tag: v7-7.0.0-20251215-100000-abc1234
+```
+
+### Disabling a Version
+
+To temporarily disable a version without removing it:
+
+```yaml
+versions:
+  v5:
+    enabled: false  # This version won't create a ReleaseChannel
+    tag: v5-5.12.8-20251214-143749-f21986b
+```
+
+### ReleaseChannel Resources Created
+
+For each enabled version, the chart creates:
+
+```yaml
+apiVersion: unleash.nais.io/v1
+kind: ReleaseChannel
+metadata:
+  name: unleash-v7
+  namespace: <release-namespace>
+spec:
+  image: "europe-north1-docker.pkg.dev/nais-io/nais/images/nais-unleash:v7-7.0.0-20251215-100000-abc1234"
+  strategy:
+    maxParallel: 1
+    batchInterval: "30s"
+  healthChecks:
+    enabled: true
+    initialDelay: "30s"
+    timeout: "5m"
+```
+
+### Connecting Unleash Instances
+
+Once the ReleaseChannel exists, connect Unleash instances to it:
+
+```yaml
+apiVersion: unleash.nais.io/v1
+kind: Unleash
+metadata:
+  name: my-unleash
+spec:
+  releaseChannel:
+    name: unleash-v7  # References the ReleaseChannel
+  database:
+    url: "postgres://..."
+```
 
 ## Version Matrix Testing
 
@@ -308,7 +387,7 @@ git push
 - [ ] Created `packages/unleash-vX` directory
 - [ ] Added package.json with correct unleash-server version
 - [ ] Created tsconfig.json
-- [ ] Created jest.config.ts
+- [ ] Created jest.config.ts (or vitest.config.ts)
 - [ ] Copied and adapted source code
 - [ ] Updated authentication handlers if needed
 - [ ] Created version-specific adapters if needed
@@ -318,6 +397,9 @@ git push
 - [ ] Committed and pushed changes
 - [ ] CI/CD builds and pushes images
 - [ ] Verified images in registry
+- [ ] ReleaseChannel chart updated automatically
+- [ ] ReleaseChannel deployed to Fasit
+- [ ] Verified ReleaseChannel resource exists in cluster
 
 ## Future Versions
 

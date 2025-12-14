@@ -1,6 +1,6 @@
 dependencies:
   - allOf:
-      - unleasherator-crd
+      - unleasherator-crds
 
 environmentKinds:
   - management

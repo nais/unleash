@@ -165,7 +165,7 @@ jobs:
       matrix:
         version: ${{ fromJson(needs.detect-versions.outputs.versions) }}
     outputs:
-      tag: ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}
+      tag: ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.sha_short }}
     permissions:
       contents: read
       id-token: write
@@ -177,7 +177,6 @@ jobs:
         run: |
           unleash=$(jq -r '.dependencies["unleash-server"]' packages/unleash-${{ matrix.version }}/package.json)
           echo "unleash=${unleash}" >> "$GITHUB_OUTPUT"
-          echo "date=$(date '+%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
           echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       - uses: nais/platform-build-push-sign@8be8359cd90915318ee8ab5fbc8337d04937ae70 # ratchet:nais/platform-build-push-sign@main
@@ -190,7 +189,7 @@ jobs:
             UNLEASH_VERSION=${{ matrix.version }}
           extra_tags: |
             ${{ matrix.version }}-${{ steps.version.outputs.unleash }}
-            ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}
+            ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.sha_short }}
           google_service_account: gh-unleash
           push: true
           workload_identity_provider: ${{ secrets.NAIS_IO_WORKLOAD_IDENTITY_PROVIDER }}
@@ -211,11 +210,10 @@ jobs:
         run: |
           unleash=$(jq -r '.dependencies["unleash-server"]' packages/unleash-${{ matrix.version }}/package.json)
           echo "unleash=${unleash}" >> "$GITHUB_OUTPUT"
-          echo "date=$(date '+%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
           echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: git tag and push
         run: |
-          tag="${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}"
+          tag="${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.sha_short }}"
           git tag "${tag}"
           git push origin "${tag}"

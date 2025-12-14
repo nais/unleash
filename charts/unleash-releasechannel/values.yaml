@@ -7,16 +7,16 @@ image:
   repository: nais-io/nais/images/nais-unleash
 
 # ReleaseChannel versions - each entry creates a ReleaseChannel resource
-# Tags are automatically updated during CI/CD with timestamped tags
+# Tags are automatically updated during CI/CD with version-sha tags
 versions:
   v5:
     enabled: true
-    # Image tag for this version (updated by CI with timestamped tag)
-    tag: v5-5.12.8-20251214-143749-f21986b
+    # Image tag for this version (updated by CI, format: v5-5.12.8-f21986b)
+    tag: v5-5.12.8-f21986b
   v6:
     enabled: true
-    # Image tag for this version (updated by CI with timestamped tag)
-    tag: v6-6.10.1-20251214-143754-f21986b
+    # Image tag for this version (updated by CI, format: v6-6.10.1-f21986b)
+    tag: v6-6.10.1-f21986b
 
 # Shared deployment strategy configuration
 strategy:
