@@ -1,0 +1,34 @@
+[tools]
+helm = "3.19.4"
+
+[tasks.helm-lint]
+description = "Lint the Helm chart"
+run = "helm lint charts/unleash-releasechannel"
+
+[tasks.helm-template]
+description = "Render Helm chart templates locally"
+run = "helm template unleash-releasechannel charts/unleash-releasechannel"
+
+[tasks.helm-template-debug]
+description = "Render Helm chart templates with debug output"
+run = "helm template unleash-releasechannel charts/unleash-releasechannel --debug"
+
+[tasks.helm-dry-run]
+description = "Simulate Helm install (dry-run)"
+run = "helm install unleash-releasechannel charts/unleash-releasechannel --dry-run"
+
+[tasks.helm-validate]
+description = "Run all Helm validations"
+depends = ["helm-lint", "helm-template"]
+
+[tasks.helm-package]
+description = "Package the Helm chart"
+run = "helm package charts/unleash-releasechannel -d charts/unleash-releasechannel"
+
+[tasks.helm-show-values]
+description = "Show default values for the chart"
+run = "helm show values charts/unleash-releasechannel"
+
+[tasks.helm-show-chart]
+description = "Show chart metadata"
+run = "helm show chart charts/unleash-releasechannel"

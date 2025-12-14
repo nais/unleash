@@ -1,0 +1,6 @@
+dependencies:
+  - allOf:
+      - unleasherator-crd
+
+environmentKinds:
+  - management

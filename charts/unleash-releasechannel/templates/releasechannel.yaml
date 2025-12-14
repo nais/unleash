@@ -1,0 +1,43 @@
+{{- range $version, $config := .Values.versions }}
+{{- if $config.enabled }}
+---
+apiVersion: unleash.nais.io/v1
+kind: ReleaseChannel
+metadata:
+  name: unleash-{{ $version }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "unleash-releasechannel.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $version }}
+spec:
+  image: {{ include "unleash-releasechannel.image" (dict "registry" $.Values.image.registry "repository" $.Values.image.repository "tag" $config.tag) | quote }}
+  strategy:
+    maxParallel: {{ $.Values.strategy.maxParallel }}
+    {{- if $.Values.strategy.batchInterval }}
+    batchInterval: {{ $.Values.strategy.batchInterval | quote }}
+    {{- end }}
+    {{- if $.Values.strategy.canary.enabled }}
+    canary:
+      enabled: true
+      {{- if $.Values.strategy.canary.labelSelector }}
+      podSelector:
+        {{- toYaml $.Values.strategy.canary.labelSelector | nindent 8 }}
+      {{- end }}
+    {{- end }}
+  {{- if $.Values.healthChecks.enabled }}
+  healthChecks:
+    enabled: {{ $.Values.healthChecks.enabled }}
+    {{- if $.Values.healthChecks.initialDelay }}
+    initialDelay: {{ $.Values.healthChecks.initialDelay | quote }}
+    {{- end }}
+    {{- if $.Values.healthChecks.timeout }}
+    timeout: {{ $.Values.healthChecks.timeout | quote }}
+    {{- end }}
+  {{- end }}
+  {{- if $.Values.rollback.enabled }}
+  rollback:
+    enabled: {{ $.Values.rollback.enabled }}
+    onFailure: {{ $.Values.rollback.onFailure }}
+  {{- end }}
+{{- end }}
+{{- end }}

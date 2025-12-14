@@ -3,6 +3,7 @@ nodejs = "25"
 go = "1.25"
 pnpm = "latest"
 "go:github.com/sethvargo/ratchet" = "latest"
+helm = "3.19.4"
 
 [env]
 DATABASE_USERNAME = "unleash"

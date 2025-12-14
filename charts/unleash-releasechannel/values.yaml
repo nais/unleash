@@ -1,0 +1,48 @@
+# Default values for unleash-releasechannel
+# This chart creates ReleaseChannel resources for each Unleash major version
+
+# Image registry configuration (shared across all versions)
+image:
+  registry: europe-north1-docker.pkg.dev
+  repository: nais-io/nais/images/nais-unleash
+
+# ReleaseChannel versions - each entry creates a ReleaseChannel resource
+# Tags are automatically updated during CI/CD with timestamped tags
+versions:
+  v5:
+    enabled: true
+    # Image tag for this version (updated by CI with timestamped tag)
+    tag: v5-5.12.8-20251214-143749-f21986b
+  v6:
+    enabled: true
+    # Image tag for this version (updated by CI with timestamped tag)
+    tag: v6-6.10.1-20251214-143754-f21986b
+
+# Shared deployment strategy configuration
+strategy:
+  # Maximum number of instances to deploy in parallel
+  maxParallel: 1
+  # Batch interval between deployments (Go duration format)
+  batchInterval: "30s"
+  # Canary deployment configuration
+  canary:
+    enabled: false
+    # labelSelector:
+    #   matchLabels:
+    #     deployment: canary
+
+# Health check configuration
+healthChecks:
+  # Enable health checks after deployment
+  enabled: true
+  # Initial delay before health checks start
+  initialDelay: "30s"
+  # Timeout for health checks
+  timeout: "5m"
+
+# Rollback configuration
+rollback:
+  # Enable automatic rollback on failure
+  enabled: false
+  # Rollback on deployment failure
+  onFailure: true

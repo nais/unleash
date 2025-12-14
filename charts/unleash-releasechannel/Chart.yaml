@@ -1,0 +1,17 @@
+apiVersion: v2
+name: unleash-releasechannel
+description: ReleaseChannel configurations for NAIS Unleash versions
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - unleash
+  - feature-flags
+  - release-channel
+home: https://github.com/nais/unleash
+sources:
+  - https://github.com/nais/unleash
+maintainers:
+  - name: NAIS
+    email: aura@nav.no
+    url: https://github.com/nais
