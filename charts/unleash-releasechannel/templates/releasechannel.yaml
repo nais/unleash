@@ -5,7 +5,7 @@ apiVersion: unleash.nais.io/v1
 kind: ReleaseChannel
 metadata:
   name: unleash-{{ $version }}
-  namespace: {{ $.Release.Namespace }}
+  namespace: {{ $.Values.namespace | default $.Release.Namespace }}
   labels:
     {{- include "unleash-releasechannel.labels" $ | nindent 4 }}
     app.kubernetes.io/component: {{ $version }}

@@ -1,6 +1,9 @@
 # Default values for unleash-releasechannel
 # This chart creates ReleaseChannel resources for each Unleash major version
 
+# Namespace where Unleash instances are deployed (set by Fasit)
+namespace: ""
+
 # Image registry configuration (shared across all versions)
 image:
   registry: europe-north1-docker.pkg.dev

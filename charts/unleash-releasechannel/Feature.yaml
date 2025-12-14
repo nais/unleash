@@ -1,6 +1,14 @@
 dependencies:
   - allOf:
       - unleasherator-crds
+      - unleasherator
+      - bifrost
 
 environmentKinds:
   - management
+
+values:
+  namespace:
+    displayName: Unleash instance namespace
+    computed:
+      template: '"{{ .Management.bifrost_unleash_namespace}}"'
