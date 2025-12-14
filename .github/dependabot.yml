@@ -34,7 +34,6 @@ updates:
           - "*"
 
   # Shared package - no unleash-server updates (peer dependency)
-  # jose v6+ is ESM-only and breaks Jest - stay on v5
   - package-ecosystem: "npm"
     directory: "/packages/shared"
     schedule:
@@ -44,15 +43,12 @@ updates:
       timezone: "Europe/Oslo"
     ignore:
       - dependency-name: "unleash-server"
-      - dependency-name: "jose"
-        update-types: ["version-update:semver-major"]
     groups:
       npm-shared:
         patterns:
           - "*"
 
   # Unleash v5 - only allow 5.x updates
-  # jose v6+ is ESM-only and breaks Jest - stay on v5
   - package-ecosystem: "npm"
     directory: "/packages/unleash-v5"
     schedule:
@@ -70,11 +66,8 @@ updates:
     ignore:
       - dependency-name: "unleash-server"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "jose"
-        update-types: ["version-update:semver-major"]
 
   # Unleash v6 - only allow 6.x updates
-  # jose v6+ is ESM-only and breaks Jest - stay on v5
   - package-ecosystem: "npm"
     directory: "/packages/unleash-v6"
     schedule:
@@ -91,6 +84,4 @@ updates:
     # Allow patch/minor updates within 6.x only
     ignore:
       - dependency-name: "unleash-server"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "jose"
         update-types: ["version-update:semver-major"]

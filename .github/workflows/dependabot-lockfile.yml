@@ -1,0 +1,56 @@
+name: Fix Dependabot Lockfile
+
+# Dependabot doesn't update pnpm-lock.yaml when updating packages in workspace subdirectories.
+# This workflow regenerates the lockfile and pushes the fix to the PR branch.
+# See: https://github.com/dependabot/dependabot-core/issues/11135
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "**/package.json"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  fix-lockfile:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Regenerate lockfile
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Check for lockfile changes
+        id: changes
+        run: |
+          if git diff --quiet pnpm-lock.yaml; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push lockfile
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "chore: regenerate pnpm-lock.yaml"
+          git push
