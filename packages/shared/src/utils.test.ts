@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { newSignedToken, verifySignedToken } from "./utils";
 
 describe("utils", () => {

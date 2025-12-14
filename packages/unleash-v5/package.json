@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest --coverage --no-cache --silent --forceExit",
-    "test:verbose": "jest --coverage --no-cache --forceExit",
+    "test": "vitest run --coverage",
+    "test:verbose": "vitest run --coverage --reporter=verbose",
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
@@ -19,7 +19,6 @@
   "devDependencies": {
     "@types/node": "^24.0.0",
     "@types/supertest": "^6.0.2",
-    "jose": "^5.10.0",
     "nock": "^14.0.0",
     "supertest": "^7.0.0"
   }

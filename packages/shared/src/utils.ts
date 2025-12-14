@@ -2,21 +2,35 @@ import crypto from "crypto";
 import { ECKeyPairKeyObjectOptions } from "crypto";
 import jwt from "jsonwebtoken";
 
-function newSignedToken(
-  audience: string,
-  issuer: string,
-  email: string,
-  kid: string,
-): { token: string; publicKey: crypto.KeyObject } {
+/**
+ * A reusable keypair for signing multiple test tokens.
+ */
+export interface TestKeyPair {
+  privateKey: crypto.KeyObject;
+  publicKey: crypto.KeyObject;
+}
+
+/**
+ * Generates a new EC keypair for signing test tokens.
+ */
+function generateTestKeyPair(): TestKeyPair {
   const { privateKey, publicKey } = crypto.generateKeyPairSync("ec", {
     namedCurve: "prime256v1",
   } as ECKeyPairKeyObjectOptions);
 
-  const decryptedPrivateKey = crypto.createPrivateKey({
-    key: privateKey.export({ type: "sec1", format: "pem" }),
-    passphrase: "top secret",
-  });
+  return { privateKey, publicKey };
+}
 
+/**
+ * Signs a token using an existing keypair.
+ */
+function signTokenWithKeyPair(
+  keyPair: TestKeyPair,
+  audience: string,
+  issuer: string,
+  email: string,
+  kid: string,
+): string {
   const payload = { email };
   const options: jwt.SignOptions = {
     expiresIn: "1h",
@@ -26,9 +40,23 @@ function newSignedToken(
     issuer,
   };
 
-  const token = jwt.sign(payload, decryptedPrivateKey, options);
+  return jwt.sign(payload, keyPair.privateKey, options);
+}
 
-  return { token, publicKey };
+/**
+ * Generates a new signed token with a new keypair.
+ * Use this for one-off tokens. For multiple tokens with the same key,
+ * use generateTestKeyPair() and signTokenWithKeyPair().
+ */
+function newSignedToken(
+  audience: string,
+  issuer: string,
+  email: string,
+  kid: string,
+): { token: string; publicKey: crypto.KeyObject } {
+  const keyPair = generateTestKeyPair();
+  const token = signTokenWithKeyPair(keyPair, audience, issuer, email, kid);
+  return { token, publicKey: keyPair.publicKey };
 }
 
 function verifySignedToken(
@@ -53,4 +81,4 @@ function verifySignedToken(
   return decoded;
 }
 
-export { newSignedToken, verifySignedToken };
+export { newSignedToken, verifySignedToken, generateTestKeyPair, signTokenWithKeyPair };

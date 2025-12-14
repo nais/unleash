@@ -8,60 +8,60 @@
  * across different Unleash major versions.
  */
 
+import { describe, it, expect, beforeAll, afterEach, afterAll, vi } from "vitest";
 import {
   TeamsService,
   cache,
-  OAUTH_JWT_AUDIENCE,
   OAUTH_JWT_HEADER,
-  OAUTH_JWT_ISSUER,
-  newSignedToken,
   MockTeamsService,
   TestToken,
   TEST_EMAIL,
   generateTestToken,
-  setupTestJWKS,
-  validateRequiredEnvVars,
   createMockUser,
+  createTestJWKS,
+  createTokenForEmail,
+  newSignedToken,
+  OAUTH_JWT_AUDIENCE,
+  OAUTH_JWT_ISSUER,
 } from "@nais/unleash-shared";
 import nock from "nock";
 import request from "supertest";
 import { IUnleash } from "unleash-server";
 import naisleash from "./server";
 
+// Required environment variables
+const REQUIRED_ENV_VARS = [
+  "DATABASE_HOST",
+  "DATABASE_NAME",
+  "DATABASE_USERNAME",
+  "DATABASE_PASSWORD",
+  "INIT_ADMIN_API_TOKENS",
+  "OAUTH_JWT_AUDIENCE",
+] as const;
+
 let mockTeamsService: TeamsService;
 let server: IUnleash;
 let testToken: TestToken;
 
-// Mock jose's createRemoteJWKSet to use a local JWKS instead.
-// This avoids network calls during tests and allows us to control the JWKS.
-// NOTE: This must be at module scope before any imports that use jose.
-jest.mock("jose", () => {
-  const actual = jest.requireActual("jose");
-  let localJWKS: ReturnType<typeof actual.createLocalJWKSet>;
-
-  return {
-    ...actual,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createRemoteJWKSet: (_url: URL) => {
-      return async (protectedHeader: any, token: any) => {
-        if (!localJWKS) {
-          throw new Error("JWKS not initialized - call __setTestJWKS first");
-        }
-        return localJWKS(protectedHeader, token);
-      };
-    },
-    __setTestJWKS: (jwks: any) => {
-      localJWKS = actual.createLocalJWKSet(jwks);
-    },
-  };
-});
-
 beforeAll(async () => {
-  validateRequiredEnvVars();
+  // Validate required environment variables
+  for (const envVar of REQUIRED_ENV_VARS) {
+    if (!process.env[envVar]) {
+      throw new Error(`Required environment variable ${envVar} is not set`);
+    }
+  }
 
   // Generate test token and set up JWKS before server starts
   testToken = generateTestToken();
-  setupTestJWKS(testToken);
+  const jwks = createTestJWKS(testToken.publicKey);
+
+  // Use nock to intercept JWKS requests from jose's createRemoteJWKSet
+  // This is cleaner than mocking jose directly
+  const jwksUrl = new URL(process.env.OAUTH_JWT_KEYSET || "https://auth.nais.io/oauth/v2/keys");
+  nock(jwksUrl.origin)
+    .persist()  // persist must be called on scope before get()
+    .get(jwksUrl.pathname)
+    .reply(200, jwks, { "Content-Type": "application/json" });
 
   // Create server with OAuth Forward Auth enabled
   mockTeamsService = new MockTeamsService();
@@ -70,7 +70,7 @@ beforeAll(async () => {
 
 afterEach(() => {
   cache.clear();
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 afterAll(async () => {
@@ -172,23 +172,31 @@ describe("Unleash server", () => {
     });
 
     it("should return 200 for valid JWT token and authorized user", async () => {
-      const mockUser = createMockUser({ role: "admin" });
-      jest.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
+      // Use a unique email for this test
+      const authorizedEmail = "authorized@example.com";
+      const authorizedToken = createTokenForEmail(testToken, authorizedEmail);
+
+      const mockUser = createMockUser({ email: authorizedEmail, role: "admin" });
+      vi.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
         status: true,
         user: mockUser,
       });
 
       const response = await request(server.app)
         .get("/api/admin/instance-admin/statistics")
-        .set(OAUTH_JWT_HEADER, testToken.token);
+        .set(OAUTH_JWT_HEADER, authorizedToken);
 
       expect(response.status).toBe(200);
-      expect(mockTeamsService.authorize).toHaveBeenCalledWith(TEST_EMAIL);
+      expect(mockTeamsService.authorize).toHaveBeenCalledWith(authorizedEmail);
     });
 
     it("should cache user authorization and not call Teams API again", async () => {
-      const mockUser = createMockUser({ role: "admin" });
-      jest.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
+      // Use a unique email for this test to avoid cache pollution
+      const cacheTestEmail = "cache-test@example.com";
+      const cacheTestToken = createTokenForEmail(testToken, cacheTestEmail);
+
+      const mockUser = createMockUser({ email: cacheTestEmail, role: "admin" });
+      vi.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
         status: true,
         user: mockUser,
       });
@@ -196,44 +204,52 @@ describe("Unleash server", () => {
       // First request - should call Teams API
       const response1 = await request(server.app)
         .get("/api/admin/instance-admin/statistics")
-        .set(OAUTH_JWT_HEADER, testToken.token);
+        .set(OAUTH_JWT_HEADER, cacheTestToken);
       expect(response1.status).toBe(200);
       expect(mockTeamsService.authorize).toHaveBeenCalledTimes(1);
 
       // Second request - should use cache
       const response2 = await request(server.app)
         .get("/api/admin/instance-admin/statistics")
-        .set(OAUTH_JWT_HEADER, testToken.token);
+        .set(OAUTH_JWT_HEADER, cacheTestToken);
       expect(response2.status).toBe(200);
       expect(mockTeamsService.authorize).toHaveBeenCalledTimes(1);
     });
 
     it("should return 401 for valid JWT token and unauthorized user", async () => {
-      const mockUser = createMockUser({ role: "member" });
-      jest.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
+      // Use a different email to avoid any cached state from previous tests
+      const unauthorizedEmail = "unauthorized@example.com";
+      const unauthorizedToken = createTokenForEmail(testToken, unauthorizedEmail);
+
+      const mockUser = createMockUser({ email: unauthorizedEmail, role: "member" });
+      vi.spyOn(mockTeamsService, "authorize").mockResolvedValueOnce({
         status: false,
         user: mockUser,
       });
 
       const response = await request(server.app)
         .get("/api/admin/instance-admin/statistics")
-        .set(OAUTH_JWT_HEADER, testToken.token);
+        .set(OAUTH_JWT_HEADER, unauthorizedToken);
 
       expect(response.status).toBe(401);
-      expect(mockTeamsService.authorize).toHaveBeenCalled();
+      expect(mockTeamsService.authorize).toHaveBeenCalledWith(unauthorizedEmail);
     });
 
     it("should return 401 when Teams API throws an error", async () => {
-      jest
-        .spyOn(mockTeamsService, "authorize")
-        .mockRejectedValueOnce(new Error("Teams API timeout"));
+      // Use a different email to avoid any cached state from previous tests
+      const errorEmail = "error@example.com";
+      const errorToken = createTokenForEmail(testToken, errorEmail);
+
+      vi.spyOn(mockTeamsService, "authorize").mockRejectedValueOnce(
+        new Error("Teams API timeout"),
+      );
 
       const response = await request(server.app)
         .get("/api/admin/instance-admin/statistics")
-        .set(OAUTH_JWT_HEADER, testToken.token);
+        .set(OAUTH_JWT_HEADER, errorToken);
 
       expect(response.status).toBe(401);
-      expect(mockTeamsService.authorize).toHaveBeenCalled();
+      expect(mockTeamsService.authorize).toHaveBeenCalledWith(errorEmail);
     });
   });
 });

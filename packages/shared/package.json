@@ -6,12 +6,12 @@
   "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jest --coverage --no-cache",
+    "test": "vitest run --coverage",
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
     "google-auth-library": "^10.5.0",
-    "jose": "^5.10.0",
+    "jose": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "log4js": "^6.9.1"
   },

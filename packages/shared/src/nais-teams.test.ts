@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from "vitest";
 import { NaisTeams, User, lookupUserQuery } from "./nais-teams";
 
 describe("NaisTeams", () => {
@@ -31,8 +32,8 @@ describe("NaisTeams", () => {
           user: expectedUser,
         },
       };
-      jest.spyOn(global, "fetch").mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockResponse),
+      vi.spyOn(global, "fetch").mockResolvedValueOnce({
+        json: vi.fn().mockResolvedValue(mockResponse),
       } as any);
 
       const user = await naisTeams.lookupUser(email);
@@ -60,8 +61,8 @@ describe("NaisTeams", () => {
           user: null,
         },
       };
-      jest.spyOn(global, "fetch").mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockResponse),
+      vi.spyOn(global, "fetch").mockResolvedValueOnce({
+        json: vi.fn().mockResolvedValue(mockResponse),
       } as any);
 
       const user = await naisTeams.lookupUser(email);
@@ -91,8 +92,8 @@ describe("NaisTeams", () => {
           },
         ],
       };
-      jest.spyOn(global, "fetch").mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockResponse),
+      vi.spyOn(global, "fetch").mockResolvedValueOnce({
+        json: vi.fn().mockResolvedValue(mockResponse),
       } as any);
 
       await expect(naisTeams.lookupUser(email)).rejects.toThrow(
@@ -124,8 +125,8 @@ describe("NaisTeams", () => {
           user: expectedUser,
         },
       };
-      jest.spyOn(global, "fetch").mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockResponse),
+      vi.spyOn(global, "fetch").mockResolvedValueOnce({
+        json: vi.fn().mockResolvedValue(mockResponse),
       } as any);
 
       const result = await naisTeams.authorize(email);
@@ -153,8 +154,8 @@ describe("NaisTeams", () => {
           user: null,
         },
       };
-      jest.spyOn(global, "fetch").mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockResponse),
+      vi.spyOn(global, "fetch").mockResolvedValueOnce({
+        json: vi.fn().mockResolvedValue(mockResponse),
       } as any);
 
       const result = await naisTeams.authorize(email);
@@ -197,8 +198,8 @@ describe("NaisTeams", () => {
           user: user,
         },
       };
-      jest.spyOn(global, "fetch").mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockResponse),
+      vi.spyOn(global, "fetch").mockResolvedValueOnce({
+        json: vi.fn().mockResolvedValue(mockResponse),
       } as any);
 
       const result = await naisTeams.authorize(email);
@@ -221,9 +222,9 @@ describe("NaisTeams", () => {
 
     it("should return status false and null user when lookupUser throws an error", async () => {
       const email = "user@example.com";
-      jest
-        .spyOn(naisTeams, "lookupUser")
-        .mockRejectedValue(new Error("Something went wrong"));
+      vi.spyOn(naisTeams, "lookupUser").mockRejectedValue(
+        new Error("Something went wrong"),
+      );
 
       const result = await naisTeams.authorize(email);
 

@@ -1,3 +1,4 @@
+import { describe, it, expect, afterEach } from "vitest";
 import Cache from "./cache";
 
 describe("Cache", () => {

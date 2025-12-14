@@ -6,9 +6,11 @@
  * and ensure consistent test behavior.
  */
 
+import { vi, type Mock } from "vitest";
 import { KeyObject } from "crypto";
-import { TeamsService } from "./nais-teams";
-import { newSignedToken } from "./utils";
+import * as jose from "jose";
+import { TeamsService, User } from "./nais-teams";
+import { generateTestKeyPair, signTokenWithKeyPair, TestKeyPair } from "./utils";
 import { OAUTH_JWT_AUDIENCE, OAUTH_JWT_ISSUER } from "./oauth-fa";
 
 export const TEST_KID = "test-key-id";
@@ -16,18 +18,22 @@ export const TEST_EMAIL = "test@example.com";
 
 /**
  * Mock implementation of TeamsService for testing.
- * Uses jest.fn() for the authorize method to allow mocking responses.
+ * Uses vi.fn() for the authorize method to allow mocking responses.
  */
 export class MockTeamsService implements TeamsService {
-  authorize = jest.fn();
+  authorize: Mock<
+    (email: string) => Promise<{ status: boolean; user: User | null }>
+  > = vi.fn();
 }
 
 /**
- * Generated test token with its public key for JWT verification tests.
+ * Generated test token with its keypair for JWT verification tests.
+ * The keypair can be reused to sign additional tokens with different emails.
  */
 export interface TestToken {
   token: string;
   publicKey: KeyObject;
+  keyPair: TestKeyPair;
 }
 
 /**
@@ -54,56 +60,62 @@ export function createTestJWKS(publicKey: KeyObject, kid: string = TEST_KID) {
 /**
  * Generates a test token and corresponding JWKS for OAuth tests.
  * Call this in beforeAll() before starting the server.
+ * The returned keyPair can be used to sign additional tokens with different emails.
  */
 export function generateTestToken(): TestToken {
-  return newSignedToken(
+  const keyPair = generateTestKeyPair();
+  const token = signTokenWithKeyPair(
+    keyPair,
     OAUTH_JWT_AUDIENCE,
     OAUTH_JWT_ISSUER,
     TEST_EMAIL,
     TEST_KID,
   );
+  return { token, publicKey: keyPair.publicKey, keyPair };
 }
+
+/**
+ * Creates a new token with a different email using the same keypair.
+ * Use this to test different user scenarios without regenerating the JWKS.
+ */
+export function createTokenForEmail(testToken: TestToken, email: string): string {
+  return signTokenWithKeyPair(
+    testToken.keyPair,
+    OAUTH_JWT_AUDIENCE,
+    OAUTH_JWT_ISSUER,
+    email,
+    TEST_KID,
+  );
+}
+
+// Store for the mocked JWKS - used by the jose mock
+let mockedLocalJWKS: ReturnType<typeof jose.createLocalJWKSet> | null = null;
 
 /**
  * Sets up the jose mock with the test JWKS.
- * Must be called after jest.mock("jose", ...) and before server initialization.
+ * Must be called after vi.mock("jose", ...) and before server initialization.
  */
 export function setupTestJWKS(testToken: TestToken): void {
   const jwks = createTestJWKS(testToken.publicKey);
-  const jose = jest.requireMock<{ __setTestJWKS: (jwks: unknown) => void }>("jose");
-  jose.__setTestJWKS(jwks);
+  mockedLocalJWKS = jose.createLocalJWKSet(jwks);
 }
 
 /**
- * Returns the jose mock factory for use with jest.mock().
- * This must be called at module scope, not inside a function.
- *
- * Usage:
- * ```
- * jest.mock("jose", () => createJoseMock());
- * ```
+ * Get the mocked JWKS for use in createRemoteJWKSet mock.
+ * Throws if setupTestJWKS hasn't been called.
  */
-export function createJoseMockFactory() {
-  return () => {
-    const actual = jest.requireActual("jose");
-    let localJWKS: ReturnType<typeof actual.createLocalJWKSet>;
+export function getMockedJWKS() {
+  if (!mockedLocalJWKS) {
+    throw new Error("JWKS not initialized - call setupTestJWKS first");
+  }
+  return mockedLocalJWKS;
+}
 
-    return {
-      ...actual,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      createRemoteJWKSet: (_url: URL) => {
-        return async (protectedHeader: any, token: any) => {
-          if (!localJWKS) {
-            throw new Error("JWKS not initialized - call __setTestJWKS first");
-          }
-          return localJWKS(protectedHeader, token);
-        };
-      },
-      __setTestJWKS: (jwks: any) => {
-        localJWKS = actual.createLocalJWKSet(jwks);
-      },
-    };
-  };
+/**
+ * Resets the mocked JWKS (call in afterAll or between tests if needed).
+ */
+export function resetMockedJWKS(): void {
+  mockedLocalJWKS = null;
 }
 
 /**
