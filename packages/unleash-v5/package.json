@@ -13,14 +13,14 @@
   "dependencies": {
     "@nais/unleash-shared": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.48.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.67.2",
     "unleash-server": "5.12.8"
   },
   "devDependencies": {
-    "@types/node": "20.14.10",
-    "@types/supertest": "6.0.2",
-    "jose": "5.10.0",
-    "nock": "^13.5.4",
+    "@types/node": "^24.0.0",
+    "@types/supertest": "^6.0.2",
+    "jose": "^5.10.0",
+    "nock": "^14.0.0",
     "supertest": "^7.0.0"
   }
 }
