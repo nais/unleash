@@ -33,7 +33,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # ratchet:actions/setup-node@v4
         with:
-          node-version: 25
+          node-version: 24
           cache: "pnpm"
 
       - name: Regenerate lockfile

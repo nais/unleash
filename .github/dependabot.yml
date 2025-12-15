@@ -7,6 +7,11 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Europe/Oslo"
+    # Note: Do not update to node:25 - distroless only supports nodejs24
+    # See: https://github.com/GoogleContainerTools/distroless
+    ignore:
+      - dependency-name: "node"
+        versions: [">=25"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -28,6 +33,11 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Europe/Oslo"
+    # Note: @types/node major version must match Node.js major version
+    # Do not update to @types/node@25 until distroless supports nodejs25
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       npm-root:
         patterns:

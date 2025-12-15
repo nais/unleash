@@ -1,5 +1,4 @@
 import crypto from "crypto";
-import { ECKeyPairKeyObjectOptions } from "crypto";
 import jwt from "jsonwebtoken";
 
 /**
@@ -16,7 +15,7 @@ export interface TestKeyPair {
 function generateTestKeyPair(): TestKeyPair {
   const { privateKey, publicKey } = crypto.generateKeyPairSync("ec", {
     namedCurve: "prime256v1",
-  } as ECKeyPairKeyObjectOptions);
+  });
 
   return { privateKey, publicKey };
 }

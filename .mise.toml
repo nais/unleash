@@ -1,5 +1,7 @@
 [tools]
-nodejs = "25"
+# Node.js 24 - do not upgrade to 25 until distroless supports nodejs25
+# See: https://github.com/GoogleContainerTools/distroless
+nodejs = "24"
 go = "1.25"
 pnpm = "latest"
 "go:github.com/sethvargo/ratchet" = "latest"
