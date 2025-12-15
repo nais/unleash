@@ -25,13 +25,32 @@ description = "Install all dependencies"
 run = "pnpm install"
 
 [tasks.build]
-description = "Build all packages"
-run = "pnpm -r build"
+description = "Build packages (all or specific: mise run build [shared|v5|v6|v7])"
+usage = 'arg "[package]" help="Package to build: shared, v5, v6, v7, or empty for all"'
+run = """
+if [ -z "${usage_package:-}" ]; then
+  pnpm -r build
+elif [ "$usage_package" = "shared" ]; then
+  pnpm --filter @nais/unleash-shared build
+else
+  pnpm --filter @nais/unleash-shared build
+  pnpm --filter unleash-$usage_package build
+fi
+"""
 depends = ["install"]
 
 [tasks.lint]
-description = "Lint all packages"
-run = "pnpm -r lint"
+description = "Lint packages (all or specific: mise run lint [shared|v5|v6|v7])"
+usage = 'arg "[package]" help="Package to lint: shared, v5, v6, v7, or empty for all"'
+run = """
+if [ -z "${usage_package:-}" ]; then
+  pnpm -r lint
+elif [ "$usage_package" = "shared" ]; then
+  pnpm --filter @nais/unleash-shared lint
+else
+  pnpm --filter unleash-$usage_package lint
+fi
+"""
 
 # Database tasks
 [tasks."db:start"]
@@ -60,24 +79,30 @@ exit 1
 depends = ["db:start"]
 
 # Test tasks
-[tasks."test:shared"]
-description = "Test shared package (no database required)"
-run = "pnpm --filter @nais/unleash-shared test"
-depends = ["build"]
-
-[tasks."test:v5"]
-description = "Test unleash-v5 package (requires database)"
-run = "pnpm --filter unleash-v5 test"
-depends = ["build", "db:wait"]
-
-[tasks."test:all"]
-description = "Test all packages with database"
-run = "pnpm -r test"
-depends = ["build", "db:wait"]
-
 [tasks.test]
-description = "Quick test - shared only (no DB)"
-alias = "test:shared"
+description = "Run tests (all or specific: mise run test [shared|v5|v6|v7])"
+usage = 'arg "[package]" help="Package to test: shared, v5, v6, v7, or empty for all"'
+run = """
+if [ -z "${usage_package:-}" ]; then
+  pnpm -r test
+elif [ "$usage_package" = "shared" ]; then
+  pnpm --filter @nais/unleash-shared test
+else
+  pnpm --filter unleash-$usage_package test
+fi
+"""
+depends = ["build", "db:wait"]
+
+# Start server
+[tasks.start]
+description = "Start unleash server (mise run start <v5|v6|v7>)"
+usage = '''
+arg "<version>" help="Version to start: v5, v6, or v7" {
+  choices "v5" "v6" "v7"
+}
+'''
+run = 'cd packages/unleash-$usage_version && pnpm start'
+depends = ["build", "db:wait"]
 
 # Development tasks
 [tasks.dev]
@@ -88,9 +113,11 @@ mise run db:start
 mise run db:wait
 echo ""
 echo "Database ready! You can now run:"
-echo "  cd packages/unleash-v5 && pnpm start"
+echo "  mise run start v5"
+echo "  mise run start v6"
+echo "  mise run start v7"
 echo ""
-echo "To run tests: mise run test:all"
+echo "To run tests: mise run test"
 echo "To stop database: mise run db:stop"
 """
 
@@ -102,99 +129,53 @@ rm -rf node_modules packages/*/node_modules
 docker compose down -v
 """
 
-# Package-specific tasks
-[tasks."build:shared"]
-description = "Build shared package only"
-run = "pnpm --filter @nais/unleash-shared build"
-depends = ["install"]
-
-[tasks."build:v5"]
-description = "Build unleash-v5 package only"
-run = "pnpm --filter unleash-v5 build"
-depends = ["build:shared"]
-
-[tasks."build:v6"]
-description = "Build unleash-v6 package only"
-run = "pnpm --filter unleash-v6 build"
-depends = ["build:shared"]
-
-[tasks."build:v7"]
-description = "Build unleash-v7 package only (when available)"
-run = "pnpm --filter unleash-v7 build 2>/dev/null || echo 'v7 not yet available'"
-depends = ["build:shared"]
-
-[tasks."start:v5"]
-description = "Start unleash-v5 server (requires database)"
-run = "cd packages/unleash-v5 && pnpm start"
-depends = ["build:v5", "db:wait"]
-
-[tasks."start:v6"]
-description = "Start unleash-v6 server (requires database)"
-run = "cd packages/unleash-v6 && pnpm start"
-depends = ["build:v6", "db:wait"]
-
-[tasks."start:v7"]
-description = "Start unleash-v7 server (requires database, when available)"
-run = "cd packages/unleash-v7 && pnpm start 2>/dev/null || echo 'v7 not yet available'"
-depends = ["build:v7", "db:wait"]
-
 # Docker tasks
 [tasks."docker:build"]
-description = "Build Docker image for v5"
-run = "docker build -t nais-unleash:v5-local ."
-
-[tasks."docker:build:v5"]
-description = "Build Docker image for v5"
-run = "docker build --build-arg UNLEASH_VERSION=v5 -t nais-unleash:v5-local ."
-
-[tasks."docker:build:v6"]
-description = "Build Docker image for v6"
-run = "docker build --build-arg UNLEASH_VERSION=v6 -t nais-unleash:v6-local ."
-
-[tasks."docker:build:v7"]
-description = "Build Docker image for v7"
-run = "docker build --build-arg UNLEASH_VERSION=v7 -t nais-unleash:v7-local ."
-
-[tasks."docker:build:all"]
-description = "Build Docker images for all versions"
+description = "Build Docker image (mise run docker:build [v5|v6|v7|all])"
+usage = 'arg "[version]" help="Version to build: v5, v6, v7, all, or empty for all"'
 run = """
-for version in $(ls -d packages/unleash-v* 2>/dev/null | sed 's|packages/unleash-||'); do
-  echo "Building Docker image for ${version}..."
-  docker build --build-arg UNLEASH_VERSION=${version} -t nais-unleash:${version}-local .
-done
+if [ -z "${usage_version:-}" ] || [ "$usage_version" = "all" ]; then
+  for version in $(ls -d packages/unleash-v* 2>/dev/null | sed 's|packages/unleash-||'); do
+    echo "Building Docker image for ${version}..."
+    docker build --build-arg UNLEASH_VERSION=${version} -t nais-unleash:${version}-local .
+  done
+else
+  echo "Building Docker image for $usage_version..."
+  docker build --build-arg UNLEASH_VERSION=$usage_version -t nais-unleash:$usage_version-local .
+fi
 """
 
 [tasks."docker:run"]
 description = "Run full stack with docker-compose"
 run = "docker compose up --build"
 
+# Ratchet tasks for GitHub Actions
 [tasks."ratchet:pin"]
 description = "Pin GitHub Actions to specific commit SHAs"
-run = [
-  "echo '📌 Pinning GitHub Actions to commit SHAs...'",
-  "ratchet pin .github/workflows/*.yml",
-  "echo '✅ All actions pinned'",
-]
+run = "ratchet pin .github/workflows/*.yml"
 
 [tasks."ratchet:update"]
 description = "Update pinned GitHub Actions to latest versions"
-run = [
-  "echo '🔄 Updating pinned GitHub Actions...'",
-  "ratchet update .github/workflows/*.yml",
-  "echo '✅ All actions updated'",
-]
+run = "ratchet update .github/workflows/*.yml"
 
 [tasks."ratchet:lint"]
 description = "Check if GitHub Actions are properly pinned"
-run = [
-  "echo '🔍 Checking GitHub Actions pinning...'",
-  "ratchet lint .github/workflows/*.yml",
-]
+run = "ratchet lint .github/workflows/*.yml"
 
 [tasks."ratchet:unpin"]
 description = "Unpin GitHub Actions (restore to tags)"
-run = [
-  "echo '🔓 Unpinning GitHub Actions...'",
-  "ratchet unpin .github/workflows/*.yml",
-  "echo '✅ All actions unpinned'",
-]
+run = "ratchet unpin .github/workflows/*.yml"
+
+# Helm tasks
+[tasks."helm:lint"]
+description = "Lint Helm charts"
+run = "helm lint charts/*"
+
+[tasks."helm:template"]
+description = "Template Helm charts for debugging"
+run = """
+for chart in charts/*/; do
+  echo "=== Templating $(basename $chart) ==="
+  helm template test "$chart"
+done
+"""

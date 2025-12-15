@@ -12,8 +12,6 @@
   },
   "dependencies": {
     "@nais/unleash-shared": "workspace:*",
-    "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.67.2",
     "unleash-server": "5.12.8"
   },
   "devDependencies": {
