@@ -101,8 +101,8 @@ importers:
         version: 5.12.8(core-js@3.47.0)(encoding@0.1.13)(mobx@6.15.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(styled-components@6.1.19(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
     devDependencies:
       '@types/node':
-        specifier: ^24.10.4
-        version: 24.10.4
+        specifier: ^25.0.2
+        version: 25.0.2
       '@types/supertest':
         specifier: ^6.0.3
         version: 6.0.3
