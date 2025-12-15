@@ -145,8 +145,8 @@ importers:
         version: 7.4.0
     devDependencies:
       '@types/node':
-        specifier: ^24.10.4
-        version: 24.10.4
+        specifier: ^25.0.2
+        version: 25.0.2
       '@types/supertest':
         specifier: ^6.0.3
         version: 6.0.3
