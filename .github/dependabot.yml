@@ -95,3 +95,22 @@ updates:
     ignore:
       - dependency-name: "unleash-server"
         update-types: ["version-update:semver-major"]
+
+  # Unleash v7 - only allow 7.x updates
+  - package-ecosystem: "npm"
+    directory: "/packages/unleash-v7"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Oslo"
+    groups:
+      npm-v7:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "unleash-server"
+    # Allow patch/minor updates within 7.x only
+    ignore:
+      - dependency-name: "unleash-server"
+        update-types: ["version-update:semver-major"]

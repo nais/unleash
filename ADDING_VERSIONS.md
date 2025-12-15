@@ -28,8 +28,6 @@ Create `packages/unleash-v6/package.json`:
   },
   "dependencies": {
     "@nais/unleash-shared": "workspace:*",
-    "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.48.0",
     "unleash-server": "6.x.x"
   },
   "devDependencies": {

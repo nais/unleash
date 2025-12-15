@@ -1,7 +1,7 @@
 {
-  "name": "unleash-v6",
-  "version": "6.10.1",
-  "description": "NAIS Unleash v6 server with custom authentication",
+  "name": "unleash-v7",
+  "version": "7.1.0",
+  "description": "NAIS Unleash v7 server with custom authentication",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@nais/unleash-shared": "workspace:*",
-    "unleash-server": "6.10.1"
+    "unleash-server": "7.4.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.4",

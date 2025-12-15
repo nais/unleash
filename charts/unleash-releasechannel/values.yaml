@@ -20,6 +20,10 @@ versions:
     enabled: true
     # Image tag for this version (format: v6-6.10.1-sha, retrieved from git tags)
     tag: v6-6.10.1
+  v7:
+    enabled: true
+    # Image tag for this version (format: v7-7.1.0-sha, retrieved from git tags)
+    tag: v7-7.1.0
 
 # Shared deployment strategy configuration
 strategy:

@@ -5,7 +5,7 @@
   "ignoreBinaries": ["lint", "build"],
   "workspaces": {
     ".": {
-      "entry": ["jest.config.ts"],
+      "entry": ["vitest.config.ts"],
       "ignoreDependencies": [
         "prettier",
         "eslint-config-*",
@@ -19,7 +19,7 @@
       "entry": ["src/index.ts", "src/**/*.test.ts"],
       "project": ["src/**/*.ts"],
       "includeEntryExports": true,
-      "ignoreDependencies": ["unleash-server", "google-auth-library", "jsonwebtoken", "log4js"],
+      "ignoreDependencies": ["unleash-server"],
       "ignore": [
         "src/cache.ts",
         "src/google-iap.ts",
@@ -31,13 +31,15 @@
     },
     "packages/unleash-v5": {
       "entry": ["src/index.ts", "src/**/*.test.ts"],
-      "project": ["src/**/*.ts"],
-      "ignoreDependencies": ["@opentelemetry/api", "@opentelemetry/auto-instrumentations-node", "jose"]
+      "project": ["src/**/*.ts"]
     },
     "packages/unleash-v6": {
       "entry": ["src/index.ts", "src/**/*.test.ts"],
-      "project": ["src/**/*.ts"],
-      "ignoreDependencies": ["@opentelemetry/api", "@opentelemetry/auto-instrumentations-node", "jose"]
+      "project": ["src/**/*.ts"]
+    },
+    "packages/unleash-v7": {
+      "entry": ["src/index.ts", "src/**/*.test.ts"],
+      "project": ["src/**/*.ts"]
     }
   }
 }
