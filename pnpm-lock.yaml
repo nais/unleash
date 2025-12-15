@@ -107,8 +107,8 @@ importers:
         version: 5.12.8(core-js@3.47.0)(encoding@0.1.13)(mobx@6.15.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(styled-components@6.1.19(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
     devDependencies:
       '@types/node':
-        specifier: ^24.10.4
-        version: 24.10.4
+        specifier: ^25.0.2
+        version: 25.0.2
       '@types/supertest':
         specifier: ^6.0.3
         version: 6.0.3
@@ -1333,6 +1333,9 @@ packages:
 
   '@types/node@24.10.4':
     resolution: {integrity: sha512-vnDVpYPMzs4wunl27jHrfmwojOGKya0xyM3sH+UE5iv5uPS6vX7UIoh6m+vQc5LGBq52HBKPIn/zcSZVzeDEZg==}
+
+  '@types/node@25.0.2':
+    resolution: {integrity: sha512-gWEkeiyYE4vqjON/+Obqcoeffmk0NF15WSBwSs7zwVA2bAbTaE0SJ7P0WNGoJn8uE7fiaV5a7dKYIJriEqOrmA==}
 
   '@types/oracledb@6.5.2':
     resolution: {integrity: sha512-kK1eBS/Adeyis+3OlBDMeQQuasIDLUYXsi2T15ccNJ0iyUpQ4xDF7svFu3+bGVrI0CMBUclPciz+lsQR3JX3TQ==}
@@ -5850,7 +5853,7 @@ snapshots:
 
   '@types/bunyan@1.8.11':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 25.0.2
 
   '@types/chai@5.2.3':
     dependencies:
@@ -5859,7 +5862,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 25.0.2
 
   '@types/cookiejar@2.1.5': {}
 
@@ -5882,7 +5885,7 @@ snapshots:
 
   '@types/memcached@2.2.10':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 25.0.2
 
   '@types/methods@1.1.4': {}
 
@@ -5890,15 +5893,19 @@ snapshots:
 
   '@types/mysql@2.15.27':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 25.0.2
 
   '@types/node@24.10.4':
     dependencies:
       undici-types: 7.16.0
 
+  '@types/node@25.0.2':
+    dependencies:
+      undici-types: 7.16.0
+
   '@types/oracledb@6.5.2':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 25.0.2
 
   '@types/pg-pool@2.0.6':
     dependencies:
@@ -5906,7 +5913,7 @@ snapshots:
 
   '@types/pg@8.15.6':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 25.0.2
       pg-protocol: 1.10.3
       pg-types: 2.2.0
 
@@ -5918,7 +5925,7 @@ snapshots:
     dependencies:
       '@types/cookiejar': 2.1.5
       '@types/methods': 1.1.4
-      '@types/node': 24.10.4
+      '@types/node': 25.0.2
       form-data: 4.0.5
 
   '@types/supertest@6.0.3':
@@ -5928,7 +5935,7 @@ snapshots:
 
   '@types/tedious@4.0.14':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 25.0.2
 
   '@types/trusted-types@2.0.7':
     optional: true
@@ -8605,7 +8612,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 24.10.4
+      '@types/node': 25.0.2
       long: 5.3.2
 
   proxy-addr@2.0.7:
