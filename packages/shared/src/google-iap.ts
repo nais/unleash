@@ -1,4 +1,4 @@
-import { RoleName } from "unleash-server/dist/lib/types/model";
+import { RoleName } from "unleash-server";
 import { Logger } from "log4js";
 import { OAuth2Client, LoginTicket } from "google-auth-library";
 import { IapPublicKeysResponse } from "google-auth-library/build/src/auth/oauth2client";

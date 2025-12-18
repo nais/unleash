@@ -1,7 +1,7 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { Logger } from "log4js";
 import { TeamsService } from "./nais-teams";
-import { RoleName } from "unleash-server/dist/lib/types/model";
+import { RoleName } from "unleash-server";
 import cache from "./cache";
 
 // Need to use require because package.json doesn't have `type: module`
