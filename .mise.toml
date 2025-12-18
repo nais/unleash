@@ -12,6 +12,7 @@ DATABASE_USERNAME = "unleash"
 DATABASE_PASSWORD = "unleash"
 DATABASE_NAME = "unleash"
 DATABASE_HOST = "localhost"
+DATABASE_PORT = "15432"
 DATABASE_SSL = "false"
 INIT_ADMIN_API_TOKENS = "*:*.unleash4all"
 GOOGLE_IAP_AUDIENCE = "/projects/123/global/backendServices/123"
@@ -54,7 +55,7 @@ fi
 
 # Database tasks
 [tasks."db:start"]
-description = "Start PostgreSQL database in Docker"
+description = "Start PostgreSQL database in Docker (port 15432)"
 run = "docker compose up -d postgres"
 
 [tasks."db:stop"]
@@ -64,7 +65,7 @@ run = "docker compose down"
 [tasks."db:wait"]
 description = "Wait for database to be ready"
 run = """
-echo "Waiting for PostgreSQL to be ready..."
+echo "Waiting for PostgreSQL to be ready on port ${DATABASE_PORT:-15432}..."
 for i in {1..30}; do
   if docker compose exec -T postgres pg_isready -U unleash > /dev/null 2>&1; then
     echo "Database is ready!"
@@ -108,7 +109,7 @@ depends = ["build", "db:wait"]
 [tasks.dev]
 description = "Start development environment with database"
 run = """
-echo "Starting PostgreSQL..."
+echo "Starting PostgreSQL on port ${DATABASE_PORT:-15432}..."
 mise run db:start
 mise run db:wait
 echo ""
@@ -126,7 +127,7 @@ description = "Clean all build artifacts and stop database"
 run = """
 pnpm -r exec rm -rf dist coverage
 rm -rf node_modules packages/*/node_modules
-docker compose down -v
+docker compose down -v 2>/dev/null || true
 """
 
 # Docker tasks
@@ -148,6 +149,181 @@ fi
 [tasks."docker:run"]
 description = "Run full stack with docker-compose"
 run = "docker compose up --build"
+
+[tasks."docker:e2e"]
+description = "Run end-to-end tests for Docker containers (mise run docker:e2e [v5|v6|v7|all])"
+usage = 'arg "[version]" help="Version to test: v5, v6, v7, all, or empty for all"'
+run = """
+#!/bin/bash
+set -e
+
+# Colors for output
+RED='\\033[0;31m'
+GREEN='\\033[0;32m'
+YELLOW='\\033[1;33m'
+NC='\\033[0m' # No Color
+
+test_container() {
+  local version=$1
+  local image="nais-unleash:${version}-local"
+  local container_name="unleash-e2e-${version}"
+  local port=$((14242 + ${version#v}))  # v5=14247, v6=14248, v7=14249
+
+  echo -e "${YELLOW}Testing ${version}...${NC}"
+
+  # Check if image exists
+  if ! docker image inspect "$image" > /dev/null 2>&1; then
+    echo -e "${RED}Image $image not found. Run 'mise run docker:build ${version}' first.${NC}"
+    return 1
+  fi
+
+  # Start container
+  echo "  Starting container on port $port..."
+  docker run -d --name "$container_name" \\
+    --network unleash_unleash \\
+    -p "${port}:4242" \\
+    -e DATABASE_HOST=postgres \\
+    -e DATABASE_USERNAME=unleash \\
+    -e DATABASE_PASSWORD=unleash \\
+    -e DATABASE_NAME=unleash \\
+    -e DATABASE_SSL=false \\
+    -e DATABASE_PORT=5432 \\
+    -e INIT_ADMIN_API_TOKENS="*:*.unleash4all" \\
+    -e GOOGLE_IAP_AUDIENCE="/projects/123/global/backendServices/123" \\
+    "$image" > /dev/null
+
+  # Wait for startup
+  echo "  Waiting for server to start..."
+  local max_attempts=30
+  local attempt=0
+  while [ $attempt -lt $max_attempts ]; do
+    if curl -s "http://localhost:${port}/health" > /dev/null 2>&1; then
+      break
+    fi
+    attempt=$((attempt + 1))
+    sleep 1
+  done
+
+  if [ $attempt -eq $max_attempts ]; then
+    echo -e "${RED}  Server failed to start within ${max_attempts}s${NC}"
+    docker logs "$container_name" 2>&1 | tail -20
+    docker rm -f "$container_name" > /dev/null 2>&1
+    return 1
+  fi
+
+  # Test health endpoint
+  echo "  Testing /health endpoint..."
+  local health_response=$(curl -s "http://localhost:${port}/health")
+  if ! echo "$health_response" | grep -q '"health":"GOOD"'; then
+    echo -e "${RED}  Health check failed: $health_response${NC}"
+    docker rm -f "$container_name" > /dev/null 2>&1
+    return 1
+  fi
+  echo -e "${GREEN}  ✓ Health check passed${NC}"
+
+  # Test prometheus endpoint
+  echo "  Testing /internal-backstage/prometheus endpoint..."
+  local prom_response=$(curl -s "http://localhost:${port}/internal-backstage/prometheus")
+  if ! echo "$prom_response" | grep -q "^# HELP"; then
+    echo -e "${RED}  Prometheus endpoint failed${NC}"
+    docker rm -f "$container_name" > /dev/null 2>&1
+    return 1
+  fi
+  echo -e "${GREEN}  ✓ Prometheus endpoint passed${NC}"
+
+  # Test API with token
+  echo "  Testing /api/admin/instance-admin/statistics with API token..."
+  local api_response=$(curl -s -w "%{http_code}" -o /dev/null \\
+    -H "Authorization: *:*.unleash4all" \\
+    "http://localhost:${port}/api/admin/instance-admin/statistics")
+  if [ "$api_response" != "200" ]; then
+    echo -e "${RED}  API test failed with status: $api_response${NC}"
+    docker rm -f "$container_name" > /dev/null 2>&1
+    return 1
+  fi
+  echo -e "${GREEN}  ✓ API authentication passed${NC}"
+
+  # Cleanup
+  docker rm -f "$container_name" > /dev/null 2>&1
+  echo -e "${GREEN}✓ ${version} passed all tests${NC}"
+  return 0
+}
+
+# Ensure postgres is running
+if ! docker compose ps postgres 2>/dev/null | grep -q "running"; then
+  echo "Starting PostgreSQL..."
+  docker compose up -d postgres
+  sleep 5
+fi
+
+# Determine which versions to test
+versions=""
+if [ -z "${usage_version:-}" ] || [ "$usage_version" = "all" ]; then
+  versions=$(ls -d packages/unleash-v* 2>/dev/null | sed 's|packages/unleash-||')
+else
+  versions="$usage_version"
+fi
+
+# Run tests
+failed=0
+for version in $versions; do
+  if ! test_container "$version"; then
+    failed=$((failed + 1))
+  fi
+  echo ""
+done
+
+# Summary
+if [ $failed -gt 0 ]; then
+  echo -e "${RED}$failed version(s) failed e2e tests${NC}"
+  exit 1
+else
+  echo -e "${GREEN}All e2e tests passed!${NC}"
+fi
+"""
+depends = ["docker:build"]
+
+[tasks."docker:smoke"]
+description = "Quick smoke test for a Docker image (mise run docker:smoke <v5|v6|v7>)"
+usage = '''
+arg "<version>" help="Version to smoke test: v5, v6, or v7" {
+  choices "v5" "v6" "v7"
+}
+'''
+run = """
+#!/bin/bash
+set -e
+image="nais-unleash:${usage_version}-local"
+
+echo "Smoke testing $image..."
+
+# Check image exists
+if ! docker image inspect "$image" > /dev/null 2>&1; then
+  echo "Error: Image $image not found. Run 'mise run docker:build ${usage_version}' first."
+  exit 1
+fi
+
+# Test that the container can at least start and show help/version
+echo "Testing container startup..."
+if docker run --rm "$image" node --version; then
+  echo "✓ Node.js runs successfully"
+else
+  echo "✗ Failed to run Node.js"
+  exit 1
+fi
+
+# Test that the entrypoint script exists
+echo "Testing entrypoint..."
+if docker run --rm --entrypoint cat "$image" /app/packages/unleash-${usage_version}/dist/index.js > /dev/null 2>&1; then
+  echo "✓ Entrypoint file exists"
+else
+  echo "✗ Entrypoint file not found"
+  exit 1
+fi
+
+echo ""
+echo "✓ Smoke test passed for $image"
+"""
 
 # Ratchet tasks for GitHub Actions
 [tasks."ratchet:pin"]
@@ -179,3 +355,45 @@ for chart in charts/*/; do
   helm template test "$chart"
 done
 """
+
+[tasks."helm:dry-run"]
+description = "Simulate Helm install (dry-run)"
+run = "helm install unleash-releasechannel charts/unleash-releasechannel --dry-run"
+
+[tasks."helm:package"]
+description = "Package the Helm chart"
+run = "helm package charts/unleash-releasechannel -d charts/unleash-releasechannel"
+
+[tasks."helm:show-values"]
+description = "Show default values for the chart"
+run = "helm show values charts/unleash-releasechannel"
+
+[tasks."helm:show-chart"]
+description = "Show chart metadata"
+run = "helm show chart charts/unleash-releasechannel"
+
+[tasks."helm:validate"]
+description = "Run all Helm validations"
+depends = ["helm:lint", "helm:template"]
+
+# CI task
+[tasks.ci]
+description = "Run full CI pipeline locally"
+run = """
+echo "=== Running CI pipeline ==="
+echo ""
+echo "1. Lint..."
+mise run lint
+echo ""
+echo "2. Build..."
+mise run build
+echo ""
+echo "3. Test..."
+mise run test
+echo ""
+echo "4. Helm validate..."
+mise run helm:validate
+echo ""
+echo "=== CI pipeline complete ==="
+"""
+depends = ["db:wait"]

@@ -27,7 +27,7 @@ services:
       - POSTGRES_PASSWORD=unleash
       - POSTGRES_DB=unleash
     ports:
-      - "5432:5432"
+      - "15432:5432"
     networks:
       - unleash
     healthcheck:
