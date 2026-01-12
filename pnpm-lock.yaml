@@ -88,8 +88,8 @@ importers:
         specifier: ^9.0.10
         version: 9.0.10
       '@types/node':
-        specifier: ^25.0.2
-        version: 25.0.2
+        specifier: ^24.10.7
+        version: 24.10.7
 
   packages/unleash-v5:
     dependencies:
@@ -867,6 +867,9 @@ packages:
 
   '@types/node@24.10.4':
     resolution: {integrity: sha512-vnDVpYPMzs4wunl27jHrfmwojOGKya0xyM3sH+UE5iv5uPS6vX7UIoh6m+vQc5LGBq52HBKPIn/zcSZVzeDEZg==}
+
+  '@types/node@24.10.7':
+    resolution: {integrity: sha512-+054pVMzVTmRQV8BhpGv3UyfZ2Llgl8rdpDTon+cUH9+na0ncBVXj3wTUKh14+Kiz18ziM3b4ikpP5/Pc0rQEQ==}
 
   '@types/node@25.0.2':
     resolution: {integrity: sha512-gWEkeiyYE4vqjON/+Obqcoeffmk0NF15WSBwSs7zwVA2bAbTaE0SJ7P0WNGoJn8uE7fiaV5a7dKYIJriEqOrmA==}
@@ -4669,11 +4672,11 @@ snapshots:
 
   '@slack/logger@3.0.0':
     dependencies:
-      '@types/node': 25.0.2
+      '@types/node': 24.10.7
 
   '@slack/logger@4.0.0':
     dependencies:
-      '@types/node': 25.0.2
+      '@types/node': 24.10.7
 
   '@slack/types@2.19.0': {}
 
@@ -4682,7 +4685,7 @@ snapshots:
       '@slack/logger': 3.0.0
       '@slack/types': 2.19.0
       '@types/is-stream': 1.1.0
-      '@types/node': 25.0.2
+      '@types/node': 24.10.7
       axios: 1.13.2
       eventemitter3: 3.1.2
       form-data: 2.5.5
@@ -4697,7 +4700,7 @@ snapshots:
     dependencies:
       '@slack/logger': 4.0.0
       '@slack/types': 2.19.0
-      '@types/node': 25.0.2
+      '@types/node': 24.10.7
       '@types/retry': 0.12.0
       axios: 1.13.2
       eventemitter3: 5.0.1
@@ -4744,7 +4747,7 @@ snapshots:
 
   '@types/is-stream@1.1.0':
     dependencies:
-      '@types/node': 25.0.2
+      '@types/node': 24.10.7
 
   '@types/json-schema@7.0.15': {}
 
@@ -4753,13 +4756,17 @@ snapshots:
   '@types/jsonwebtoken@9.0.10':
     dependencies:
       '@types/ms': 2.1.0
-      '@types/node': 25.0.2
+      '@types/node': 24.10.7
 
   '@types/methods@1.1.4': {}
 
   '@types/ms@2.1.0': {}
 
   '@types/node@24.10.4':
+    dependencies:
+      undici-types: 7.16.0
+
+  '@types/node@24.10.7':
     dependencies:
       undici-types: 7.16.0
 
@@ -4775,7 +4782,7 @@ snapshots:
     dependencies:
       '@types/cookiejar': 2.1.5
       '@types/methods': 1.1.4
-      '@types/node': 25.0.2
+      '@types/node': 24.10.7
       form-data: 4.0.5
 
   '@types/supertest@6.0.3':
