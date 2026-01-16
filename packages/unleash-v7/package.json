@@ -1,6 +1,6 @@
 {
   "name": "unleash-v7",
-  "version": "7.1.0",
+  "version": "7.4.0",
   "description": "NAIS Unleash v7 server with custom authentication",
   "main": "dist/index.js",
   "scripts": {
@@ -15,9 +15,9 @@
     "unleash-server": "7.4.0"
   },
   "devDependencies": {
-    "@types/node": "^24.10.4",
+    "@types/node": "^24.10.9",
     "@types/supertest": "^6.0.3",
     "nock": "^14.0.10",
-    "supertest": "^7.1.4"
+    "supertest": "^7.2.2"
   }
 }
