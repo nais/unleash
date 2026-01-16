@@ -85,7 +85,12 @@ description = "Run tests (all or specific: mise run test [shared|v5|v6|v7])"
 usage = 'arg "[package]" help="Package to test: shared, v5, v6, v7, or empty for all"'
 run = """
 if [ -z "${usage_package:-}" ]; then
-  pnpm -r test
+  # Run all tests sequentially to avoid database conflicts
+  echo "Running tests sequentially (shared, v5, v6, v7)..."
+  pnpm --filter @nais/unleash-shared test && \
+  pnpm --filter unleash-v5 test && \
+  pnpm --filter unleash-v6 test && \
+  pnpm --filter unleash-v7 test
 elif [ "$usage_package" = "shared" ]; then
   pnpm --filter @nais/unleash-shared test
 else
