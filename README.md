@@ -213,6 +213,7 @@ mise run start:v5
 | `mise run start:v6`           | Start Unleash v6 server                               |
 | `mise run db:start`           | Start PostgreSQL                                      |
 | `mise run db:stop`            | Stop PostgreSQL                                       |
+| `mise run db:reset`           | Reset database (drop and recreate)                    |
 | `mise run update:check`       | Check for package updates                             |
 | `mise run update:unleash`     | Update specific version (v5, v6, or v7)               |
 | `mise run update:unleash-all` | Update all unleash packages (respects major versions) |

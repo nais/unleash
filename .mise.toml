@@ -62,6 +62,16 @@ run = "docker compose up -d postgres"
 description = "Stop PostgreSQL database"
 run = "docker compose down"
 
+[tasks."db:reset"]
+description = "Reset database (drop and recreate)"
+run = """
+echo "Resetting database..."
+docker compose exec -T postgres psql -U unleash -d postgres -c "DROP DATABASE IF EXISTS unleash;" > /dev/null 2>&1
+docker compose exec -T postgres psql -U unleash -d postgres -c "CREATE DATABASE unleash;" > /dev/null 2>&1
+echo "Database reset complete"
+"""
+depends = ["db:wait"]
+
 [tasks."db:wait"]
 description = "Wait for database to be ready"
 run = """
@@ -85,16 +95,16 @@ description = "Run tests (all or specific: mise run test [shared|v5|v6|v7])"
 usage = 'arg "[package]" help="Package to test: shared, v5, v6, v7, or empty for all"'
 run = """
 if [ -z "${usage_package:-}" ]; then
-  # Run all tests sequentially to avoid database conflicts
+  # Run all tests sequentially with database reset between versions
   echo "Running tests sequentially (shared, v5, v6, v7)..."
   pnpm --filter @nais/unleash-shared test && \
-  pnpm --filter unleash-v5 test && \
-  pnpm --filter unleash-v6 test && \
-  pnpm --filter unleash-v7 test
+  mise run db:reset && pnpm --filter unleash-v5 test && \
+  mise run db:reset && pnpm --filter unleash-v6 test && \
+  mise run db:reset && pnpm --filter unleash-v7 test
 elif [ "$usage_package" = "shared" ]; then
   pnpm --filter @nais/unleash-shared test
 else
-  pnpm --filter unleash-$usage_package test
+  mise run db:reset && pnpm --filter unleash-$usage_package test
 fi
 """
 depends = ["build", "db:wait"]
