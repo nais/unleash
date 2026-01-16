@@ -201,19 +201,22 @@ mise run start:v5
 
 ### Common Tasks
 
-| Command                | Description                    |
-| ---------------------- | ------------------------------ |
-| `mise run dev`         | Setup complete dev environment |
-| `mise run build`       | Build all packages             |
-| `mise run test:shared` | Test shared package (no DB)    |
-| `mise run test:v5`     | Test v5 with database          |
-| `mise run test:v6`     | Test v6 with database          |
-| `mise run test:all`    | Test everything                |
-| `mise run start:v5`    | Start Unleash v5 server        |
-| `mise run start:v6`    | Start Unleash v6 server        |
-| `mise run db:start`    | Start PostgreSQL               |
-| `mise run db:stop`     | Stop PostgreSQL                |
-| `mise tasks`           | List all available tasks       |
+| Command                       | Description                                           |
+| ----------------------------- | ----------------------------------------------------- |
+| `mise run dev`                | Setup complete dev environment                        |
+| `mise run build`              | Build all packages                                    |
+| `mise run test:shared`        | Test shared package (no DB)                           |
+| `mise run test:v5`            | Test v5 with database                                 |
+| `mise run test:v6`            | Test v6 with database                                 |
+| `mise run test:all`           | Test everything                                       |
+| `mise run start:v5`           | Start Unleash v5 server                               |
+| `mise run start:v6`           | Start Unleash v6 server                               |
+| `mise run db:start`           | Start PostgreSQL                                      |
+| `mise run db:stop`            | Stop PostgreSQL                                       |
+| `mise run update:check`       | Check for package updates                             |
+| `mise run update:unleash`     | Update specific version (v5, v6, or v7)               |
+| `mise run update:unleash-all` | Update all unleash packages (respects major versions) |
+| `mise tasks`                  | List all available tasks                              |
 
 ### Running Unleash
 
@@ -277,6 +280,37 @@ GOOGLE_IAP_AUDIENCE=/projects/123/global/backendServices/123
 ```
 
 **Note:** When using `mise`, these environment variables are automatically set from [.mise.toml](.mise.toml).
+
+## Updating Dependencies
+
+This monorepo maintains multiple major versions of Unleash simultaneously. Each version package (v5, v6, v7) is pinned to its respective major version of `unleash-server`.
+
+```bash
+# Check for available updates across all packages
+mise run update:check
+
+# Update a specific unleash version (respects major version constraint)
+mise run update:unleash v5   # Updates to latest 5.x
+mise run update:unleash v6   # Updates to latest 6.x
+mise run update:unleash v7   # Updates to latest 7.x
+
+# Update all unleash packages at once (maintains major version constraints)
+mise run update:unleash-all
+
+# Update shared package dependencies
+mise run update:shared
+
+# Update everything (interactive)
+mise run update:all
+```
+
+The update tasks ensure that:
+- `unleash-v5` only updates to the latest `5.x` version
+- `unleash-v6` only updates to the latest `6.x` version
+- `unleash-v7` only updates to the latest `7.x` version
+- Package versions are automatically synced with their `unleash-server` dependency
+
+After updating, always run `pnpm install` and `mise run test` to verify compatibility.
 
 ## Adding New Unleash Versions
 

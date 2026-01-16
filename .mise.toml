@@ -109,10 +109,6 @@ depends = ["build", "db:wait"]
 [tasks.dev]
 description = "Start development environment with database"
 run = """
-echo "Starting PostgreSQL on port ${DATABASE_PORT:-15432}..."
-mise run db:start
-mise run db:wait
-echo ""
 echo "Database ready! You can now run:"
 echo "  mise run start v5"
 echo "  mise run start v6"
@@ -121,6 +117,7 @@ echo ""
 echo "To run tests: mise run test"
 echo "To stop database: mise run db:stop"
 """
+depends = ["build", "db:wait"]
 
 [tasks.clean]
 description = "Clean all build artifacts and stop database"
@@ -249,13 +246,6 @@ test_container() {
   return 0
 }
 
-# Ensure postgres is running
-if ! docker compose ps postgres 2>/dev/null | grep -q "running"; then
-  echo "Starting PostgreSQL..."
-  docker compose up -d postgres
-  sleep 5
-fi
-
 # Determine which versions to test
 versions=""
 if [ -z "${usage_version:-}" ] || [ "$usage_version" = "all" ]; then
@@ -281,7 +271,7 @@ else
   echo -e "${GREEN}All e2e tests passed!${NC}"
 fi
 """
-depends = ["docker:build"]
+depends = ["docker:build", "db:start"]
 
 [tasks."docker:smoke"]
 description = "Quick smoke test for a Docker image (mise run docker:smoke <v5|v6|v7>)"
@@ -376,24 +366,191 @@ run = "helm show chart charts/unleash-releasechannel"
 description = "Run all Helm validations"
 depends = ["helm:lint", "helm:template"]
 
+# Update tasks
+[tasks."update:check"]
+description = "Check for available package updates"
+run = """
+echo "=== Checking for package updates ==="
+for scope in "root" "shared" "v5" "v6" "v7"; do
+  echo ""
+  case $scope in
+    root) echo "Root workspace:"; pnpm outdated || true ;;
+    shared) echo "Shared package:"; pnpm --filter @nais/unleash-shared outdated || true ;;
+    *) echo "Unleash $scope (unleash-server: ${scope#v}.x):"; pnpm --filter unleash-$scope outdated || true ;;
+  esac
+done
+"""
+
+[tasks."update:shared"]
+description = "Update shared package dependencies"
+run = "cd packages/shared && pnpm update --interactive"
+
+[tasks."update:unleash"]
+description = "Update a specific unleash version (mise run update:unleash <v5|v6|v7>)"
+usage = '''
+arg "<version>" help="Version to update: v5, v6, or v7" {
+  choices "v5" "v6" "v7"
+}
+'''
+run = """
+#!/bin/bash
+set -e
+VERSION=${usage_version}
+MAJOR=${VERSION#v}
+
+echo "=== Updating unleash-${VERSION} to latest ${MAJOR}.x ==="
+cd packages/unleash-${VERSION}
+
+LATEST=$(npm view unleash-server@${MAJOR} version 2>&1 | tail -1 | awk '{print $NF}' | tr -d "'")
+if [ -z "$LATEST" ]; then
+  echo "⚠ Could not find unleash-server@${MAJOR}"
+  exit 1
+fi
+
+CURRENT=$(node -p "require('./package.json').version")
+echo "Current: $CURRENT"
+echo "Latest unleash-server ${MAJOR}.x: $LATEST"
+
+if [ "$CURRENT" = "$LATEST" ]; then
+  echo "Already at latest version, updating other dependencies..."
+  pnpm update
+else
+  pnpm add unleash-server@$LATEST
+  pnpm update
+  pnpm version $LATEST --no-git-tag-version
+  echo "✓ Updated unleash-${VERSION} from $CURRENT to $LATEST"
+fi
+"""
+
+[tasks."update:unleash-all"]
+description = "Update all unleash packages to latest within their major versions"
+run = """
+#!/bin/bash
+set -e
+echo "=== Updating all Unleash packages ==="
+
+UPDATED_VERSIONS=""
+
+update_version() {
+  local VERSION=$1
+  local MAJOR=${VERSION#v}
+
+  echo ""
+  echo "=== Unleash ${VERSION} ==="
+  cd packages/unleash-${VERSION}
+
+  LATEST=$(npm view unleash-server@${MAJOR} version 2>&1 | tail -1 | awk '{print $NF}' | tr -d "'")
+  if [ -n "$LATEST" ]; then
+    CURRENT=$(node -p "require('./package.json').version")
+    echo "Current: $CURRENT, Latest: $LATEST"
+
+    if [ "$CURRENT" = "$LATEST" ]; then
+      echo "✓ Already at latest version"
+    else
+      pnpm add unleash-server@$LATEST
+      pnpm version $LATEST --no-git-tag-version
+      echo "✓ Updated from $CURRENT to $LATEST"
+      UPDATED_VERSIONS="${UPDATED_VERSIONS}  - unleash-${VERSION}: ${CURRENT} → ${LATEST}\n"
+    fi
+  else
+    echo "⚠ Could not find unleash-server@${MAJOR}"
+  fi
+  cd ../..
+}
+
+for version in v5 v6 v7; do
+  update_version $version
+done
+
+echo ""
+echo "=== Unleash packages update complete ==="
+if [ -n "$UPDATED_VERSIONS" ]; then
+  echo -e "Updated:\n${UPDATED_VERSIONS}"
+else
+  echo "All packages already at latest versions"
+fi
+"""
+
+[tasks."update:all"]
+run = """
+#!/bin/bash
+set -e
+echo "=== Updating all dependencies ==="
+echo "Unleash server versions will be constrained to their major versions."
+echo ""
+read -p "Continue? (y/N) " -n 1 -r
+echo
+[[ ! $REPLY =~ ^[Yy]$ ]] && echo "Cancelled" && exit 0
+
+# Store git state before updates
+echo ""
+echo "Capturing current state..."
+git diff --name-only > /tmp/unleash-update-before.txt 2>/dev/null || true
+
+mise run update:unleash-all
+
+echo ""
+echo "2. Updating other packages..."
+for scope in "root" "shared" "v5" "v6" "v7"; do
+  case $scope in
+    root) echo "   - root"; pnpm update ;;
+    shared) echo "   - shared"; (cd packages/shared && pnpm update) ;;
+    *) echo "   - unleash-$scope devDeps"; (cd packages/unleash-$scope && pnpm update) ;;
+  esac
+done
+
+echo ""
+echo "3. Installing to update lockfile..."
+pnpm install
+
+echo ""
+echo "=== Update Summary ==="
+echo ""
+
+# Show version changes first (most important)
+echo "📦 Package versions:"
+HAS_VERSION_CHANGES=false
+for pkg in packages/unleash-v*/package.json; do
+  if git diff "$pkg" | grep -E '^\\+.*"version"' > /dev/null 2>&1; then
+    PKG_NAME=$(basename $(dirname "$pkg"))
+    OLD=$(git diff "$pkg" | grep -E '^-.*"version"' | sed 's/.*"version": "//;s/".*//' || echo "N/A")
+    NEW=$(git diff "$pkg" | grep -E '^\\+.*"version"' | sed 's/.*"version": "//;s/".*//' || echo "N/A")
+    echo "  ✓ $PKG_NAME: $OLD → $NEW"
+    HAS_VERSION_CHANGES=true
+  fi
+done
+if [ "$HAS_VERSION_CHANGES" = false ]; then
+  echo "  ✓ All packages already at latest versions"
+fi
+
+# Show production dependency changes
+echo ""
+echo "🔧 Production dependencies:"
+HAS_PROD_CHANGES=false
+for pkg in packages/unleash-v*/package.json packages/shared/package.json; do
+  if git diff "$pkg" | grep -E '^\\+.*"(unleash-server|google-auth-library|jose|jsonwebtoken|log4js)"' > /dev/null 2>&1; then
+    PKG_NAME=$(basename $(dirname "$pkg"))
+    if [ "$HAS_PROD_CHANGES" = false ]; then
+      HAS_PROD_CHANGES=true
+    fi
+    echo "  $PKG_NAME:"
+    git diff "$pkg" | grep -E '^\\+.*"(unleash-server|google-auth-library|jose|jsonwebtoken|log4js)"' | sed 's/^+/    /' | sed 's/,$//'
+  fi
+done
+if [ "$HAS_PROD_CHANGES" = false ]; then
+  echo "  ✓ No production dependency changes"
+fi
+
+# Count dev dependency changes
+DEV_CHANGES=$(git diff packages/*/package.json package.json | grep -E '^\\+.*"@types/|^\\+.*"eslint|^\\+.*"typescript|^\\+.*"vitest|^\\+.*"prettier|^\\+.*"supertest|^\\+.*"nock' | wc -l | tr -d ' ')
+echo ""
+echo "🛠️  Dev dependencies: $DEV_CHANGES packages updated"
+
+echo ""
+echo "Review all changes: git diff"
+"""
+
 # CI task
 [tasks.ci]
 description = "Run full CI pipeline locally"
-run = """
-echo "=== Running CI pipeline ==="
-echo ""
-echo "1. Lint..."
-mise run lint
-echo ""
-echo "2. Build..."
-mise run build
-echo ""
-echo "3. Test..."
-mise run test
-echo ""
-echo "4. Helm validate..."
-mise run helm:validate
-echo ""
-echo "=== CI pipeline complete ==="
-"""
-depends = ["db:wait"]
+depends = ["lint", "build", "test", "helm:validate"]
