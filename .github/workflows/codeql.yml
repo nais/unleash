@@ -38,11 +38,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # ratchet:actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v4
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@cdefb33c0f6224e58673d9004f47f7cb3e328b89 # ratchet:github/codeql-action/init@v3
+        uses: github/codeql-action/init@19b2f06db2b6f5108140aeb04014ef02b648f789 # ratchet:github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           # If you wish to specify custom queries, you can do so here or in a config file.
@@ -58,7 +58,7 @@ jobs:
         # queries: security-extended,security-and-quality
 
 
-        uses: github/codeql-action/autobuild@cdefb33c0f6224e58673d9004f47f7cb3e328b89 # ratchet:github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@19b2f06db2b6f5108140aeb04014ef02b648f789 # ratchet:github/codeql-action/autobuild@v3
       # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
 
       #   If the Autobuild fails above, remove it and uncomment the following three lines.
@@ -75,7 +75,7 @@ jobs:
 
         # ℹ️ Command-line programs to run using the OS shell.
 
-        uses: github/codeql-action/analyze@cdefb33c0f6224e58673d9004f47f7cb3e328b89 # ratchet:github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@19b2f06db2b6f5108140aeb04014ef02b648f789 # ratchet:github/codeql-action/analyze@v3
 
         with:
           category: "/language:${{matrix.language}}"
