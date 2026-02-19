@@ -8,11 +8,7 @@
       "entry": ["vitest.config.ts"],
       "ignoreDependencies": [
         "prettier",
-        "eslint-config-*",
-        "eslint-plugin-*",
-        "@typescript-eslint/*",
-        "@types/*",
-        "ts-node"
+        "@types/*"
       ]
     },
     "packages/shared": {

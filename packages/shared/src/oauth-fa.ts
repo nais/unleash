@@ -1,7 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { Logger } from "log4js";
 import { TeamsService } from "./nais-teams";
-import { RoleName } from "unleash-server";
 import cache from "./cache";
 
 // Need to use require because package.json doesn't have `type: module`
@@ -72,6 +71,7 @@ async function getCachedValue<T>(
  */
 async function createJWTAuthHandler(
   teamsServer: TeamsService,
+  adminRoleName: string = "Admin",
 ): Promise<(app: any, config: any, services: any) => void> {
   if (OAUTH_JWT_AUDIENCE === "") {
     throw new Error("OAUTH_JWT_AUDIENCE is not set");
@@ -139,7 +139,7 @@ async function createJWTAuthHandler(
         req.user = await userService.loginUserSSO({
           email: userData.email,
           name: userData.name,
-          rootRole: RoleName.ADMIN,
+          rootRole: adminRoleName,
           autoCreate: true,
         });
       } catch (error) {
