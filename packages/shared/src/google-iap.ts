@@ -1,4 +1,3 @@
-import { RoleName } from "unleash-server";
 import { Logger } from "log4js";
 import { OAuth2Client, LoginTicket } from "google-auth-library";
 import { IapPublicKeysResponse } from "google-auth-library/build/src/auth/oauth2client";
@@ -159,7 +158,7 @@ async function createIapAuthHandler(
         req.user = await userService.loginUserSSO({
           email: userData.email,
           name: userData.name,
-          rootRole: RoleName.ADMIN,
+          rootRole: "Admin",
           autoCreate: true,
         });
       } catch (error) {
