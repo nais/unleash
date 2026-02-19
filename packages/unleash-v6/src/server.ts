@@ -13,7 +13,7 @@ import {
   parseEnvVarBoolean,
   parseEnvVarNumber,
 } from "unleash-server/dist/lib/util";
-import { IAuthType, LogLevel } from "unleash-server";
+import { IAuthType, LogLevel, RoleName } from "unleash-server";
 import { TeamsService } from "@nais/unleash-shared";
 
 async function naisleash(
@@ -21,14 +21,14 @@ async function naisleash(
   teamsService: TeamsService,
   useJWTAuth: boolean = false,
 ): Promise<IUnleash> {
-  let createFunc: ((teamsServer: TeamsService) => Promise<(app: any, config: any, services: any) => void>) | undefined = undefined;
+  let createFunc: ((teamsServer: TeamsService, adminRoleName: string) => Promise<(app: any, config: any, services: any) => void>) | undefined = undefined;
   if (useJWTAuth) {
     createFunc = oauthForwardAuth
   } else {
     createFunc = googleIapAuth
   }
 
-  const iapAuthHandler = await createFunc(teamsService);
+  const iapAuthHandler = await createFunc(teamsService, RoleName.ADMIN);
   const unleashOptions: IUnleashOptions = {
     authentication: {
       type: IAuthType.CUSTOM,

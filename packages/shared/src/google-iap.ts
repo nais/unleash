@@ -71,6 +71,7 @@ async function getCachedValue<T>(
  */
 async function createIapAuthHandler(
   teamsServer: TeamsService,
+  adminRoleName: string = "Admin",
 ): Promise<(app: any, config: any, services: any) => void> {
   if (IAP_AUDIENCE === "") {
     throw new Error("GOOGLE_IAP_AUDIENCE is not set");
@@ -158,7 +159,7 @@ async function createIapAuthHandler(
         req.user = await userService.loginUserSSO({
           email: userData.email,
           name: userData.name,
-          rootRole: "Admin",
+          rootRole: adminRoleName,
           autoCreate: true,
         });
       } catch (error) {
