@@ -58,25 +58,6 @@ updates:
         patterns:
           - "*"
 
-  # Unleash v5 - only allow 5.x updates
-  - package-ecosystem: "npm"
-    directory: "/packages/unleash-v5"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Europe/Oslo"
-    groups:
-      npm-v5:
-        patterns:
-          - "*"
-        exclude-patterns:
-          - "unleash-server"
-    # Allow patch/minor updates within 5.x only
-    ignore:
-      - dependency-name: "unleash-server"
-        update-types: ["version-update:semver-major"]
-
   # Unleash v6 - only allow 6.x updates
   - package-ecosystem: "npm"
     directory: "/packages/unleash-v6"

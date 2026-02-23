@@ -88,15 +88,15 @@ export default config;
 
 ## Step 5: Copy and Adapt Application Code
 
-Copy the v5 source files as a starting point:
+Copy the v7 source files as a starting point:
 
 ```bash
-cp -r packages/unleash-v5/src packages/unleash-v6/
+cp -r packages/unleash-v7/src packages/unleash-v8/
 ```
 
-### Adapt server.ts for v6 Changes
+### Adapt server.ts for v8 Changes
 
-Review the Unleash v6 release notes for breaking changes. Common areas that may need adaptation:
+Review the Unleash v8 release notes for breaking changes. Common areas that may need adaptation:
 
 1. **Authentication API changes**: Check if the custom authentication hook interface has changed
 2. **Configuration structure**: Verify if IUnleashOptions structure has changed
@@ -106,12 +106,12 @@ Review the Unleash v6 release notes for breaking changes. Common areas that may 
 Example adaptation pattern if authentication changed:
 
 ```typescript
-// If v6 has a different auth handler signature
-import { AuthHandler } from "unleash-server/v6/types/auth";
+// If v8 has a different auth handler signature
+import { AuthHandler } from "unleash-server/v8/types/auth";
 
 // Create adapter in shared package
-export function createV6AuthAdapter(v5Handler: any): AuthHandler {
-  // Adapt v5 handler to v6 interface
+export function createV8AuthAdapter(v7Handler: any): AuthHandler {
+  // Adapt v7 handler to v8 interface
   return async (req, res, next) => {
     // Implementation
   };
@@ -124,16 +124,16 @@ If there are significant breaking changes between versions, consider:
 
 ### Option A: Create Version Adapters in Shared Package
 
-Create `packages/shared/src/adapters/v6-adapter.ts`:
+Create `packages/shared/src/adapters/v8-adapter.ts`:
 
 ```typescript
 import { TeamsService } from "../nais-teams";
 
-export async function createV6AuthHandler(
+export async function createV8AuthHandler(
   teamsService: TeamsService,
   authType: "iap" | "oauth"
 ) {
-  // V6-specific auth handler implementation
+  // V8-specific auth handler implementation
 }
 ```
 
@@ -143,14 +143,14 @@ Keep version-specific code in the version package if changes are substantial.
 
 ## Step 7: Update Tests
 
-Adapt `server.test.ts` for any v6-specific changes:
+Adapt `server.test.ts` for any v8-specific changes:
 
 ```bash
 # Copy and adapt tests
-cp packages/unleash-v5/src/server.test.ts packages/unleash-v6/src/
+cp packages/unleash-v7/src/server.test.ts packages/unleash-v8/src/
 ```
 
-Update mock objects and assertions based on v6 API changes.
+Update mock objects and assertions based on v8 API changes.
 
 ## Step 8: Verify Build
 
@@ -159,10 +159,10 @@ Update mock objects and assertions based on v6 API changes.
 pnpm install
 
 # Build the new version
-mise run build:v6
+mise run build:v8
 
 # Or
-pnpm --filter unleash-v6 build
+pnpm --filter unleash-v8 build
 ```
 
 ## Step 9: Test with Database
@@ -258,15 +258,15 @@ If you need to manually add a version before the workflow runs:
 ```yaml
 # charts/unleash-releasechannel/values.yaml
 versions:
-  v5:
-    enabled: true
-    tag: v5-5.12.8-20251214-143749-f21986b
   v6:
     enabled: true
     tag: v6-6.10.1-20251214-143754-f21986b
-  v7:  # Add new version
+  v7:
     enabled: true
     tag: v7-7.0.0-20251215-100000-abc1234
+  v8:  # Add new version
+    enabled: true
+    tag: v8-8.0.0-20260215-100000-abc1234
 ```
 
 ### Disabling a Version
@@ -275,9 +275,9 @@ To temporarily disable a version without removing it:
 
 ```yaml
 versions:
-  v5:
+  v6:
     enabled: false  # This version won't create a ReleaseChannel
-    tag: v5-5.12.8-20251214-143749-f21986b
+    tag: v6-6.10.1-20251214-143754-f21986b
 ```
 
 ### ReleaseChannel Resources Created
