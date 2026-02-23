@@ -25,10 +25,6 @@
         "src/test-utils.ts"
       ]
     },
-    "packages/unleash-v5": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"],
-      "project": ["src/**/*.ts"]
-    },
     "packages/unleash-v6": {
       "entry": ["src/index.ts", "src/**/*.test.ts"],
       "project": ["src/**/*.ts"]

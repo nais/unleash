@@ -95,12 +95,12 @@ packages/
 │   │   ├── cache.ts         # Simple in-memory cache
 │   │   └── utils.ts         # Utility functions
 │   └── package.json
-├── unleash-v5/      # Unleash v5 server implementation
+├── unleash-v6/      # Unleash v6 server implementation
 │   ├── src/
 │   │   ├── server.ts        # Server factory with custom auth
 │   │   └── index.ts         # Application entry point
 │   └── package.json
-└── unleash-v6/      # Unleash v6 server implementation
+└── unleash-v7/      # Unleash v7 server implementation
     ├── src/
     │   ├── server.ts        # Server factory with custom auth
     │   └── index.ts         # Application entry point
@@ -122,7 +122,7 @@ pnpm -r lint
 
 # Build/test/lint specific package
 pnpm --filter @nais/unleash-shared build
-pnpm --filter unleash-v5 test
+pnpm --filter unleash-v6 test
 pnpm --filter unleash-v6 build
 ```
 
@@ -146,14 +146,17 @@ mise run test:v5
 # Test v6 package with database
 mise run test:v6
 
+# Test v7 package with database
+mise run test:v7
+
 # Start development environment
 mise run dev
 
-# Start unleash-v5 server
-mise run start:v5
-
 # Start unleash-v6 server
 mise run start:v6
+
+# Start unleash-v7 server
+mise run start:v7
 
 # Database management
 mise run db:start    # Start PostgreSQL
@@ -253,8 +256,8 @@ mise run db:start
 # 2. Install and build
 mise run build
 
-# 3. Start Unleash (v5 or v6)
-cd packages/unleash-v5  # or unleash-v6
+# 3. Start Unleash (v6 or v7)
+cd packages/unleash-v6  # or unleash-v7
 pnpm start
 ```
 
@@ -306,7 +309,6 @@ mise run update:all
 ```
 
 The update tasks ensure that:
-- `unleash-v5` only updates to the latest `5.x` version
 - `unleash-v6` only updates to the latest `6.x` version
 - `unleash-v7` only updates to the latest `7.x` version
 - Package versions are automatically synced with their `unleash-server` dependency
@@ -315,10 +317,10 @@ After updating, always run `pnpm install` and `mise run test` to verify compatib
 
 ## Adding New Unleash Versions
 
-To add support for a new Unleash major version (e.g., v6 or v7):
+To add support for a new Unleash major version (e.g., v8):
 
-1. Create a new package directory: `packages/unleash-v6/`
-2. Copy the structure from `packages/unleash-v5/`
+1. Create a new package directory: `packages/unleash-v8/`
+2. Copy the structure from `packages/unleash-v7/`
 3. Update `package.json` with the correct `unleash-server` version
 4. Add `@nais/unleash-shared: workspace:*` dependency
 5. Adapt server initialization for any breaking changes in the new Unleash version
