@@ -38,11 +38,11 @@
     }
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.3",
+    "@eslint/js": "^10.0.1",
     "@types/node": "25.0.2",
     "@vitest/coverage-v8": "^4.0.18",
-    "eslint": "^9.39.3",
-    "globals": "^16.5.0",
+    "eslint": "^10.0.2",
+    "globals": "^17.4.0",
     "knip": "^5.85.0",
     "prettier": "^3.8.1",
     "typescript": "5.9.3",
