@@ -142,8 +142,8 @@ docker compose down -v 2>/dev/null || true
 
 # Docker tasks
 [tasks."docker:build"]
-description = "Build Docker image (mise run docker:build [v5|v6|v7|all])"
-usage = 'arg "[version]" help="Version to build: v5, v6, v7, all, or empty for all"'
+description = "Build Docker image (mise run docker:build [v6|v7|all])"
+usage = 'arg "[version]" help="Version to build: v6, v7, all, or empty for all"'
 run = """
 if [ -z "${usage_version:-}" ] || [ "$usage_version" = "all" ]; then
   for version in $(ls -d packages/unleash-v* 2>/dev/null | sed 's|packages/unleash-||'); do
@@ -161,8 +161,8 @@ description = "Run full stack with docker-compose"
 run = "docker compose up --build"
 
 [tasks."docker:e2e"]
-description = "Run end-to-end tests for Docker containers (mise run docker:e2e [v5|v6|v7|all])"
-usage = 'arg "[version]" help="Version to test: v5, v6, v7, all, or empty for all"'
+description = "Run end-to-end tests for Docker containers (mise run docker:e2e [v6|v7|all])"
+usage = 'arg "[version]" help="Version to test: v6, v7, all, or empty for all"'
 run = """
 #!/bin/bash
 set -e
@@ -177,7 +177,7 @@ test_container() {
   local version=$1
   local image="nais-unleash:${version}-local"
   local container_name="unleash-e2e-${version}"
-  local port=$((14242 + ${version#v}))  # v5=14247, v6=14248, v7=14249
+  local port=$((14242 + ${version#v}))  # v6=14248, v7=14249
 
   echo -e "${YELLOW}Testing ${version}...${NC}"
 
@@ -287,10 +287,10 @@ fi
 depends = ["docker:build", "db:start"]
 
 [tasks."docker:smoke"]
-description = "Quick smoke test for a Docker image (mise run docker:smoke <v5|v6|v7>)"
+description = "Quick smoke test for a Docker image (mise run docker:smoke <v6|v7>)"
 usage = '''
-arg "<version>" help="Version to smoke test: v5, v6, or v7" {
-  choices "v5" "v6" "v7"
+arg "<version>" help="Version to smoke test: v6, or v7" {
+  choices "v6" "v7"
 }
 '''
 run = """
@@ -384,7 +384,7 @@ depends = ["helm:lint", "helm:template"]
 description = "Check for available package updates"
 run = """
 echo "=== Checking for package updates ==="
-for scope in "root" "shared" "v5" "v6" "v7"; do
+for scope in "root" "shared" "v6" "v7"; do
   echo ""
   case $scope in
     root) echo "Root workspace:"; pnpm outdated || true ;;
@@ -399,10 +399,10 @@ description = "Update shared package dependencies"
 run = "cd packages/shared && pnpm update --interactive"
 
 [tasks."update:unleash"]
-description = "Update a specific unleash version (mise run update:unleash <v5|v6|v7>)"
+description = "Update a specific unleash version (mise run update:unleash <v6|v7>)"
 usage = '''
-arg "<version>" help="Version to update: v5, v6, or v7" {
-  choices "v5" "v6" "v7"
+arg "<version>" help="Version to update: v6, or v7" {
+  choices "v6" "v7"
 }
 '''
 run = """
@@ -471,7 +471,7 @@ update_version() {
   cd ../..
 }
 
-for version in v5 v6 v7; do
+for version in v6 v7; do
   update_version $version
 done
 
@@ -504,7 +504,7 @@ mise run update:unleash-all
 
 echo ""
 echo "2. Updating other packages..."
-for scope in "root" "shared" "v5" "v6" "v7"; do
+for scope in "root" "shared" "v6" "v7"; do
   case $scope in
     root) echo "   - root"; pnpm update ;;
     shared) echo "   - shared"; (cd packages/shared && pnpm update) ;;
