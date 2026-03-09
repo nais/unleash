@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@nais/unleash-shared": "workspace:*",
-    "unleash-server": "7.4.3"
+    "unleash-server": "7.5.0"
   },
   "devDependencies": {
     "@types/node": "^24.11.0",
