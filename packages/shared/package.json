@@ -20,13 +20,13 @@
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "google-auth-library": "^10.6.1",
-    "jose": "^6.2.0",
+    "google-auth-library": "^10.6.2",
+    "jose": "^6.2.2",
     "jsonwebtoken": "^9.0.3",
     "log4js": "^6.9.1"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^24.12.0"
+    "@types/node": "^24.12.2"
   }
 }
