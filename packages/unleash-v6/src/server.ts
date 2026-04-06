@@ -21,7 +21,7 @@ async function naisleash(
   teamsService: TeamsService,
   useJWTAuth: boolean = false,
 ): Promise<IUnleash> {
-  let createFunc: ((teamsServer: TeamsService, adminRoleName: string) => Promise<(app: any, config: any, services: any) => void>) | undefined = undefined;
+  let createFunc: ((teamsServer: TeamsService, adminRoleName: string) => Promise<(app: any, config: any, services: any) => void>);
   if (useJWTAuth) {
     createFunc = oauthForwardAuth
   } else {
