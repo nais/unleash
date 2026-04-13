@@ -14,11 +14,29 @@ import {
 import { RoleName } from "unleash-server";
 import { googleIapAuth, oauthForwardAuth, TeamsService } from "@nais/unleash-shared";
 
+const LOG_LEVELS: Record<string, number> = {
+  debug: 0, info: 1, warn: 2, error: 3, fatal: 4,
+};
+
+function getLogLevel(): LogLevel {
+  const envLevel = process.env.LOG_LEVEL;
+  if (envLevel && envLevel in LogLevel) {
+    return (LogLevel as any)[envLevel];
+  }
+  return LogLevel.warn;
+}
+
+function shouldLog(level: string, currentLevel: string): boolean {
+  return (LOG_LEVELS[level] ?? 0) >= (LOG_LEVELS[currentLevel] ?? 0);
+}
+
 async function naisleash(
   shouldStart: boolean,
   teamsService: TeamsService,
   useJWTAuth: boolean = false,
 ): Promise<IUnleash> {
+  const logLevel = getLogLevel();
+
   let createFunc: ((teamsServer: TeamsService, adminRoleName: string) => Promise<(app: any, config: any, services: any) => void>);
   if (useJWTAuth) {
     createFunc = oauthForwardAuth
@@ -46,15 +64,17 @@ async function naisleash(
     versionCheck: {
       enable: false,
     } as IVersionOption,
-    logLevel: process.env.LOG_LEVEL
-      ? (LogLevel as any)[process.env.LOG_LEVEL]
-      : LogLevel.warn,
+    logLevel,
   };
 
-  console.log("nais/server.js: Auth handler created successfully");
+  if (shouldLog("info", logLevel)) {
+    console.log("nais/server.js: Auth handler created successfully");
+  }
 
   if (shouldStart) {
-    console.log("nais/server.js: Starting Unleash server");
+    if (shouldLog("info", logLevel)) {
+      console.log("nais/server.js: Starting Unleash server");
+    }
     return unleashStart(unleashOptions);
   } else {
     return unleashCreate(unleashOptions);
