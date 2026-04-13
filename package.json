@@ -30,7 +30,9 @@
   },
   "pnpm": {
     "overrides": {
-      "axios": ">=1.15.0"
+      "axios": ">=1.15.0",
+      "lodash": ">=4.18.0",
+      "router>path-to-regexp": ">=0.1.13"
     },
     "packageExtensions": {
       "connect-session-knex": {
@@ -50,6 +52,7 @@
     "prettier": "^3.8.1",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.57.2",
+    "vite": "7.3.2",
     "vitest": "^4.1.2"
   }
 }
