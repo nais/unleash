@@ -1,5 +1,12 @@
 packages:
   - packages/*
 
+allowBuilds:
+  '@scarf/scarf': set this to true or false
+  cpu-features: set this to true or false
+  es5-ext: set this to true or false
+  esbuild: set this to true or false
+  ssh2: set this to true or false
+
 ignoredBuiltDependencies:
   - core-js
