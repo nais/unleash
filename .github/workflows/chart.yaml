@@ -194,8 +194,8 @@ jobs:
         run: |
           helm push ./charts/${{ env.CHART_NAME }}/*.tgz oci://${{ env.ARTIFACT_REGISTRY }}/${{ env.ARTIFACT_REPO }}
 
-  rollout:
-    name: Rollout to Fasit
+  deploy:
+    name: Deploy to Fasit
     runs-on: fasit-deploy
     needs: [meta, push]
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_run'
@@ -203,14 +203,19 @@ jobs:
       id-token: write
     steps:
       - name: Deploy ${{ env.CHART_NAME }}
-        uses: nais/fasit-deploy@8727ed1c7a5a465e837873e6016a9a692a6b874a # ratchet:nais/fasit-deploy@v2
+        uses: nais/fasit-deploy@58a70a338b16dc646373c91724fc7e7522d085a4 # ratchet:nais/fasit-deploy@v4.0.1
         with:
           chart: oci://${{ env.ARTIFACT_REGISTRY }}/${{ env.ARTIFACT_REPO }}/${{ env.CHART_NAME }}
           version: ${{ needs.meta.outputs.version }}
+          targets: |
+            [
+              { "target": { "kind": "management", "tenant": "ci-nais" }, "wait": true },
+              { "target": { "kind": "management" } }
+            ]
 
   git-tag:
     runs-on: ubuntu-latest
-    needs: [meta, rollout]
+    needs: [meta, deploy]
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_run'
     permissions:
       contents: write
@@ -226,7 +231,7 @@ jobs:
   summary:
     name: Summary
     runs-on: ubuntu-latest
-    needs: [meta, push, rollout, git-tag]
+    needs: [meta, push, deploy, git-tag]
     if: always() && (github.event_name == 'push' || github.event_name == 'workflow_run')
     steps:
       - name: Generate Summary
@@ -258,7 +263,7 @@ jobs:
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Metadata | ${{ needs.meta.result == 'success' && '✅ Success' || needs.meta.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Push Chart | ${{ needs.push.result == 'success' && '✅ Success' || needs.push.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Rollout to Fasit | ${{ needs.rollout.result == 'success' && '✅ Success' || needs.rollout.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Deploy to Fasit | ${{ needs.deploy.result == 'success' && '✅ Success' || needs.deploy.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Git Tag | ${{ needs.git-tag.result == 'success' && '✅ Success' || needs.git-tag.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
