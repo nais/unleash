@@ -3,3 +3,10 @@ packages:
 
 ignoredBuiltDependencies:
   - core-js
+
+allowBuilds:
+  '@scarf/scarf': false
+  cpu-features: false
+  es5-ext: false
+  esbuild: false
+  ssh2: false
