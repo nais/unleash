@@ -28,22 +28,6 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "pnpm": {
-    "overrides": {
-      "axios": "^1.15.0",
-      "lodash": "^4.18.0",
-      "router>path-to-regexp": "0.1.13",
-      "nodemailer": "^8.0.5",
-      "tar": "^7.5.11"
-    },
-    "packageExtensions": {
-      "connect-session-knex": {
-        "peerDependencies": {
-          "express-session": "*"
-        }
-      }
-    }
-  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "25.5.0",
