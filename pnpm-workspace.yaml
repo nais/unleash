@@ -10,3 +10,22 @@ allowBuilds:
   es5-ext: false
   esbuild: false
   ssh2: false
+
+overrides:
+  axios: ">=1.15.2"
+  lodash: "^4.18.0"
+  "router>path-to-regexp": "0.1.13"
+  nodemailer: ">=8.0.5"
+  tar: ">=7.5.11"
+  fast-uri: ">=3.1.2"
+  postcss: ">=8.5.10"
+  follow-redirects: ">=1.16.0"
+  ip-address: ">=10.1.1"
+  brace-expansion: ">=5.0.6"
+  uuid: ">=11.1.1"
+  qs: ">=6.15.2"
+
+packageExtensions:
+  connect-session-knex:
+    peerDependencies:
+      express-session: "*"
