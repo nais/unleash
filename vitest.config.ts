@@ -7,6 +7,11 @@ export default defineConfig({
     testTimeout: 15000,
     hookTimeout: 15000,
 
+    // Suppress expected error/warn log output during tests
+    env: {
+      LOG_LEVEL: "fatal",
+    },
+
     // Enable globals (describe, it, expect, vi, etc.)
     globals: true,
 

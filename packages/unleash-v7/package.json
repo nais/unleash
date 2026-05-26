@@ -15,7 +15,7 @@
     "unleash-server": "7.5.1"
   },
   "devDependencies": {
-    "@types/node": "^24.12.0",
+    "@types/node": "^24.12.2",
     "@types/supertest": "^7.2.0",
     "nock": "^15.0.0",
     "supertest": "^7.2.2"

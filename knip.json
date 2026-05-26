@@ -1,36 +1,28 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignore": ["**/*.d.ts"],
   "ignoreExportsUsedInFile": true,
-  "ignoreBinaries": ["lint", "build"],
+  "ignoreBinaries": ["lint", "build", "sleep"],
   "workspaces": {
     ".": {
-      "entry": ["vitest.config.ts"],
       "ignoreDependencies": [
-        "prettier",
-        "@types/*"
+        "prettier"
       ]
     },
     "packages/shared": {
       "entry": ["src/index.ts", "src/**/*.test.ts"],
       "project": ["src/**/*.ts"],
       "includeEntryExports": true,
-      "ignoreDependencies": ["unleash-server"],
       "ignore": [
-        "src/cache.ts",
         "src/google-iap.ts",
-        "src/nais-teams.ts",
-        "src/oauth-fa.ts",
-        "src/utils.ts",
         "src/test-utils.ts"
       ]
     },
     "packages/unleash-v6": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"],
+      "entry": ["src/**/*.test.ts"],
       "project": ["src/**/*.ts"]
     },
     "packages/unleash-v7": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"],
+      "entry": ["src/**/*.test.ts"],
       "project": ["src/**/*.ts"]
     }
   }
