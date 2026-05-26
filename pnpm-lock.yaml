@@ -90,8 +90,8 @@ importers:
         version: 6.10.1
     devDependencies:
       '@types/node':
-        specifier: ^24.12.0
-        version: 24.12.0
+        specifier: ^24.12.2
+        version: 24.12.2
       '@types/supertest':
         specifier: ^7.2.0
         version: 7.2.0
