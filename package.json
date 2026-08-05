@@ -3,6 +3,7 @@
   "version": "4.0.0",
   "description": "NAIS customized Unleash feature flag server - monorepo",
   "private": true,
+  "packageManager": "pnpm@11.20.0",
   "scripts": {
     "db:start": "docker compose up -d postgres && echo 'Waiting for PostgreSQL...' && until docker compose exec -T postgres pg_isready -U unleash > /dev/null 2>&1; do sleep 1; done && echo 'Database ready!'",
     "db:stop": "docker compose down",

@@ -1,6 +1,11 @@
 packages:
   - packages/*
 
+injectWorkspacePackages: true
+
+syncInjectedDepsAfterScripts:
+  - build
+
 ignoredBuiltDependencies:
   - core-js
 

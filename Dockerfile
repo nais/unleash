@@ -4,8 +4,8 @@ FROM node:24-alpine AS builder
 # Version argument - defaults to v5, can be overridden for v6, v7, etc.
 ARG UNLEASH_VERSION=v5
 
-# Install pnpm globally
-RUN npm install -g pnpm@latest
+# Keep builds reproducible across pull requests and releases.
+RUN npm install -g pnpm@11.20.0
 
 WORKDIR /workspace
 
@@ -30,9 +30,12 @@ COPY packages/unleash-${UNLEASH_VERSION} ./packages/unleash-${UNLEASH_VERSION}
 RUN pnpm --filter @nais/unleash-shared build && \
     pnpm --filter unleash-${UNLEASH_VERSION} build
 
-# Deploy target version with production dependencies only
-# Using --legacy for pnpm v10+ compatibility
-RUN pnpm deploy --filter=unleash-${UNLEASH_VERSION} --prod --legacy /prod/unleash
+# Deploy the target and its injected workspace dependencies as a standalone app.
+RUN pnpm deploy --filter=unleash-${UNLEASH_VERSION} --prod /prod/unleash
+
+# Fail if the package escapes the deploy root or cannot load with production deps.
+RUN cd /prod/unleash && \
+    node -e "const fs = require('node:fs'); const root = process.cwd() + '/'; const dependency = fs.realpathSync('node_modules/@nais/unleash-shared'); if (!dependency.startsWith(root)) throw new Error('@nais/unleash-shared points outside the deploy root'); require('@nais/unleash-shared')"
 
 # Production Stage
 # Using Node.js 24 distroless for minimal attack surface
