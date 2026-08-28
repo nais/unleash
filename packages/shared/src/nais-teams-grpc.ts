@@ -21,6 +21,10 @@ export class NaisTeamsGrpc implements TeamsService {
   constructor(apiAddress: string, allowedTeams: string[]) {
     const logger = getLogger("nais/nais-teams-grpc.ts");
 
+    if (!apiAddress) {
+      throw new Error("NAIS_API_ADDRESS is not set");
+    }
+
     const packageDefinition = protoLoader.loadSync(
       [path.join(PROTO_DIR, "teams.proto"), path.join(PROTO_DIR, "users.proto")],
       {
