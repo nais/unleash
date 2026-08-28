@@ -23,6 +23,8 @@
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.13.0",
+    "@grpc/proto-loader": "^0.8.0",
     "google-auth-library": "^10.9.1",
     "jose": "^6.2.4",
     "jsonwebtoken": "^9.0.3",

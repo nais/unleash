@@ -62,12 +62,11 @@ sequenceDiagram
 
 ### Authorization
 
-| environment variable               | description                          | default      |
-| ---------------------------------- | ------------------------------------ | ------------ |
-| `TEAMS_API_URL`                    | URL for Teams API                    | **REQUIRED** |
-| `TEAMS_API_TOKEN`                  | Token for Teams API                  | **REQUIRED** |
-| `TEAMS_ALLOWED_TEAMS`              | Teams allowed to access Unleash      | **REQUIRED** |
-| `TEAMS_USER_VALIDATION_CACHE_TIME` | Cache time for Teams user validation | `3600`       |
+| environment variable               | description                              | default      |
+| ---------------------------------- | ---------------------------------------- | ------------ |
+| `NAIS_API_ADDRESS`                 | gRPC address for nais/api (host:port)    | **REQUIRED** |
+| `TEAMS_ALLOWED_TEAMS`              | Teams allowed to access Unleash          | **REQUIRED** |
+| `TEAMS_USER_VALIDATION_CACHE_TIME` | Cache time for Teams user validation     | `3600`       |
 
 ### Unleash configuration
 
@@ -91,7 +90,8 @@ packages/
 │   ├── src/
 │   │   ├── google-iap.ts    # Google IAP JWT authentication
 │   │   ├── oauth-fa.ts      # OAuth forward auth JWT authentication
-│   │   ├── nais-teams.ts    # NAIS Teams API integration
+│   │   ├── nais-teams.ts    # NAIS Teams API (GraphQL) integration
+│   │   ├── nais-teams-grpc.ts # NAIS Teams gRPC integration (nais/api)
 │   │   ├── cache.ts         # Simple in-memory cache
 │   │   └── utils.ts         # Utility functions
 │   └── package.json
