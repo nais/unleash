@@ -7,7 +7,7 @@ concurrency:
 on:
   push:
     branches:
-      - main
+      - '**'
     paths:
       - '.github/workflows/**'
       - 'Dockerfile'
@@ -247,7 +247,7 @@ jobs:
       matrix:
         version: ${{ fromJson(needs.detect-versions.outputs.versions) }}
     outputs:
-      tag: ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.sha_short }}
+      tag: ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.suffix }}
     permissions:
       contents: read
       id-token: write
@@ -259,7 +259,18 @@ jobs:
         run: |
           unleash=$(jq -r '.dependencies["unleash-server"]' packages/unleash-${{ matrix.version }}/package.json)
           echo "unleash=${unleash}" >> "$GITHUB_OUTPUT"
-          echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          sha_short=$(git rev-parse --short HEAD)
+          echo "sha_short=${sha_short}" >> "$GITHUB_OUTPUT"
+
+          # Branch builds get a branch-qualified tag suffix so they never
+          # collide with main (or each other); main keeps the plain sha tag.
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            suffix="${sha_short}"
+          else
+            branch_slug=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
+            suffix="${branch_slug}-${sha_short}"
+          fi
+          echo "suffix=${suffix}" >> "$GITHUB_OUTPUT"
 
       - uses: nais/platform-build-push-sign@a16d89d06262f12e3468a20b9cc70f5317290bab # ratchet:nais/platform-build-push-sign@main
         id: push
@@ -271,7 +282,7 @@ jobs:
             UNLEASH_VERSION=${{ matrix.version }}
           extra_tags: |
             ${{ matrix.version }}-${{ steps.version.outputs.unleash }}
-            ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.sha_short }}
+            ${{ matrix.version }}-${{ steps.version.outputs.unleash }}-${{ steps.version.outputs.suffix }}
           google_service_account: gh-unleash
           push: true
           workload_identity_provider: ${{ secrets.NAIS_IO_WORKLOAD_IDENTITY_PROVIDER }}
@@ -279,6 +290,7 @@ jobs:
   git-tag:
     runs-on: ubuntu-latest
     needs: [detect-versions, build-push-sign]
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: write
     strategy:
