@@ -52,13 +52,17 @@ jobs:
 
       - name: Resolve branch and sha
         id: ctx
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          WR_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WR_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           # The ref that triggered this run differs per event type:
           #  - workflow_run: the branch/sha of the Main workflow that triggered us
           #  - push/workflow_dispatch/pull_request: the current checkout
-          if [ "${{ github.event_name }}" = "workflow_run" ]; then
-            branch="${{ github.event.workflow_run.head_branch }}"
-            sha_short=$(echo "${{ github.event.workflow_run.head_sha }}" | cut -c1-7)
+          if [ "$EVENT_NAME" = "workflow_run" ]; then
+            branch="$WR_HEAD_BRANCH"
+            sha_short=$(echo "$WR_HEAD_SHA" | cut -c1-7)
           else
             branch="${GITHUB_REF_NAME}"
             sha_short=$(git rev-parse --short HEAD)
