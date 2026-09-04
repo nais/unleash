@@ -256,7 +256,9 @@ jobs:
           targets: |
             [
               { "target": { "kind": "management", "tenant": "ci-nais" }, "wait": true },
-              { "target": { "kind": "management" } }
+              { "target": { "kind": "management", "tenant": "dev-nais" } },
+              { "target": { "kind": "management", "tenant": "atil" } },
+              { "target": { "kind": "management", "tenant": "nav" } }
             ]
 
   git-tag:
