@@ -8,8 +8,8 @@ namespace: ""
 image:
   registry: europe-north1-docker.pkg.dev
   repository: nais-io/nais/images/nais-unleash
-# Set only after the compatible Unleasherator CRD and controller are deployed.
-unleasheratorBreakGlassSupported: false
+# Compatible Unleasherator CRDs and controllers are deployed in all environments.
+unleasheratorBreakGlassSupported: true
 
 # ReleaseChannel versions - each entry creates a ReleaseChannel resource
 # Tags are automatically updated during CI/CD from git tags
