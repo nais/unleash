@@ -8,6 +8,7 @@ namespace: ""
 image:
   registry: europe-north1-docker.pkg.dev
   repository: nais-io/nais/images/nais-unleash
+
 # Compatible Unleasherator CRDs and controllers are deployed in all environments.
 unleasheratorBreakGlassSupported: true
 
