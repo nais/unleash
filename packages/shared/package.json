@@ -26,13 +26,13 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.13.0",
     "@grpc/proto-loader": "^0.8.0",
-    "google-auth-library": "^10.9.1",
-    "jose": "^6.2.4",
+    "google-auth-library": "^11.0.2",
+    "jose": "^6.2.11",
     "jsonwebtoken": "^9.0.3",
     "log4js": "^6.9.1"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^26.1.1"
+    "@types/node": "^24.13.3"
   }
 }
