@@ -12,27 +12,45 @@ metadata:
 spec:
   image: {{ include "unleash-releasechannel.image" (dict "registry" $.Values.image.registry "repository" $.Values.image.repository "tag" $config.tag) | quote }}
   strategy:
-    maxParallel: {{ $.Values.strategy.maxParallel }}
-    {{- if $.Values.strategy.batchInterval }}
-    batchInterval: {{ $.Values.strategy.batchInterval | quote }}
+    maxParallel: {{ $config.strategy.maxParallel | default $.Values.strategy.maxParallel }}
+    {{- $batchInterval := $config.strategy.batchInterval | default $.Values.strategy.batchInterval }}
+    {{- if $batchInterval }}
+    batchInterval: {{ $batchInterval | quote }}
     {{- end }}
-    {{- if $.Values.strategy.canary.enabled }}
+    {{- $canary := $config.strategy.canary | default $.Values.strategy.canary }}
+    {{- if $canary.enabled }}
     canary:
       enabled: true
-      {{- if $.Values.strategy.canary.labelSelector }}
+      {{- if $canary.labelSelector }}
       podSelector:
-        {{- toYaml $.Values.strategy.canary.labelSelector | nindent 8 }}
+        {{- toYaml $canary.labelSelector | nindent 8 }}
       {{- end }}
     {{- end }}
-  {{- if $.Values.healthChecks.enabled }}
+    {{- if $config.maxUpgradeTime }}
+    maxUpgradeTime: {{ $config.maxUpgradeTime | quote }}
+    {{- end }}
+  {{- $healthChecks := mergeOverwrite (deepCopy $.Values.healthChecks) $config.healthChecks }}
+  {{- if $healthChecks.enabled }}
   healthChecks:
-    enabled: {{ $.Values.healthChecks.enabled }}
-    {{- if $.Values.healthChecks.initialDelay }}
-    initialDelay: {{ $.Values.healthChecks.initialDelay | quote }}
+    enabled: {{ $healthChecks.enabled }}
+    {{- if $healthChecks.initialDelay }}
+    initialDelay: {{ $healthChecks.initialDelay | quote }}
     {{- end }}
-    {{- if $.Values.healthChecks.timeout }}
-    timeout: {{ $.Values.healthChecks.timeout | quote }}
+    {{- if $healthChecks.timeout }}
+    timeout: {{ $healthChecks.timeout | quote }}
     {{- end }}
+  {{- end }}
+  {{- if $config.breakGlassTargetTag }}
+  {{- if not $.Values.unleasheratorBreakGlassSupported }}
+  {{- fail "unleasheratorBreakGlassSupported must be true before configuring breakGlassTargetTag" }}
+  {{- end }}
+  {{- if ne $config.breakGlassTargetTag $config.tag }}
+  {{- fail (printf "versions.%s.breakGlassTargetTag must equal versions.%s.tag" $version $version) }}
+  {{- end }}
+  breakGlassImage: {{ include "unleash-releasechannel.image" (dict "registry" $.Values.image.registry "repository" $.Values.image.repository "tag" $config.breakGlassTargetTag) | quote }}
+  {{- end }}
+  {{- if $config.allowDowngrade }}
+  allowDowngrade: true
   {{- end }}
   {{- if $.Values.rollback.enabled }}
   rollback:

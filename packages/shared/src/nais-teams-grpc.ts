@@ -5,6 +5,13 @@ import * as path from "path";
 import type { TeamsService, User } from "./nais-teams";
 
 const PROTO_DIR = path.resolve(__dirname, "../../proto");
+const GRPC_REQUEST_TIMEOUT_MS = 5_000;
+
+export class NaisApiUnavailableError extends Error {
+  constructor() {
+    super("nais-api authorization lookup failed");
+  }
+}
 
 /**
  * gRPC-based teams service that talks to nais/api instead of the
@@ -57,8 +64,6 @@ export class NaisTeamsGrpc implements TeamsService {
     const logger = getLogger("nais/nais-teams-grpc.ts");
 
     logger.debug("authorize: config", { allowedTeams: this.allowedTeams });
-    logger.info("authorize: user", email);
-
     try {
       const [name, teams] = await Promise.all([
         this.getUserName(email),
@@ -72,15 +77,15 @@ export class NaisTeamsGrpc implements TeamsService {
       );
 
       if (allowedTeams.length === 0) {
-        logger.warn("authorize: user has no allowed teams", email);
+        logger.warn("authorize: user has no allowed teams");
         return { status: false, user };
       }
 
-      logger.info("authorize: user authorized", email);
+      logger.info("authorize: user authorized");
       return { status: true, user };
-    } catch (error) {
-      logger.warn("authorize: error looking up user", error);
-      return { status: false, user: null };
+    } catch {
+      logger.warn("authorize: nais-api lookup failed");
+      throw new NaisApiUnavailableError();
     }
   };
 
@@ -88,6 +93,7 @@ export class NaisTeamsGrpc implements TeamsService {
     return new Promise((resolve, reject) => {
       this.usersClient.Get(
         { email },
+        { deadline: Date.now() + GRPC_REQUEST_TIMEOUT_MS },
         (err: grpc.ServiceError | null, response: any) => {
           if (err) return reject(err);
           resolve(response?.user?.name || "");
@@ -100,6 +106,7 @@ export class NaisTeamsGrpc implements TeamsService {
     return new Promise((resolve, reject) => {
       this.teamsClient.ListForUserByEmail(
         { email, limit: 100, offset: 0 },
+        { deadline: Date.now() + GRPC_REQUEST_TIMEOUT_MS },
         (err: grpc.ServiceError | null, response: any) => {
           if (err) return reject(err);
           const slugs = (response?.nodes || []).map(
