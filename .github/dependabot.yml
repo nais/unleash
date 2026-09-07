@@ -35,9 +35,14 @@ updates:
       timezone: "Europe/Oslo"
     # Note: @types/node major version must match Node.js major version
     # Do not update to @types/node@25 until distroless supports nodejs25
+    #
+    # Note: typescript-eslint has no TypeScript 7 support. Keep TypeScript 6
+    # eligible while blocking unsupported TypeScript 7 releases.
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        versions: [">=7"]
     groups:
       npm-root:
         patterns:
