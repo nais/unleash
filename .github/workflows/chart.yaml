@@ -4,9 +4,12 @@ on:
   # Trigger after container images are built
   workflow_run:
     workflows: ["Main"]
-    branches: [main]
+    branches:
+      - '**'
     types:
       - completed
+  # Allow manual chart builds/re-runs
+  workflow_dispatch:
   # Also allow manual chart updates
   pull_request:
     branches:
@@ -16,7 +19,7 @@ on:
       - '.github/workflows/chart.yaml'
   push:
     branches:
-      - main
+      - '**'
     paths:
       - 'charts/**'
       - '.github/workflows/chart.yaml'
@@ -47,34 +50,72 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Resolve branch and sha
+        id: ctx
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          WR_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WR_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          # The ref that triggered this run differs per event type:
+          #  - workflow_run: the branch/sha of the Main workflow that triggered us
+          #  - push/workflow_dispatch/pull_request: the current checkout
+          if [ "$EVENT_NAME" = "workflow_run" ]; then
+            branch="$WR_HEAD_BRANCH"
+            sha_short=$(echo "$WR_HEAD_SHA" | cut -c1-7)
+          else
+            branch="${GITHUB_REF_NAME}"
+            sha_short=$(git rev-parse --short HEAD)
+          fi
+          branch_slug=$(echo "${branch}" | tr '/' '-')
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+          echo "branch_slug=${branch_slug}" >> "$GITHUB_OUTPUT"
+          echo "sha_short=${sha_short}" >> "$GITHUB_OUTPUT"
+          # Tag suffix matches Main workflow: plain sha on main, branch-qualified otherwise
+          if [ "${branch}" = "main" ]; then
+            suffix="${sha_short}"
+          else
+            suffix="${branch_slug}-${sha_short}"
+          fi
+          echo "suffix=${suffix}" >> "$GITHUB_OUTPUT"
+          # Helm chart versions must be SemVer-valid, and SemVer forbids '_'
+          # (e.g. a branch like 'nais_api_sa'). Derive a SemVer-safe slug that
+          # also turns '_' into '.'. Docker tags allow '_', so the image tag
+          # keeps the plain branch_slug above; only the chart version uses this.
+          semver_slug=$(echo "${branch_slug}" | tr '_' '.')
+          if [ "${branch}" = "main" ]; then
+            chart_suffix="${sha_short}"
+          else
+            chart_suffix="${semver_slug}-${sha_short}"
+          fi
+          echo "chart_suffix=${chart_suffix}" >> "$GITHUB_OUTPUT"
+
       - name: Generate version
         id: version
-        run: echo "version=$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> ${GITHUB_OUTPUT}
+        run: |
+          # Branch chart versions get a SemVer-safe branch suffix so they never
+          # overwrite a same-day main chart in the OCI registry.
+          version="$(date +'%Y%m%d')-${{ steps.ctx.outputs.chart_suffix }}"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Detect Unleash versions and build version map
         id: versions
         run: |
-          # Build a JSON object with version -> tag mapping
-          # Get the tag from git tags created by Main workflow (format: v5-5.12.8-sha)
+          # Build a JSON object with version -> tag mapping.
+          # The tag matches the image tag produced by the Main workflow:
+          #   main:   v<major>-<unleash_version>-<sha>
+          #   branch: v<major>-<unleash_version>-<branch>-<sha>
+          # This is deterministic and does not rely on git tags (branches don't
+          # create git tags), so it resolves identically for main and branches.
+          suffix="${{ steps.ctx.outputs.suffix }}"
           versions_json="{"
           first=true
           for dir in packages/unleash-v*; do
             version_suffix=$(basename "$dir" | sed 's/unleash-//')
             unleash_version=$(jq -r '.dependencies["unleash-server"]' "$dir/package.json")
 
-            # Find the latest git tag for this version (e.g., v5-5.12.8-f21986b)
-            # Tags are created by Main workflow after image is pushed
-            # Sort by committerdate to get the tag pointing to the most recent commit
-            tag_pattern="${version_suffix}-${unleash_version}-"
-            latest_tag=$(git tag -l "${tag_pattern}*" --sort=-committerdate | head -n1)
-
-            if [ -z "$latest_tag" ]; then
-              echo "Warning: No git tag found for pattern ${tag_pattern}*, using short tag"
-              tag="${version_suffix}-${unleash_version}"
-            else
-              tag="$latest_tag"
-              echo "Found tag: $tag for $version_suffix"
-            fi
+            tag="${version_suffix}-${unleash_version}-${suffix}"
+            echo "Resolved tag: ${tag} for ${version_suffix}"
 
             if [ "$first" = true ]; then
               first=false
@@ -164,7 +205,7 @@ jobs:
 
       - name: Authenticate to Google Cloud
         id: auth
-        if: github.actor != 'dependabot[bot]' && (github.event_name == 'push' || github.event_name == 'workflow_run')
+        if: github.actor != 'dependabot[bot]' && (github.event_name == 'push' || github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch')
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # ratchet:google-github-actions/auth@v3.0.0
         with:
           workload_identity_provider: ${{ secrets.NAIS_IO_WORKLOAD_IDENTITY_PROVIDER }}
@@ -172,11 +213,11 @@ jobs:
           token_format: access_token
 
       - name: Set up Cloud SDK
-        if: github.actor != 'dependabot[bot]' && (github.event_name == 'push' || github.event_name == 'workflow_run')
+        if: github.actor != 'dependabot[bot]' && (github.event_name == 'push' || github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch')
         uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # ratchet:google-github-actions/setup-gcloud@v3
 
       - name: Log in to Google Artifact Registry
-        if: github.actor != 'dependabot[bot]' && (github.event_name == 'push' || github.event_name == 'workflow_run')
+        if: github.actor != 'dependabot[bot]' && (github.event_name == 'push' || github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch')
         run: |
           echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://${{ env.ARTIFACT_REGISTRY }}
 
@@ -190,7 +231,7 @@ jobs:
           helm package ./charts/${{ env.CHART_NAME }} -d ./charts/${{ env.CHART_NAME }}
 
       - name: Push Chart
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_run'
+        if: github.event_name == 'push' || github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch'
         run: |
           helm push ./charts/${{ env.CHART_NAME }}/*.tgz oci://${{ env.ARTIFACT_REGISTRY }}/${{ env.ARTIFACT_REPO }}
 
@@ -198,7 +239,12 @@ jobs:
     name: Deploy to Fasit
     runs-on: fasit-deploy
     needs: [meta, push]
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_run'
+    # Only ever deploy from main, regardless of trigger type. Branch builds
+    # push a chart for manual testing but must never touch Fasit.
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'main') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     permissions:
       id-token: write
     steps:
@@ -210,13 +256,18 @@ jobs:
           targets: |
             [
               { "target": { "kind": "management", "tenant": "ci-nais" }, "wait": true },
-              { "target": { "kind": "management" } }
+              { "target": { "kind": "management", "tenant": "dev-nais" } },
+              { "target": { "kind": "management", "tenant": "atil" } },
+              { "target": { "kind": "management", "tenant": "nav" } }
             ]
 
   git-tag:
     runs-on: ubuntu-latest
     needs: [meta, deploy]
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_run'
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'main') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     permissions:
       contents: write
     steps:
@@ -232,7 +283,7 @@ jobs:
     name: Summary
     runs-on: ubuntu-latest
     needs: [meta, push, deploy, git-tag]
-    if: always() && (github.event_name == 'push' || github.event_name == 'workflow_run')
+    if: always() && (github.event_name == 'push' || github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch')
     steps:
       - name: Generate Summary
         run: |

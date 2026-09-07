@@ -14,6 +14,7 @@ allowBuilds:
   cpu-features: false
   es5-ext: false
   esbuild: false
+  protobufjs: false
   ssh2: false
 
 overrides:

@@ -84,7 +84,6 @@ async function createIapAuthHandler(
     const { userService }: any = services;
 
     app.use(async (req: any, res: any, next: any) => {
-      logger.debug("iapAuthHandler: request headers: ", req.headers);
       const iapJwtHeader: string | undefined = req.get(IAP_JWT_HEADER);
 
       if (!iapJwtHeader) {
@@ -98,14 +97,13 @@ async function createIapAuthHandler(
         iapPublicKeys = await getCachedValue(
           "iapPublicKeys",
           () => {
-            const keys = oAuth2Client.getIapPublicKeys();
-            logger.info("Fetched IAP public keys: ", keys);
-            return keys;
+            logger.info("Fetched IAP public keys");
+            return oAuth2Client.getIapPublicKeys();
           },
           IAP_PUBLIC_KEY_CACHE_TIME,
         );
-      } catch (error) {
-        logger.error("iapAuthHandler: failed to fetch IAP public keys", error);
+      } catch {
+        logger.error("iapAuthHandler: failed to fetch IAP public keys");
         return next(new Error("Failed to fetch IAP public keys"));
       }
 
@@ -118,15 +116,11 @@ async function createIapAuthHandler(
             [IAP_AUDIENCE as string],
             [IAP_JWT_ISSUER],
           );
-        logger.debug("iapAuthHandler: login ticket: ", login);
         const tokenPayload = login.getPayload();
 
         // Check if the tokenPayload contains an email.
         if (!tokenPayload || !tokenPayload.email) {
-          logger.error(
-            "iapAuthHandler: no email in JWT tokenPayload",
-            tokenPayload,
-          );
+          logger.error("iapAuthHandler: no email in JWT token payload");
           throw new Error("No email in JWT tokenPayload");
         }
 
@@ -140,41 +134,25 @@ async function createIapAuthHandler(
         );
 
         if (!isAuthorized || !userData) {
-          if (userData) {
-            logger.warn(
-              "iapAuthHandler: user is not authorized",
-              tokenPayload.email,
-              userData,
-            );
-          } else {
-            logger.warn(
-              "iapAuthHandler: user is not authorized",
-              tokenPayload.email,
-            );
-          }
+          logger.warn("iapAuthHandler: user is not authorized");
           throw new Error("User is not authorized");
         }
 
-        logger.info("iapAuthHandler: logging in user: ", userData);
+        logger.info("iapAuthHandler: logging in authorized user");
         req.user = await userService.loginUserSSO({
           email: userData.email,
           name: userData.name,
           rootRole: adminRoleName,
           autoCreate: true,
         });
-      } catch (error) {
-        logger.error(
-          "iapAuthHandler: JWT token validation failed with error",
-          error,
-        );
+      } catch {
+        logger.error("iapAuthHandler: JWT token validation failed");
       }
 
       next();
     });
 
     app.use("/api", (req: any, res: any, next: any) => {
-      logger.debug("apiHandler: request user: ", req.user);
-
       if (req.user) {
         return next();
       } else {
