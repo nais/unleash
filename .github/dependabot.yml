@@ -63,6 +63,8 @@ updates:
       time: "09:00"
       timezone: "Europe/Oslo"
     ignore:
+      - dependency-name: "@types/node"
+        versions: [">=25"]
       - dependency-name: "unleash-server"
     groups:
       npm-shared:
@@ -85,6 +87,8 @@ updates:
           - "unleash-server"
     # Allow patch/minor updates within 6.x only
     ignore:
+      - dependency-name: "@types/node"
+        versions: [">=25"]
       - dependency-name: "unleash-server"
         update-types: ["version-update:semver-major"]
 
@@ -104,5 +108,7 @@ updates:
           - "unleash-server"
     # Allow patch/minor updates within 7.x only
     ignore:
+      - dependency-name: "@types/node"
+        versions: [">=25"]
       - dependency-name: "unleash-server"
         update-types: ["version-update:semver-major"]
