@@ -8,6 +8,8 @@ namespace: ""
 image:
   registry: europe-north1-docker.pkg.dev
   repository: nais-io/nais/images/nais-unleash
+# Set only after the compatible Unleasherator CRD and controller are deployed.
+unleasheratorBreakGlassSupported: false
 
 # ReleaseChannel versions - each entry creates a ReleaseChannel resource
 # Tags are automatically updated during CI/CD from git tags
@@ -16,10 +18,23 @@ versions:
     enabled: true
     # Image tag for this version (format: v6-6.10.1-sha, retrieved from git tags)
     tag: v6-6.10.1
+    strategy: {}
+    healthChecks: {}
+    # Empty keeps the default derived timeout. Set a Go duration only for an
+    # explicit operational override.
+    maxUpgradeTime: ""
+    # Must equal tag. Fasit confirmation and audit control this emergency path.
+    breakGlassTargetTag: ""
+    allowDowngrade: false
   v7:
     enabled: true
     # Image tag for this version (format: v7-7.1.0-sha, retrieved from git tags)
     tag: v7-7.1.0
+    strategy: {}
+    healthChecks: {}
+    maxUpgradeTime: ""
+    breakGlassTargetTag: ""
+    allowDowngrade: false
 
 # Shared deployment strategy configuration
 strategy:

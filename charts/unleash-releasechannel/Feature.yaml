@@ -12,3 +12,63 @@ values:
     displayName: Unleash instance namespace
     computed:
       template: '"{{ .Management.bifrost_unleash_namespace}}"'
+  unleasheratorBreakGlassSupported:
+    displayName: Unleasherator break-glass support deployed
+    config:
+      type: bool
+  versions.v6.strategy.maxParallel:
+    displayName: Unleash v6 maximum parallel instances
+    config:
+      type: int
+  versions.v6.strategy.batchInterval:
+    displayName: Unleash v6 batch interval
+    config:
+      type: string
+  versions.v6.healthChecks.initialDelay:
+    displayName: Unleash v6 health check initial delay
+    config:
+      type: string
+  versions.v6.healthChecks.timeout:
+    displayName: Unleash v6 health check timeout
+    config:
+      type: string
+  versions.v6.maxUpgradeTime:
+    displayName: Unleash v6 maximum upgrade time
+    config:
+      type: string
+  versions.v6.breakGlassTargetTag:
+    displayName: Unleash v6 break-glass target tag
+    config:
+      type: string
+  versions.v6.allowDowngrade:
+    displayName: Allow Unleash v6 downgrade
+    config:
+      type: bool
+  versions.v7.strategy.maxParallel:
+    displayName: Unleash v7 maximum parallel instances
+    config:
+      type: int
+  versions.v7.strategy.batchInterval:
+    displayName: Unleash v7 batch interval
+    config:
+      type: string
+  versions.v7.healthChecks.initialDelay:
+    displayName: Unleash v7 health check initial delay
+    config:
+      type: string
+  versions.v7.healthChecks.timeout:
+    displayName: Unleash v7 health check timeout
+    config:
+      type: string
+  versions.v7.maxUpgradeTime:
+    displayName: Unleash v7 maximum upgrade time
+    config:
+      type: string
+  versions.v7.breakGlassTargetTag:
+    displayName: Unleash v7 break-glass target tag
+    config:
+      type: string
+  versions.v7.allowDowngrade:
+    displayName: Allow Unleash v7 downgrade
+    config:
+      type: bool
