@@ -84,7 +84,6 @@ async function createJWTAuthHandler(
     const { userService }: any = services;
 
     app.use(async (req: any, res: any, next: any) => {
-      logger.debug("jwtAuthHandler: request headers: ", req.headers);
       const iapJwtHeader: string | undefined = req.get(OAUTH_JWT_HEADER);
 
       if (!iapJwtHeader) {
@@ -101,10 +100,7 @@ async function createJWTAuthHandler(
 
         // Check if the tokenPayload contains an email.
         if (!tokenPayload || !tokenPayload.email) {
-          logger.error(
-            "jwtAuthHandler: no email in JWT tokenPayload",
-            tokenPayload,
-          );
+          logger.error("jwtAuthHandler: no email in JWT token payload");
           throw new Error("No email in JWT tokenPayload");
         }
 
@@ -120,41 +116,25 @@ async function createJWTAuthHandler(
         );
 
         if (!isAuthorized || !userData) {
-          if (userData) {
-            logger.warn(
-              "jwtAuthHandler: user is not authorized",
-              tokenPayload.email,
-              userData,
-            );
-          } else {
-            logger.warn(
-              "jwtAuthHandler: user is not authorized",
-              tokenPayload.email,
-            );
-          }
+          logger.warn("jwtAuthHandler: user is not authorized");
           throw new Error("User is not authorized");
         }
 
-        logger.info("jwtAuthHandler: logging in user: ", userData);
+        logger.info("jwtAuthHandler: logging in authorized user");
         req.user = await userService.loginUserSSO({
           email: userData.email,
           name: userData.name,
           rootRole: adminRoleName,
           autoCreate: true,
         });
-      } catch (error) {
-        logger.error(
-          "jwtAuthHandler: JWT token validation failed with error",
-          error,
-        );
+      } catch {
+        logger.error("jwtAuthHandler: JWT token validation failed");
       }
 
       next();
     });
 
     app.use("/api", (req: any, res: any, next: any) => {
-      logger.debug("apiHandler: request user: ", req.user);
-
       if (req.user) {
         return next();
       } else {

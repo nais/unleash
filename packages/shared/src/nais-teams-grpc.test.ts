@@ -38,7 +38,7 @@ vi.mock("log4js", () => ({
   getLogger: vi.fn(() => mocks.logger),
 }));
 
-import { NaisTeamsGrpc } from "./nais-teams-grpc";
+import { NaisApiUnavailableError, NaisTeamsGrpc } from "./nais-teams-grpc";
 
 describe("NaisTeamsGrpc", () => {
   beforeEach(() => {
@@ -90,5 +90,22 @@ describe("NaisTeamsGrpc", () => {
       ...mocks.logger.warn.mock.calls,
     ];
     expect(JSON.stringify(logArguments)).not.toContain("user@example.com");
+  });
+
+  it("does not turn a transient nais-api failure into a cacheable denial", async () => {
+    mocks.get.mockImplementation(
+      (
+        _request: unknown,
+        _options: unknown,
+        callback: (error: Error, response: unknown) => void,
+      ) => callback(new Error("deadline exceeded"), null),
+    );
+    const service = new NaisTeamsGrpc("nais-api.nais-system:3001", [
+      "allowed-team",
+    ]);
+
+    await expect(service.authorize("user@example.com")).rejects.toBeInstanceOf(
+      NaisApiUnavailableError,
+    );
   });
 });

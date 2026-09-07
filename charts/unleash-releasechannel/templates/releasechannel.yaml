@@ -29,7 +29,7 @@ spec:
     {{- if $config.maxUpgradeTime }}
     maxUpgradeTime: {{ $config.maxUpgradeTime | quote }}
     {{- end }}
-  {{- $healthChecks := $config.healthChecks | default $.Values.healthChecks }}
+  {{- $healthChecks := mergeOverwrite (deepCopy $.Values.healthChecks) $config.healthChecks }}
   {{- if $healthChecks.enabled }}
   healthChecks:
     enabled: {{ $healthChecks.enabled }}
@@ -41,6 +41,9 @@ spec:
     {{- end }}
   {{- end }}
   {{- if $config.breakGlassTargetTag }}
+  {{- if not $.Values.unleasheratorBreakGlassSupported }}
+  {{- fail "unleasheratorBreakGlassSupported must be true before configuring breakGlassTargetTag" }}
+  {{- end }}
   {{- if ne $config.breakGlassTargetTag $config.tag }}
   {{- fail (printf "versions.%s.breakGlassTargetTag must equal versions.%s.tag" $version $version) }}
   {{- end }}

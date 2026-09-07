@@ -12,6 +12,10 @@ values:
     displayName: Unleash instance namespace
     computed:
       template: '"{{ .Management.bifrost_unleash_namespace}}"'
+  unleasheratorBreakGlassSupported:
+    displayName: Unleasherator break-glass support deployed
+    config:
+      type: bool
   versions.v6.strategy.maxParallel:
     displayName: Unleash v6 maximum parallel instances
     config:

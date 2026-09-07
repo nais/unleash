@@ -7,6 +7,12 @@ import type { TeamsService, User } from "./nais-teams";
 const PROTO_DIR = path.resolve(__dirname, "../../proto");
 const GRPC_REQUEST_TIMEOUT_MS = 5_000;
 
+export class NaisApiUnavailableError extends Error {
+  constructor() {
+    super("nais-api authorization lookup failed");
+  }
+}
+
 /**
  * gRPC-based teams service that talks to nais/api instead of the
  * deprecated console GraphQL endpoint.
@@ -77,9 +83,9 @@ export class NaisTeamsGrpc implements TeamsService {
 
       logger.info("authorize: user authorized");
       return { status: true, user };
-    } catch (error) {
-      logger.warn("authorize: error looking up user", error);
-      return { status: false, user: null };
+    } catch {
+      logger.warn("authorize: nais-api lookup failed");
+      throw new NaisApiUnavailableError();
     }
   };
 
