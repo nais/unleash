@@ -68,8 +68,8 @@ importers:
         specifier: ^0.8.0
         version: 0.8.1
       google-auth-library:
-        specifier: ^11.2.0
-        version: 11.2.0(supports-color@7.2.0)
+        specifier: ^11.3.1
+        version: 11.3.1(supports-color@7.2.0)
       jose:
         specifier: ^6.2.12
         version: 6.2.12
@@ -1852,6 +1852,10 @@ packages:
     resolution: {integrity: sha512-kB3rzJV7d9juLZh8/56QTXCwQfxyhdOMdyYk1HdQKFtF8TJTDTZQJtixWIwXdE9Jji91mC41DUNpjleo4L4eAQ==}
     engines: {node: '>=18'}
 
+  gaxios@8.3.1:
+    resolution: {integrity: sha512-h4/R7ay7JFXU5kmAkp/Y4Y4Vmm7m83tD579GUgfQQsRRGQ4TzSedyHla6XgTWohQuVffT3ldN4FF6uCqlRGaEA==}
+    engines: {node: '>=22'}
+
   gcp-metadata@9.1.0:
     resolution: {integrity: sha512-hV4Abmis9XY9ch/HK8t4oGy/Ho4WNzd6QAj/7PHKF5Ae25LUDviZET0s7DD3i+mG1QpGCqnDji/R/jBiuux4jw==}
     engines: {node: '>=22'}
@@ -1895,8 +1899,8 @@ packages:
     resolution: {integrity: sha512-RwMTC61u7hrG3ZJMkZQOK4JLJrKS8QtoTii63EmWvFXHqycY9FObBJQCbsLxSO8kjKhWE5kV1GC+Vb1g3RI0Zg==}
     engines: {node: '>=18'}
 
-  google-auth-library@11.2.0:
-    resolution: {integrity: sha512-R9/Dwc3swSur04RnizQ6EBUmmcno2cC5cAKtrG/C+pY+W7c5l6rSnFWgMkR7NSYj1n6XWmb/KhcjxGslWm4yIA==}
+  google-auth-library@11.3.1:
+    resolution: {integrity: sha512-mQS0R2Ev/DKkzuWSYtDeq15uhDeaWuT2qzLYqJ41LmooxVKHmn5ut3pc6dlHY6wfHW/D7FBmOYjAtkjaD1A7qA==}
     engines: {node: '>=22'}
 
   google-logging-utils@2.0.1:
@@ -5154,6 +5158,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  gaxios@8.3.1(supports-color@7.2.0):
+    dependencies:
+      extend: 3.0.2
+      https-proxy-agent: 7.0.6(supports-color@7.2.0)
+      node-fetch: 3.3.2
+    transitivePeerDependencies:
+      - supports-color
+
   gcp-metadata@9.1.0(supports-color@7.2.0):
     dependencies:
       gaxios: 7.3.1(supports-color@7.2.0)
@@ -5211,11 +5223,11 @@ snapshots:
 
   globals@17.13.0: {}
 
-  google-auth-library@11.2.0(supports-color@7.2.0):
+  google-auth-library@11.3.1(supports-color@7.2.0):
     dependencies:
       base64-js: 1.5.1
       ecdsa-sig-formatter: 1.0.11
-      gaxios: 7.3.1(supports-color@7.2.0)
+      gaxios: 8.3.1(supports-color@7.2.0)
       gcp-metadata: 9.1.0(supports-color@7.2.0)
       google-logging-utils: 2.0.1
       jws: 4.0.1
