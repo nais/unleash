@@ -27,7 +27,7 @@
     "@grpc/grpc-js": "^1.14.6",
     "@grpc/proto-loader": "^0.8.0",
     "google-auth-library": "^11.3.1",
-    "jose": "^6.2.12",
+    "jose": "^6.2.13",
     "jsonwebtoken": "^9.0.3",
     "log4js": "^6.9.1"
   },
