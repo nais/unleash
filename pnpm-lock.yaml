@@ -125,8 +125,8 @@ importers:
         specifier: ^7.2.1
         version: 7.2.1
       nock:
-        specifier: ^15.0.1
-        version: 15.0.1(supports-color@7.2.0)
+        specifier: ^15.0.5
+        version: 15.0.5(supports-color@7.2.0)
       supertest:
         specifier: ^7.3.1
         version: 7.3.1(supports-color@7.2.0)
@@ -2576,6 +2576,10 @@ packages:
   nock@15.0.1:
     resolution: {integrity: sha512-Mjx5Xl4t9vP13eUZPWqwwpjjXNjvhUTo1qTdryVM3+7t6Z2w6WHZ9GVZk/zQ8Ym1vbmloWaglye3cloyHAJ8FA==}
     engines: {node: '>=20.12.1'}
+
+  nock@15.0.5:
+    resolution: {integrity: sha512-nVeuZGS2we1PyvqbW082Qj0EB4bd//6pZk/zOPDlaTPU72qcWrqfHg3kx9JcBcH1fJxwJHjmsfuQ4mss42su4w==}
+    engines: {node: '>=22.20.0'}
 
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -5841,6 +5845,12 @@ snapshots:
   next-tick@1.1.0: {}
 
   nock@15.0.1(supports-color@7.2.0):
+    dependencies:
+      '@mswjs/interceptors': 0.44.0(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  nock@15.0.5(supports-color@7.2.0):
     dependencies:
       '@mswjs/interceptors': 0.44.0(supports-color@7.2.0)
     transitivePeerDependencies:
