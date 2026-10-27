@@ -362,4 +362,6 @@ Requests and questions can be made via issues on the repo. For NAV employees thi
 
 ## License
 
-[MIT](LICENSE)
+The code in this repository is [MIT](LICENSE).
+
+The images bundle unmodified [unleash-server](https://github.com/Unleash/unleash) from npm. Unleash 6 and 7 are Apache-2.0. From Unleash 8, unleash-server is [AGPL-3.0-or-later](https://github.com/Unleash/unleash/blob/v8.0.0/LICENSE). The complete source for every image, including the v8 images, is this repository at the git tag matching the image tag. We do not patch unleash-server; if that changes, the patches will be published here.
