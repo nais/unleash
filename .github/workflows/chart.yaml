@@ -175,6 +175,9 @@ jobs:
           versions="$VERSIONS_JSON"
           for version in $(echo "$versions" | jq -r 'keys[]'); do
             tag=$(echo "$versions" | jq -r ".${version}.tag")
+            # Both values end up in a sed expression; reject anything unexpected.
+            [[ "$version" =~ ^v[0-9]+$ ]] || { echo "::error::invalid version key: $version"; exit 1; }
+            [[ "$tag" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "::error::invalid image tag: $tag"; exit 1; }
             # Update the tag for this version in values.yaml
             sed -i "/^  ${version}:/,/^  v[0-9]/ s/tag:.*$/tag: ${tag}/" ./charts/${{ env.CHART_NAME }}/values.yaml
           done
