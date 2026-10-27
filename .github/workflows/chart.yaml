@@ -30,7 +30,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PYTHON_VERSION: "3.9"
+  PYTHON_VERSION: '3.13'
   HELM_VERSION: v3.19.4
   ARTIFACT_REGISTRY: europe-north1-docker.pkg.dev
   ARTIFACT_REPO: nais-io/nais/feature
@@ -41,6 +41,8 @@ jobs:
   meta:
     name: Metadata
     runs-on: ubuntu-latest
+    # Never build metadata for workflow_run events triggered from forks.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository
     permissions:
       contents: read
     outputs:
@@ -113,20 +115,25 @@ jobs:
 
       - name: Generate version
         id: version
+        env:
+          CHART_SUFFIX: ${{ steps.ctx.outputs.chart_suffix }}
         run: |
           # Branch chart versions get a SemVer-safe branch suffix so they never
           # overwrite a same-day main chart in the OCI registry.
-          version="$(date +'%Y%m%d')-${{ steps.ctx.outputs.chart_suffix }}"
+          version="$(date +'%Y%m%d')-${CHART_SUFFIX}"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Detect Unleash versions and build version map
         id: versions
+        env:
+          SUFFIX: ${{ steps.ctx.outputs.suffix }}
+          PRODUCTION_RELEASE: ${{ steps.ctx.outputs.production_release }}
         run: |
           # Production chart deployment follows a successful Main push that has
           # built and tagged both images. All other chart builds use a
           # deterministic tag and are never deployed to Fasit.
-          suffix="${{ steps.ctx.outputs.suffix }}"
-          production_release="${{ steps.ctx.outputs.production_release }}"
+          suffix="$SUFFIX"
+          production_release="$PRODUCTION_RELEASE"
           versions_json="{"
           first=true
           for dir in packages/unleash-v*; do
@@ -154,16 +161,23 @@ jobs:
           echo "Detected versions: ${versions_json}"
 
       - name: Update Chart.yaml version
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          sed -i "s/^version:.*$/version: ${{ steps.version.outputs.version }}/g" ./charts/${{ env.CHART_NAME }}/Chart.yaml
+          sed -i "s/^version:.*$/version: ${VERSION}/g" ./charts/${{ env.CHART_NAME }}/Chart.yaml
           cat ./charts/${{ env.CHART_NAME }}/Chart.yaml
 
       - name: Update values.yaml with image tags
+        env:
+          VERSIONS_JSON: ${{ steps.versions.outputs.json }}
         run: |
           # Parse the versions JSON and update each tag in values.yaml
-          versions='${{ steps.versions.outputs.json }}'
+          versions="$VERSIONS_JSON"
           for version in $(echo "$versions" | jq -r 'keys[]'); do
             tag=$(echo "$versions" | jq -r ".${version}.tag")
+            # Both values end up in a sed expression; reject anything unexpected.
+            [[ "$version" =~ ^v[0-9]+$ ]] || { echo "::error::invalid version key: $version"; exit 1; }
+            [[ "$tag" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "::error::invalid image tag: $tag"; exit 1; }
             # Update the tag for this version in values.yaml
             sed -i "/^  ${version}:/,/^  v[0-9]/ s/tag:.*$/tag: ${tag}/" ./charts/${{ env.CHART_NAME }}/values.yaml
           done
@@ -209,7 +223,9 @@ jobs:
         uses: helm/chart-testing-action@720270857a28afd41e2426521a7801db09e9b510 # ratchet:helm/chart-testing-action@v2.9.0
 
       - name: Run chart-testing (lint)
-        run: ct lint --charts ./charts/${{ env.CHART_NAME }} --target-branch ${{ github.event.repository.default_branch }}
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: ct lint --charts "./charts/${CHART_NAME}" --target-branch "$DEFAULT_BRANCH"
 
   push:
     name: Build and push Chart
@@ -246,8 +262,10 @@ jobs:
 
       - name: Log in to Google Artifact Registry
         if: github.actor != 'dependabot[bot]' && (github.event_name == 'push' || github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch')
+        env:
+          ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
         run: |
-          echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://${{ env.ARTIFACT_REGISTRY }}
+          echo "$ACCESS_TOKEN" | docker login -u oauth2accesstoken --password-stdin https://${{ env.ARTIFACT_REGISTRY }}
 
       - name: Setup Helm
         uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # ratchet:azure/setup-helm@v5.0.1
@@ -299,8 +317,10 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: git tag and push
+        env:
+          VERSION: ${{ needs.meta.outputs.version }}
         run: |
-          tag="chart-${{ env.CHART_NAME }}-${{ needs.meta.outputs.version }}"
+          tag="chart-${CHART_NAME}-${VERSION}"
           git tag "${tag}" || true
           git push origin "${tag}" || true
 
@@ -311,8 +331,13 @@ jobs:
     if: always() && (github.event_name == 'push' || github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch')
     steps:
       - name: Generate Summary
+        env:
+          VERSIONS_JSON: ${{ needs.meta.outputs.versions_json }}
+          VERSION: ${{ needs.meta.outputs.version }}
+          REF: ${{ github.ref }}
+          ACTOR: ${{ github.actor }}
         run: |
-          versions='${{ needs.meta.outputs.versions_json }}'
+          versions="$VERSIONS_JSON"
 
           echo "# 🚀 Helm Chart Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -320,9 +345,9 @@ jobs:
           echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| **Chart Name** | \`${{ env.CHART_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Chart Version** | \`${{ needs.meta.outputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Chart Version** | \`${VERSION}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| **Registry** | \`${{ env.ARTIFACT_REGISTRY }}/${{ env.ARTIFACT_REPO }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Git Tag** | \`chart-${{ env.CHART_NAME }}-${{ needs.meta.outputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Git Tag** | \`chart-${CHART_NAME}-${VERSION}\` |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "## ReleaseChannel Versions" >> $GITHUB_STEP_SUMMARY
@@ -347,6 +372,6 @@ jobs:
           echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| **Event** | \`${{ github.event_name }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Ref** | \`${{ github.ref }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Ref** | \`${REF}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| **SHA** | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Actor** | @${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Actor** | @${ACTOR} |" >> $GITHUB_STEP_SUMMARY
