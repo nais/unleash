@@ -146,28 +146,28 @@ mise run test:all
 mise run test:shared
 
 # Test v5 package with database
-mise run test:v5
+mise run test v5
 
 # Test v6 package with database
-mise run test:v6
+mise run test v6
 
 # Test v7 package with database
-mise run test:v7
+mise run test v7
 
 # Test v8 package with database
-mise run test:v8
+mise run test v8
 
 # Start development environment
 mise run dev
 
 # Start unleash-v6 server
-mise run start:v6
+mise run start v6
 
 # Start unleash-v7 server
-mise run start:v7
+mise run start v7
 
 # Start unleash-v8 server
-mise run start:v8
+mise run start v8
 
 # Database management
 mise run db:start    # Start PostgreSQL
@@ -210,7 +210,7 @@ cd unleash
 mise run dev
 
 # In another terminal, start the server
-mise run start:v5
+mise run start v5
 ```
 
 ### Common Tasks
@@ -242,7 +242,7 @@ mise run start:v5
 mise run dev
 
 # In another terminal, start the server
-mise run start:v5
+mise run start v5
 ```
 
 Unleash will be available at `http://localhost:4242`.
