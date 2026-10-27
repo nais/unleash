@@ -100,7 +100,12 @@ packages/
 │   │   ├── server.ts        # Server factory with custom auth
 │   │   └── index.ts         # Application entry point
 │   └── package.json
-└── unleash-v7/      # Unleash v7 server implementation
+├── unleash-v7/      # Unleash v7 server implementation
+│   ├── src/
+│   │   ├── server.ts        # Server factory with custom auth
+│   │   └── index.ts         # Application entry point
+│   └── package.json
+└── unleash-v8/      # Unleash v8 server implementation (requires PostgreSQL 15+)
     ├── src/
     │   ├── server.ts        # Server factory with custom auth
     │   └── index.ts         # Application entry point
@@ -149,6 +154,9 @@ mise run test:v6
 # Test v7 package with database
 mise run test:v7
 
+# Test v8 package with database
+mise run test:v8
+
 # Start development environment
 mise run dev
 
@@ -157,6 +165,9 @@ mise run start:v6
 
 # Start unleash-v7 server
 mise run start:v7
+
+# Start unleash-v8 server
+mise run start:v8
 
 # Database management
 mise run db:start    # Start PostgreSQL
@@ -218,7 +229,7 @@ mise run start:v5
 | `mise run db:stop`            | Stop PostgreSQL                                       |
 | `mise run db:reset`           | Reset database (drop and recreate)                    |
 | `mise run update:check`       | Check for package updates                             |
-| `mise run update:unleash`     | Update specific version (v5, v6, or v7)               |
+| `mise run update:unleash`     | Update specific version (v6, v7, or v8)               |
 | `mise run update:unleash-all` | Update all unleash packages (respects major versions) |
 | `mise tasks`                  | List all available tasks                              |
 
@@ -287,7 +298,7 @@ GOOGLE_IAP_AUDIENCE=/projects/123/global/backendServices/123
 
 ## Updating Dependencies
 
-This monorepo maintains multiple major versions of Unleash simultaneously. Each version package (v5, v6, v7) is pinned to its respective major version of `unleash-server`.
+This monorepo maintains multiple major versions of Unleash simultaneously. Each version package (v6, v7, v8) is pinned to its respective major version of `unleash-server`.
 
 ```bash
 # Check for available updates across all packages
@@ -297,6 +308,7 @@ mise run update:check
 mise run update:unleash v5   # Updates to latest 5.x
 mise run update:unleash v6   # Updates to latest 6.x
 mise run update:unleash v7   # Updates to latest 7.x
+mise run update:unleash v8   # Updates to latest 8.x
 
 # Update all unleash packages at once (maintains major version constraints)
 mise run update:unleash-all
@@ -311,16 +323,17 @@ mise run update:all
 The update tasks ensure that:
 - `unleash-v6` only updates to the latest `6.x` version
 - `unleash-v7` only updates to the latest `7.x` version
+- `unleash-v8` only updates to the latest `8.x` version
 - Package versions are automatically synced with their `unleash-server` dependency
 
 After updating, always run `pnpm install` and `mise run test` to verify compatibility.
 
 ## Adding New Unleash Versions
 
-To add support for a new Unleash major version (e.g., v8):
+To add support for a new Unleash major version (e.g., v9):
 
-1. Create a new package directory: `packages/unleash-v8/`
-2. Copy the structure from `packages/unleash-v7/`
+1. Create a new package directory: `packages/unleash-v9/`
+2. Copy the structure from `packages/unleash-v8/`
 3. Update `package.json` with the correct `unleash-server` version
 4. Add `@nais/unleash-shared: workspace:*` dependency
 5. Adapt server initialization for any breaking changes in the new Unleash version
