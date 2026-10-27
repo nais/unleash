@@ -30,7 +30,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PYTHON_VERSION: "3.9"
+  PYTHON_VERSION: '3.13'
   HELM_VERSION: v3.19.4
   ARTIFACT_REGISTRY: europe-north1-docker.pkg.dev
   ARTIFACT_REPO: nais-io/nais/feature
