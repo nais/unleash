@@ -12,11 +12,10 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   fix-lockfile:
-    if: github.actor == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR branch
@@ -37,7 +36,7 @@ jobs:
           cache: "pnpm"
 
       - name: Regenerate lockfile
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --lockfile-only --ignore-scripts
 
       - name: Check for lockfile changes
         id: changes
