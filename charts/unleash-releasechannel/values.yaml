@@ -37,7 +37,7 @@ versions:
     breakGlassTargetTag: ""
     allowDowngrade: false
   v8:
-    enabled: true
+    enabled: false # needs PostgreSQL 15+; enable per tenant in Fasit after the DB upgrade
     # Image tag for this version (format: v8-8.2.1-sha, retrieved from git tags)
     tag: v8-8.2.1
     strategy: {}

@@ -73,6 +73,11 @@ values:
     config:
       type: bool
 
+  versions.v8.enabled:
+    displayName: Enable Unleash v8 release channel (requires PostgreSQL 15+)
+    config:
+      type: bool
+
   versions.v8.strategy.maxParallel:
     displayName: Unleash v8 maximum parallel instances
     config:
