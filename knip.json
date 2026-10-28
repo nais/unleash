@@ -24,6 +24,10 @@
     "packages/unleash-v7": {
       "entry": ["src/**/*.test.ts"],
       "project": ["src/**/*.ts"]
+    },
+    "packages/unleash-v8": {
+      "entry": ["src/**/*.test.ts"],
+      "project": ["src/**/*.ts"]
     }
   }
 }

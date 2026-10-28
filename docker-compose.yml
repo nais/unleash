@@ -21,7 +21,7 @@ services:
       - GOOGLE_IAP_ISSUER=https://accounts.google.com
 
   postgres:
-    image: "postgres:14"
+    image: "postgres:15"
     environment:
       - POSTGRES_USER=unleash
       - POSTGRES_PASSWORD=unleash

@@ -36,6 +36,15 @@ versions:
     maxUpgradeTime: ""
     breakGlassTargetTag: ""
     allowDowngrade: false
+  v8:
+    enabled: true
+    # Image tag for this version (format: v8-8.2.1-sha, retrieved from git tags)
+    tag: v8-8.2.1
+    strategy: {}
+    healthChecks: {}
+    maxUpgradeTime: ""
+    breakGlassTargetTag: ""
+    allowDowngrade: false
 
 # Shared deployment strategy configuration
 strategy:

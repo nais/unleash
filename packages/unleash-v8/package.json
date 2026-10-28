@@ -1,0 +1,23 @@
+{
+  "name": "unleash-v8",
+  "version": "8.2.1",
+  "description": "NAIS Unleash v8 server with custom authentication",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest run --coverage",
+    "test:verbose": "vitest run --coverage --reporter=verbose",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "@nais/unleash-shared": "workspace:*",
+    "unleash-server": "8.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/supertest": "^7.2.1",
+    "nock": "^15.0.5",
+    "supertest": "^7.3.1"
+  }
+}

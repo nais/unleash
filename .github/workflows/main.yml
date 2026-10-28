@@ -111,7 +111,7 @@ jobs:
         version: ${{ fromJson(needs.detect-versions.outputs.versions) }}
     services:
       postgres:
-        image: index.docker.io/library/postgres@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d # ratchet:postgres:14
+        image: index.docker.io/library/postgres@sha256:baa22e6286bf832cb147b8bb5aa9d8bc999846d69c21d11bf63f58fbeed1fa48 # ratchet:postgres:15
         env:
           POSTGRES_USER: ${{ env.DATABASE_USERNAME }}
           POSTGRES_PASSWORD: ${{ env.DATABASE_PASSWORD }}
@@ -153,7 +153,7 @@ jobs:
         version: ${{ fromJson(needs.detect-versions.outputs.versions) }}
     services:
       postgres:
-        image: index.docker.io/library/postgres@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d # ratchet:postgres:14
+        image: index.docker.io/library/postgres@sha256:baa22e6286bf832cb147b8bb5aa9d8bc999846d69c21d11bf63f58fbeed1fa48 # ratchet:postgres:15
         env:
           POSTGRES_USER: unleash
           POSTGRES_PASSWORD: unleash

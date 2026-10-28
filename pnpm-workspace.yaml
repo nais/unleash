@@ -16,6 +16,7 @@ allowBuilds:
   esbuild: false
   protobufjs: false
   ssh2: false
+  unleash-server: false
 
 overrides:
   axios: ">=1.15.2"

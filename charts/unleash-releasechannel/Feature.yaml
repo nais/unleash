@@ -72,3 +72,32 @@ values:
     displayName: Allow Unleash v7 downgrade
     config:
       type: bool
+
+  versions.v8.strategy.maxParallel:
+    displayName: Unleash v8 maximum parallel instances
+    config:
+      type: int
+  versions.v8.strategy.batchInterval:
+    displayName: Unleash v8 batch interval
+    config:
+      type: string
+  versions.v8.healthChecks.initialDelay:
+    displayName: Unleash v8 health check initial delay
+    config:
+      type: string
+  versions.v8.healthChecks.timeout:
+    displayName: Unleash v8 health check timeout
+    config:
+      type: string
+  versions.v8.maxUpgradeTime:
+    displayName: Unleash v8 maximum upgrade time
+    config:
+      type: string
+  versions.v8.breakGlassTargetTag:
+    displayName: Unleash v8 break-glass target tag
+    config:
+      type: string
+  versions.v8.allowDowngrade:
+    displayName: Allow Unleash v8 downgrade
+    config:
+      type: bool

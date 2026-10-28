@@ -112,3 +112,24 @@ updates:
         versions: [">=25"]
       - dependency-name: "unleash-server"
         update-types: ["version-update:semver-major"]
+
+  # Unleash v8 - only allow 8.x updates
+  - package-ecosystem: "npm"
+    directory: "/packages/unleash-v8"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Oslo"
+    groups:
+      npm-v8:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "unleash-server"
+    # Allow patch/minor updates within 8.x only
+    ignore:
+      - dependency-name: "@types/node"
+        versions: [">=25"]
+      - dependency-name: "unleash-server"
+        update-types: ["version-update:semver-major"]
