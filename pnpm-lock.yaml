@@ -103,8 +103,8 @@ importers:
         specifier: ^7.2.1
         version: 7.2.1
       nock:
-        specifier: ^15.0.5
-        version: 15.0.5(supports-color@7.2.0)
+        specifier: ^15.0.6
+        version: 15.0.6(supports-color@7.2.0)
       supertest:
         specifier: ^7.3.1
         version: 7.3.1(supports-color@7.2.0)
@@ -512,6 +512,10 @@ packages:
 
   '@mswjs/interceptors@0.44.0':
     resolution: {integrity: sha512-IYHevRStF4ijM20GI9c9Ndhw483NSAjCydQhUr4/zIB0BNLsTVw3vFAxTo6TlvX4QnV60wEHttUa9539TTAq+A==}
+    engines: {node: '>=22'}
+
+  '@mswjs/interceptors@0.45.11':
+    resolution: {integrity: sha512-+ISPERIRIHhSVnFQRGCP9jDJXxn0/z2+pWWbXUym6JUfpUCRW2Pvro4P9RBKGYUKTKAULszKurKMTQIsaJUIgQ==}
     engines: {node: '>=22'}
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
@@ -2626,6 +2630,10 @@ packages:
     resolution: {integrity: sha512-nVeuZGS2we1PyvqbW082Qj0EB4bd//6pZk/zOPDlaTPU72qcWrqfHg3kx9JcBcH1fJxwJHjmsfuQ4mss42su4w==}
     engines: {node: '>=22.20.0'}
 
+  nock@15.0.6:
+    resolution: {integrity: sha512-eyOJ1wemcgJZ+PQC3lecfF3gQc2SAmGlQ4mHGfFXcOa/+7v0qjnX+ft/NV2F+4vCwzkXZqik3gS6ZIjh+QcigQ==}
+    engines: {node: '>=22.20.0'}
+
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
@@ -3832,6 +3840,17 @@ snapshots:
   '@keyv/serialize@1.1.1': {}
 
   '@mswjs/interceptors@0.44.0(supports-color@7.2.0)':
+    dependencies:
+      '@open-draft/until': 3.0.1
+      '@types/debug': 4.1.13
+      debug: 4.4.3(supports-color@7.2.0)
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      rettime: 0.11.12
+    transitivePeerDependencies:
+      - supports-color
+
+  '@mswjs/interceptors@0.45.11(supports-color@7.2.0)':
     dependencies:
       '@open-draft/until': 3.0.1
       '@types/debug': 4.1.13
@@ -5927,6 +5946,12 @@ snapshots:
   nock@15.0.5(supports-color@7.2.0):
     dependencies:
       '@mswjs/interceptors': 0.44.0(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  nock@15.0.6(supports-color@7.2.0):
+    dependencies:
+      '@mswjs/interceptors': 0.45.11(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
