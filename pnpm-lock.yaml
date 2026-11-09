@@ -137,8 +137,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       unleash-server:
-        specifier: 8.2.1
-        version: 8.2.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+        specifier: 8.3.1
+        version: 8.3.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
     devDependencies:
       '@types/node':
         specifier: ^24.19.2
@@ -2146,6 +2146,10 @@ packages:
   joi@17.13.8:
     resolution: {integrity: sha512-iPKOGmiRw1jxf/JOPwxmCcUQAOdF359mdzYiP2DJ+TMX0YK2zjK3D+zYOaGjpumWxOFF/l2xVWjRVK5bGSLdEw==}
 
+  joi@18.2.9:
+    resolution: {integrity: sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==}
+    engines: {node: '>= 20'}
+
   joi@18.3.0:
     resolution: {integrity: sha512-/RwAK4BAfzcdbdFg073tzq4/xhY6Q7lMd5AmjqTL6pu0QFJdEmtswgm8BvgwXvOKuPNYQ8XrdQrrW/gF65LiNw==}
     engines: {node: '>= 20'}
@@ -3343,8 +3347,8 @@ packages:
     resolution: {integrity: sha512-kBS9cPZNLeGO4g2XeUs37R0g4sQYcBjjrMAqea47TQIGcrs0iagNEm+ABih3SyEDAOnmxkQetsB0RGHIFki1Gg==}
     engines: {node: '>=22'}
 
-  unleash-server@8.2.1:
-    resolution: {integrity: sha512-zSZ9bv92GuFIbFj9IxrdsL70UgZUpvaybKAy7xIBe8ygM/bF+cdZKk3VQkhgGyFFNFAPS0vhk2ASDkSXRJ2FNA==}
+  unleash-server@8.3.1:
+    resolution: {integrity: sha512-m/L6izV4DT4K1NYf/Q1EUgJboyaqzIYFzL4eRzgdWT1rDZwrR71u3WOYqNKyaEiguEPA60RqyI0oAyoPIt3YdQ==}
     engines: {node: '>=22'}
 
   unpipe@1.0.0:
@@ -5473,6 +5477,16 @@ snapshots:
       '@sideway/formula': 3.0.1
       '@sideway/pinpoint': 2.0.0
 
+  joi@18.2.9:
+    dependencies:
+      '@hapi/address': 5.1.1
+      '@hapi/formula': 3.0.2
+      '@hapi/hoek': 11.0.7
+      '@hapi/pinpoint': 2.0.1
+      '@hapi/tlds': 1.1.7
+      '@hapi/topo': 6.0.2
+      '@standard-schema/spec': 1.1.0
+
   joi@18.3.0:
     dependencies:
       '@hapi/address': 5.1.1
@@ -6854,7 +6868,7 @@ snapshots:
       - supports-color
       - tedious
 
-  unleash-server@8.2.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
+  unleash-server@8.3.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
       '@json2csv/plainjs': 7.0.8
       '@slack/web-api': 7.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
@@ -6884,7 +6898,7 @@ snapshots:
       http-errors: 2.0.1
       hyperloglog-lite: 1.0.2
       ip-address: 10.7.5
-      joi: 18.3.0
+      joi: 18.2.9
       js-sha256: 0.11.1
       js-yaml: 4.3.2
       json-diff: 1.0.6
@@ -6892,9 +6906,7 @@ snapshots:
       knex: 3.3.0(pg@8.23.1)(supports-color@7.2.0)
       ky: 1.14.3
       lodash: 4.18.1
-      lodash.get: 4.4.2
       lodash.groupby: 4.6.0
-      lodash.isequal: 4.5.0
       lodash.sortby: 4.7.0
       log4js: 6.9.1(supports-color@7.2.0)
       memoizee: 0.4.17
