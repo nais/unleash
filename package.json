@@ -39,11 +39,11 @@
     "@vitest/coverage-v8": "^4.1.12",
     "eslint": "^10.14.0",
     "globals": "^17.14.0",
-    "knip": "^6.44.1",
-    "prettier": "^3.9.10",
+    "knip": "^6.45.1",
+    "prettier": "^3.10.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "^8.72.1",
-    "vite": "7.3.7",
+    "typescript-eslint": "^8.72.2",
+    "vite": "7.3.8",
     "vitest": "^4.1.12"
   }
 }
