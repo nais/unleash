@@ -128,8 +128,8 @@ importers:
         specifier: ^15.0.6
         version: 15.0.6(supports-color@7.2.0)
       supertest:
-        specifier: ^7.3.1
-        version: 7.3.1(supports-color@7.2.0)
+        specifier: ^7.3.2
+        version: 7.3.2(supports-color@7.2.0)
 
   packages/unleash-v8:
     dependencies:
@@ -3180,6 +3180,10 @@ packages:
 
   supertest@7.3.1:
     resolution: {integrity: sha512-vNaNCFoCR/edDbErQZp5KLNT8R4dSPHX7rlDLoE8hWLAm/878j6ShMbe8HK/E6RwwuhlSXVelXAIg9AxR5WWPw==}
+    engines: {node: '>=14.18.0'}
+
+  supertest@7.3.2:
+    resolution: {integrity: sha512-hR0dKRUE+PwZhHLdq/GRhf97HbUQte+AhbpWBQ9nh02tpjujVJj0GY4aygd1dAKdNZ7UZexWHpeItyJi/jLsgw==}
     engines: {node: '>=14.18.0'}
 
   supports-color@7.2.0:
@@ -6538,6 +6542,14 @@ snapshots:
       - supports-color
 
   supertest@7.3.1(supports-color@7.2.0):
+    dependencies:
+      cookie-signature: 1.2.2
+      methods: 1.1.2
+      superagent: 10.4.1(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  supertest@7.3.2(supports-color@7.2.0):
     dependencies:
       cookie-signature: 1.2.2
       methods: 1.1.2
