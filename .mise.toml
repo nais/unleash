@@ -4,7 +4,7 @@
 nodejs = "24"
 go = "1.25"
 pnpm = "latest"
-"go:github.com/sethvargo/ratchet" = "latest"
+"go:github.com/sethvargo/ratchet" = "0.12.0"
 helm = "3.19.4"
 
 [env]
